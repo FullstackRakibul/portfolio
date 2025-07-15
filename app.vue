@@ -14,7 +14,7 @@ useHead({
     { name: 'description', content: 'Full-Stack Software Developer specializing in .NET, React, Vue, and enterprise applications.' }
   ],
   link: [
-    { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    { rel: 'icon', type: 'text', href: 'R' }
   ]
 })
 </script>

@@ -1,66 +1,116 @@
 <template>
   <div class="pt-20 pb-16">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Header -->
       <div class="text-center mb-16">
         <h1 class="text-4xl sm:text-5xl font-bold mb-6">
           <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Blog</span>
         </h1>
-        <p class="text-xl text-gray-300">Thoughts on development, technology, and building great software</p>
+        <p class="text-xl text-gray-300 mb-8">Thoughts on development, technology, and building great software</p>
+
+        <!-- Search Bar -->
+        <div class="max-w-md mx-auto mb-8">
+          <div class="relative">
+            <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input v-model="searchQuery" type="text" placeholder="Search articles..."
+              class="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" />
+          </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+          <button @click="selectedCategory = 'all'" :class="[
+            'px-4 py-2 rounded-full text-sm font-medium transition-colors',
+            selectedCategory === 'all'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+          ]">
+            All Posts
+          </button>
+          <button v-for="category in categories" :key="category" @click="selectedCategory = category" :class="[
+            'px-4 py-2 rounded-full text-sm font-medium transition-colors',
+            selectedCategory === category
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+          ]">
+            {{ category }}
+          </button>
+        </div>
       </div>
 
-      <div class="grid gap-8">
-        <BlogCard v-for="post in posts" :key="post.slug" :title="post.title" :excerpt="post.excerpt" :date="post.date"
-          :readTime="post.readTime" :tags="post.tags" :slug="post.slug" />
+      <!-- Featured Posts -->
+      <div v-if="!searchQuery && selectedCategory === 'all'" class="mb-16">
+        <h2 class="text-2xl font-bold text-white mb-8">Featured Articles</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <BlogCard v-for="post in featuredPosts" :key="post.slug" :title="post.title" :excerpt="post.excerpt"
+            :date="post.date" :readTime="post.readTime" :tags="post.tags" :slug="post.slug" :featured="true" />
+        </div>
+      </div>
+
+      <!-- All Posts -->
+      <div>
+        <h2 class="text-2xl font-bold text-white mb-8">
+          {{ searchQuery ? `Search Results (${filteredPosts.length})` : 'All Articles' }}
+        </h2>
+        <div v-if="filteredPosts.length > 0" class="grid gap-8">
+          <BlogCard v-for="post in filteredPosts" :key="post.slug" :title="post.title" :excerpt="post.excerpt"
+            :date="post.date" :readTime="post.readTime" :tags="post.tags" :slug="post.slug" :category="post.category" />
+        </div>
+        <div v-else class="text-center py-16">
+          <div class="text-gray-400 mb-4">
+            <Search class="w-16 h-16 mx-auto mb-4 opacity-50" />
+            <p class="text-xl">No articles found</p>
+            <p class="text-sm">Try adjusting your search or filter criteria</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useHead } from '#app';
+import { ref, computed } from 'vue'
+import { Search } from 'lucide-vue-next'
+import { useBlog } from '~/composables/useBlog'
 
-const posts = [
-  {
-    slug: 'building-scalable-enterprise-applications',
-    title: 'Building Scalable Enterprise Applications with .NET Core',
-    excerpt: 'Learn how to architect and build enterprise-grade applications using .NET Core, focusing on scalability, maintainability, and performance optimization.',
-    date: '2024-01-15',
-    readTime: '8 min read',
-    tags: ['.NET', 'Enterprise', 'Architecture']
-  },
-  {
-    slug: 'modern-frontend-development-with-vue',
-    title: 'Modern Frontend Development with Vue.js and Nuxt',
-    excerpt: 'Exploring the latest features in Vue.js ecosystem and how Nuxt.js can accelerate your development workflow with server-side rendering and static generation.',
-    date: '2024-01-10',
-    readTime: '6 min read',
-    tags: ['Vue.js', 'Nuxt', 'Frontend']
-  },
-  {
-    slug: 'database-optimization-strategies',
-    title: 'Database Optimization Strategies for High-Performance Applications',
-    excerpt: 'Deep dive into SQL Server optimization techniques, indexing strategies, and query performance tuning for enterprise applications.',
-    date: '2024-01-05',
-    readTime: '10 min read',
-    tags: ['SQL Server', 'Performance', 'Database']
-  },
-  {
-    slug: 'cloud-migration-azure-aws',
-    title: 'Cloud Migration: From On-Premise to Azure and AWS',
-    excerpt: 'A comprehensive guide to migrating enterprise applications to the cloud, comparing Azure and AWS services and best practices.',
-    date: '2023-12-28',
-    readTime: '12 min read',
-    tags: ['Azure', 'AWS', 'Cloud Migration']
-  },
-  {
-    slug: 'react-state-management-patterns',
-    title: 'React State Management: From Redux to Zustand',
-    excerpt: 'Comparing different state management solutions in React applications and when to use each approach for optimal performance.',
-    date: '2023-12-20',
-    readTime: '7 min read',
-    tags: ['React', 'State Management', 'Redux']
+const searchQuery = ref('')
+const selectedCategory = ref('all')
+
+const {
+  getAllPosts,
+  getFeaturedPosts,
+  getPostsByCategory,
+  searchPosts,
+  getAllCategories
+} = useBlog()
+
+const allPosts = getAllPosts()
+const featuredPosts = getFeaturedPosts()
+const categories = getAllCategories()
+
+const filteredPosts = computed(() => {
+  let posts = allPosts
+
+  // Apply search filter
+  if (searchQuery.value.trim()) {
+    posts = searchPosts(searchQuery.value.trim())
   }
-]
+
+  // Apply category filter
+  if (selectedCategory.value !== 'all') {
+    posts = getPostsByCategory(selectedCategory.value)
+
+    // If there's also a search query, filter the category results
+    if (searchQuery.value.trim()) {
+      const searchResults = searchPosts(searchQuery.value.trim())
+      posts = posts.filter(post =>
+        searchResults.some(searchPost => searchPost.slug === post.slug)
+      )
+    }
+  }
+
+  return posts
+})
 
 useHead({
   title: 'Blog - Rakibul H. Rabbi',

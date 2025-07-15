@@ -11,6 +11,7 @@
         <div class="hidden md:flex items-center space-x-8">
           <NuxtLink to="/" class="nav-link">Home</NuxtLink>
           <NuxtLink to="/blog" class="nav-link">Blog</NuxtLink>
+          
           <a href="#contact" class="nav-link">Contact</a>
           <a href="https://github.com/FullstackRakibul" target="_blank"
             class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors">

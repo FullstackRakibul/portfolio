@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative w-full h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden">
+    class="relative w-full min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
     <!-- Background Particle Canvas -->
     <canvas ref="bgCanvasRef" class="w-full h-full absolute top-0 left-0 opacity-30" />
 
@@ -9,7 +9,7 @@
       aria-label="Interactive particle effect with Rakibul H. Rabbi name" />
 
     <!-- Main Content -->
-    <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8">
+    <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 w-full">
       <div class="animate-fade-in-up">
         <!-- Name will be rendered by particles -->
         <div class="h-24 sm:h-32 lg:h-40 mb-8"></div>
@@ -57,7 +57,7 @@
     </div>
 
     <!-- GitHub-style Stats Cards -->
-    <div class="absolute bottom-8 left-8 right-8 z-10 animate-fade-in-up animation-delay-1000">
+    <div class="absolute bottom-8 left-4 right-4 z-10 animate-fade-in-up animation-delay-1000">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
         <div class="bg-black/20 backdrop-blur-sm border border-gray-700/50 rounded-lg p-3 text-center">
           <div class="text-cyan-400 font-bold text-lg">5+</div>
@@ -182,18 +182,16 @@ const createTextImage = () => {
 
   const scale = isMobile.value ? 0.6 : 1.2
   const centerX = canvas.width / 2
-  const centerY = canvas.height / 2 - 100 // Move up to make room for content
+  const centerY = canvas.height / 2 - 100
 
   ctx.translate(centerX, centerY)
   ctx.scale(scale, scale)
 
-  // Set font for the name
   const fontSize = isMobile.value ? 36 : 64
   ctx.font = `bold ${fontSize}px Inter, sans-serif`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
 
-  // Draw the name with letter spacing
   const name = 'Rakibul H. Rabbi'
   ctx.fillText(name, 0, 0)
 
@@ -215,7 +213,6 @@ const createParticle = (scale) => {
     const y = Math.floor(Math.random() * canvas.height)
 
     if (data[(y * canvas.width + x) * 4 + 3] > 128) {
-      // Determine color based on position (gradient effect)
       const centerX = canvas.width / 2
       const distanceFromCenter = Math.abs(x - centerX)
       const maxDistance = canvas.width / 2
@@ -243,7 +240,7 @@ const createInitialParticles = (scale) => {
   const canvas = canvasRef.value
   if (!canvas) return
 
-  const baseParticleCount = 8000
+  const baseParticleCount = 6000
   const particleCount = Math.floor(baseParticleCount * Math.sqrt((canvas.width * canvas.height) / (1920 * 1080)))
 
   particles = []
@@ -257,9 +254,9 @@ const createBgParticles = () => {
   const canvas = bgCanvasRef.value
   if (!canvas) return
 
-  const particleCount = 50
+  const particleCount = 2000
   bgParticles = []
-  for (let i = 0; i < particleCount; i++) {
+  for (let i = 500; i < particleCount; i++) {
     const particle = createBgParticle()
     if (particle) bgParticles.push(particle)
   }
@@ -276,7 +273,7 @@ const animate = (scale) => {
 
   const { x: mouseX, y: mouseY } = mousePositionRef.value
   const maxDistance = isMobile.value ? 120 : 180
-  const repelForce = 60
+  const repelForce = 500
 
   particles.forEach((p, i) => {
     const dx = mouseX - p.x
@@ -284,7 +281,6 @@ const animate = (scale) => {
     const distance = Math.sqrt(dx * dx + dy * dy)
 
     if (distance < maxDistance && (isTouchingRef.value || !('ontouchstart' in window))) {
-      // Mouse repel effect
       const force = (maxDistance - distance) / maxDistance
       const angle = Math.atan2(dy, dx)
       const moveX = Math.cos(angle) * force * repelForce
@@ -293,32 +289,27 @@ const animate = (scale) => {
       p.x = p.baseX - moveX
       p.y = p.baseY - moveY
 
-      // Color change on interaction
       ctx.fillStyle = p.scatteredColor
 
-      // Add some glow effect
       if (Math.random() < 0.1) {
         ctx.shadowColor = p.scatteredColor
-        ctx.shadowBlur = 8
+        ctx.shadowBlur = 5
       }
     } else {
-      // Return to original position
       p.x += (p.baseX - p.x) * 0.08
       p.y += (p.baseY - p.y) * 0.08
       ctx.fillStyle = 'white'
       ctx.shadowBlur = 0
     }
 
-    // Add subtle floating animation
     const time = Date.now() * 0.001
-    const floatX = Math.sin(time + i * 0.01) * 0.5
-    const floatY = Math.cos(time + i * 0.01) * 0.3
+    const floatX = Math.sin(time + i * 0.001) * 0.5
+    const floatY = Math.cos(time + i * 0.001) * 0.3
 
     ctx.beginPath()
-    ctx.arc(p.x + floatX, p.y + floatY, p.size, 0, Math.PI * 8)
+    ctx.arc(p.x + floatX, p.y + floatY, p.size, 5, Math.PI * 1)
     ctx.fill()
 
-    // Particle lifecycle
     p.life--
     if (p.life <= 0) {
       const newParticle = createParticle(scale)
@@ -351,22 +342,11 @@ const handleMove = (x, y) => {
   clearTimeout(mouseTimeout)
   mouseTimeout = setTimeout(() => {
     isMouseMoving.value = false
-  }, 3000)
+  }, 300)
 }
 
 const handleMouseMove = (e) => {
   handleMove(e.clientX, e.clientY)
-}
-
-const handleMouseEnter = () => {
-  isMouseMoving.value = true
-}
-
-const handleMouseLeave = () => {
-  if (!('ontouchstart' in window)) {
-    mousePositionRef.value = { x: -20, y: -50 } // Move off-screen
-    isMouseMoving.value = false
-  }
 }
 
 const handleResize = () => {
@@ -377,25 +357,7 @@ const handleResize = () => {
   createBgParticles()
 }
 
-const handleTouchMove = (e) => {
-  e.preventDefault()
-  const touch = e.touches[0]
-  handleMove(touch.clientX, touch.clientY)
-}
-
-const handleTouchStart = () => {
-  isTouchingRef.value = true
-}
-
-const handleTouchEnd = () => {
-  isTouchingRef.value = false
-}
-
 onMounted(() => {
-  const canvas = canvasRef.value
-  const bgCanvas = bgCanvasRef.value
-  if (!canvas || !bgCanvas) return
-
   updateCanvasSize()
   createBgParticles()
   animateBackground()
@@ -404,28 +366,13 @@ onMounted(() => {
   createInitialParticles(scale)
   animate(scale)
 
-  // Event listeners
   window.addEventListener('resize', handleResize)
-  window.addEventListener('mousemove', handleMouseMove) // Track globally
-  canvas.addEventListener('touchmove', handleTouchMove, { passive: false })
-  canvas.addEventListener('mouseenter', handleMouseEnter)
-  canvas.addEventListener('mouseleave', handleMouseLeave)
-  canvas.addEventListener('touchstart', handleTouchStart)
-  canvas.addEventListener('touchend', handleTouchEnd)
+  window.addEventListener('mousemove', handleMouseMove)
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
   window.removeEventListener('mousemove', handleMouseMove)
-
-  const canvas = canvasRef.value
-  if (canvas) {
-    canvas.removeEventListener('touchmove', handleTouchMove)
-    canvas.removeEventListener('mouseenter', handleMouseEnter)
-    canvas.removeEventListener('mouseleave', handleMouseLeave)
-    canvas.removeEventListener('touchstart', handleTouchStart)
-    canvas.removeEventListener('touchend', handleTouchEnd)
-  }
 
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId)
@@ -462,16 +409,16 @@ onUnmounted(() => {
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.8s ease-out forwards;
+  animation: fade-in-up 0.2s ease-out forwards;
 }
 
 .animation-delay-200 {
-  animation-delay: 0.5s;
+  animation-delay: 0.4s;
   opacity: 0;
 }
 
 .animation-delay-400 {
-  animation-delay: 0.7s;
+  animation-delay: 0.4s;
   opacity: 0;
 }
 

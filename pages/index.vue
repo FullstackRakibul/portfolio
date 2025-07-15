@@ -177,7 +177,7 @@ useHead({
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.8s ease-out forwards;
+  animation: fade-in-up 2s ease-out forwards;
 }
 
 .animation-delay-200 {
