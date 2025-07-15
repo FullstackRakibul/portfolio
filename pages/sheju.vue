@@ -383,9 +383,9 @@ onUnmounted(() => {
 })
 
 useHead({
-  title: 'Welcome সেঁজুতি - Sweet Friend',
+  title: 'sweetheart | সেঁজুতি',
   meta: [
-    { name: 'description', content: 'A warm welcome page for সেঁজুতি with a sweet, modern design.' }
+    { name: 'description', content: 'between you and everything' }
   ],
   link: [
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
