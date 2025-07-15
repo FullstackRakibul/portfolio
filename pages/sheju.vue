@@ -8,7 +8,7 @@
       aria-label="Interactive particle effect with Senjuti name" />
 
     <!-- Main Content -->
-    <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
+    <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8 w-full">
       <div class="text-center animate-fade-in-up">
         <!-- Heart Icon - Modernized -->
         <div class="animate-fade-in-up mb-8">
@@ -24,19 +24,8 @@
           <span class="sr-only">সেঁজুতি</span>
         </div>
 
-        <!-- Welcome Message -->
-        <!-- <div class="animate-fade-in-up animation-delay-400 mb-8">
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-800 mb-4 tracking-tight leading-tight">
-            Welcome, Sweet Friend! <span class="text-rose-500">🌸</span>
-          </h2>
-          <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-light">
-            Your gentle spirit and caring heart make the world a brighter place.
-            You bring warmth, compassion, and harmony wherever you go.
-          </p>
-        </div> -->
-
         <!-- Inspirational Quote -->
-        <div class="animate-fade-in-up animation-delay-600 mb-8">
+        <div class="animate-fade-in-up animation-delay-800 mb-8">
           <blockquote
             class="text-xl sm:text-2xl italic text-gray-700 max-w-4xl mx-auto bg-white/60 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-rose-200 shadow-xl relative overflow-hidden">
             <span
@@ -48,7 +37,7 @@
         </div>
 
         <!-- Action Button -->
-        <div class="animate-fade-in-up animation-delay-800">
+        <div class="animate-fade-in-up animation-delay-1000">
           <button
             class="inline-flex items-center px-10 py-4 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-pink-300 focus:ring-opacity-75">
             <Heart class="w-6 h-6 mr-3" />
@@ -72,10 +61,10 @@
 
     <!-- Mouse follower effect - hidden on mobile -->
     <div ref="mouseFollower"
-      class="fixed w-8 h-8 border-2 border-rose-400/60 rounded-full pointer-events-none z-20 transition-all duration-300 hidden sm:block"
+      class="fixed w-6 h-6 border-2 border-rose-400/60 rounded-full pointer-events-none z-20 transition-all duration-300 hidden sm:block"
       :style="{
-        left: mousePosition.x - 16 + 'px',
-        top: mousePosition.y - 16 + 'px',
+        left: mousePosition.x - 12 + 'px',
+        top: mousePosition.y - 12 + 'px',
         opacity: isMouseMoving ? 0.9 : 0,
         transform: isMouseMoving ? 'scale(1.5)' : 'scale(1)'
       }" />
@@ -84,7 +73,8 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Heart } from 'lucide-vue-next' // Only Heart is needed now
+import { Heart, Shield, Users, Sparkles, Flower } from 'lucide-vue-next'
+import { definePageMeta } from '#imports'
 
 // Exclude default Nuxt layout if this component is used as a page
 definePageMeta({
@@ -116,10 +106,10 @@ const createBgParticle = () => {
   return {
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
-    vx: (Math.random() - 0.5) * 0.5, // Slightly faster background particles
-    vy: (Math.random() - 0.5) * 0.5,
-    size: Math.random() * 4 + 1, // Slightly larger background particles
-    opacity: Math.random() * 0.5 + 0.2, // More visible background particles
+    vx: (Math.random() - 0.5) * 0.3, // Slower background particles
+    vy: (Math.random() - 0.5) * 0.3,
+    size: Math.random() * 3 + 1, // Slightly larger background particles
+    opacity: Math.random() * 0.4 + 0.1, // More visible background particles
     color: sweetModernColors[Math.floor(Math.random() * sweetModernColors.length)]
   }
 }
@@ -217,13 +207,12 @@ const createParticle = (scale) => {
       const distanceFromCenter = Math.abs(x - centerX)
       const maxDistance = canvas.width / 2
       const colorIndex = Math.floor((distanceFromCenter / maxDistance) * sweetModernColors.length)
-
       return {
         x: x,
         y: y,
         baseX: x,
         baseY: y,
-        size: Math.random() * 2.5 + 1.5, // Slightly larger particles
+        size: Math.random() * 1.5 + 0.5, // Smaller particles
         color: '#be185d', // Original color
         scatteredColor: sweetModernColors[Math.min(colorIndex, sweetModernColors.length - 1)], // Use new color palette
         life: Math.random() * 250 + 200, // Longer particle life
@@ -231,7 +220,6 @@ const createParticle = (scale) => {
       }
     }
   }
-
   return null
 }
 
@@ -254,7 +242,7 @@ const createBgParticles = () => {
   const canvas = bgCanvasRef.value
   if (!canvas) return
 
-  const particleCount = isMobile.value ? 2000 : 500 // Fewer background particles on mobile
+  const particleCount = isMobile.value ? 100 : 60 // Fewer background particles on mobile
   bgParticles = []
   for (let i = 0; i < particleCount; i++) {
     const particle = createBgParticle()
@@ -290,7 +278,6 @@ const animate = (scale) => {
       p.y = p.baseY - moveY
 
       ctx.fillStyle = p.scatteredColor
-
       if (Math.random() < 0.07) { // Slightly higher chance of shadow
         ctx.shadowColor = p.scatteredColor
         ctx.shadowBlur = 8 // Increased shadow blur
@@ -303,8 +290,8 @@ const animate = (scale) => {
     }
 
     const time = Date.now() * 0.001
-    const floatX = Math.sin(time + i * 0.01) * 0.4 // Increased float
-    const floatY = Math.cos(time + i * 0.01) * 0.3
+    const floatX = Math.sin(time + i * 0.01) * 0.2 // Reduced float
+    const floatY = Math.cos(time + i * 0.01) * 0.1 // Reduced float
 
     ctx.beginPath()
     ctx.arc(p.x + floatX, p.y + floatY, p.size, 0, Math.PI * 2)
@@ -353,6 +340,7 @@ const handleMouseMove = (e) => {
 
 const handleTouchMove = (e) => {
   if (e.touches.length > 0) {
+    e.preventDefault()
     handleMove(e.touches[0].clientX, e.touches[0].clientY)
   }
 }
@@ -465,6 +453,11 @@ useHead({
 
 .animation-delay-800 {
   animation-delay: 0.8s;
+  opacity: 0;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1.0s;
   opacity: 0;
 }
 </style>
