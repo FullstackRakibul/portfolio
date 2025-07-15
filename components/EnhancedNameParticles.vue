@@ -26,7 +26,7 @@
             <span class="text-red-400">Angular</span> |
             <span class="text-pink-400">CMS</span>
           </p>
-          <p class="animate-fade-in-up animation-delay-400 max-w-4xl mx-auto text-gray-300 italic">
+          <p class="animate-fade-in-up animation-delay-400 max-w-3xl mx-auto text-gray-300 italic">
             Welcome to my code sanctuary – where systems meet soul, and logic meets artistry.
           </p>
         </div>
@@ -146,7 +146,7 @@ const animateBackground = () => {
     if (particle.y > canvas.height) particle.y = 0
 
     ctx.beginPath()
-    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 0.5)
+    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
     ctx.fillStyle = particle.color + Math.floor(particle.opacity * 255).toString(16).padStart(2, '0')
     ctx.fill()
 
@@ -243,7 +243,7 @@ const createInitialParticles = (scale) => {
   const canvas = canvasRef.value
   if (!canvas) return
 
-  const baseParticleCount = 4000
+  const baseParticleCount = 8000
   const particleCount = Math.floor(baseParticleCount * Math.sqrt((canvas.width * canvas.height) / (1920 * 1080)))
 
   particles = []
@@ -315,7 +315,7 @@ const animate = (scale) => {
     const floatY = Math.cos(time + i * 0.01) * 0.3
 
     ctx.beginPath()
-    ctx.arc(p.x + floatX, p.y + floatY, p.size, 0, Math.PI * 2)
+    ctx.arc(p.x + floatX, p.y + floatY, p.size, 0, Math.PI * 8)
     ctx.fill()
 
     // Particle lifecycle
@@ -351,32 +351,20 @@ const handleMove = (x, y) => {
   clearTimeout(mouseTimeout)
   mouseTimeout = setTimeout(() => {
     isMouseMoving.value = false
-  }, 2000)
+  }, 3000)
 }
 
 const handleMouseMove = (e) => {
   handleMove(e.clientX, e.clientY)
 }
 
-const handleTouchMove = (e) => {
-  if (e.touches.length > 0) {
-    e.preventDefault()
-    handleMove(e.touches[0].clientX, e.touches[0].clientY)
-  }
-}
-
-const handleTouchStart = () => {
-  isTouchingRef.value = true
-}
-
-const handleTouchEnd = () => {
-  isTouchingRef.value = false
-  mousePositionRef.value = { x: 0, y: 0 }
+const handleMouseEnter = () => {
+  isMouseMoving.value = true
 }
 
 const handleMouseLeave = () => {
   if (!('ontouchstart' in window)) {
-    mousePositionRef.value = { x: 0, y: 0 }
+    mousePositionRef.value = { x: -20, y: -50 } // Move off-screen
     isMouseMoving.value = false
   }
 }
@@ -387,6 +375,20 @@ const handleResize = () => {
   particles = []
   createInitialParticles(newScale)
   createBgParticles()
+}
+
+const handleTouchMove = (e) => {
+  e.preventDefault()
+  const touch = e.touches[0]
+  handleMove(touch.clientX, touch.clientY)
+}
+
+const handleTouchStart = () => {
+  isTouchingRef.value = true
+}
+
+const handleTouchEnd = () => {
+  isTouchingRef.value = false
 }
 
 onMounted(() => {
@@ -404,19 +406,22 @@ onMounted(() => {
 
   // Event listeners
   window.addEventListener('resize', handleResize)
-  canvas.addEventListener('mousemove', handleMouseMove)
+  window.addEventListener('mousemove', handleMouseMove) // Track globally
   canvas.addEventListener('touchmove', handleTouchMove, { passive: false })
+  canvas.addEventListener('mouseenter', handleMouseEnter)
   canvas.addEventListener('mouseleave', handleMouseLeave)
   canvas.addEventListener('touchstart', handleTouchStart)
   canvas.addEventListener('touchend', handleTouchEnd)
 })
 
 onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+  window.removeEventListener('mousemove', handleMouseMove)
+
   const canvas = canvasRef.value
   if (canvas) {
-    window.removeEventListener('resize', handleResize)
-    canvas.removeEventListener('mousemove', handleMouseMove)
     canvas.removeEventListener('touchmove', handleTouchMove)
+    canvas.removeEventListener('mouseenter', handleMouseEnter)
     canvas.removeEventListener('mouseleave', handleMouseLeave)
     canvas.removeEventListener('touchstart', handleTouchStart)
     canvas.removeEventListener('touchend', handleTouchEnd)
@@ -461,12 +466,12 @@ onUnmounted(() => {
 }
 
 .animation-delay-200 {
-  animation-delay: 0.2s;
+  animation-delay: 0.5s;
   opacity: 0;
 }
 
 .animation-delay-400 {
-  animation-delay: 0.4s;
+  animation-delay: 0.7s;
   opacity: 0;
 }
 
