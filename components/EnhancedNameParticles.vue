@@ -26,7 +26,7 @@
             <span class="text-red-400">Angular</span> |
             <span class="text-pink-400">CMS</span>
           </p>
-          <p class="animate-fade-in-up animation-delay-400 max-w-3xl mx-auto text-gray-300 italic">
+          <p class="animate-fade-in-up animation-delay-400 max-w-4xl mx-auto text-gray-300 italic">
             Welcome to my code sanctuary – where systems meet soul, and logic meets artistry.
           </p>
         </div>
