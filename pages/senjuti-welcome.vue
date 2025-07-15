@@ -25,15 +25,15 @@
         </div>
 
         <!-- Welcome Message -->
-        <div class="animate-fade-in-up animation-delay-400 mb-8">
-          <!-- <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-800 mb-4 tracking-tight leading-tight">
+        <!-- <div class="animate-fade-in-up animation-delay-400 mb-8">
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-800 mb-4 tracking-tight leading-tight">
             Welcome, Sweet Friend! <span class="text-rose-500">🌸</span>
-          </h2> -->
+          </h2>
           <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-light">
             Your gentle spirit and caring heart make the world a brighter place.
             You bring warmth, compassion, and harmony wherever you go.
           </p>
-        </div>
+        </div> -->
 
         <!-- Inspirational Quote -->
         <div class="animate-fade-in-up animation-delay-600 mb-8">
@@ -85,6 +85,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Heart } from 'lucide-vue-next' // Only Heart is needed now
+
+// Exclude default Nuxt layout if this component is used as a page
+definePageMeta({
+  layout: false
+})
 
 const canvasRef = ref(null)
 const bgCanvasRef = ref(null)
@@ -235,7 +240,7 @@ const createInitialParticles = (scale) => {
   if (!canvas) return
 
   // Adjust particle count based on screen size for performance and visual density
-  const baseParticleCount = isMobile.value ? 3000 : 7000
+  const baseParticleCount = isMobile.value ? 5000 : 7000
   const particleCount = Math.floor(baseParticleCount * Math.sqrt((canvas.width * canvas.height) / (1920 * 1080)))
 
   particles = []
@@ -249,7 +254,7 @@ const createBgParticles = () => {
   const canvas = bgCanvasRef.value
   if (!canvas) return
 
-  const particleCount = isMobile.value ? 40 : 80 // Fewer background particles on mobile
+  const particleCount = isMobile.value ? 2000 : 500 // Fewer background particles on mobile
   bgParticles = []
   for (let i = 0; i < particleCount; i++) {
     const particle = createBgParticle()
