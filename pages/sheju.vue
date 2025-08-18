@@ -7,42 +7,25 @@
     <canvas ref="canvasRef" class="w-full h-full absolute top-0 left-0 touch-none cursor-none"
       aria-label="Interactive particle effect with Senjuti name" />
 
+    <!-- Particle Trail Canvas -->
+    <canvas ref="trailCanvasRef" class="w-full h-full absolute top-0 left-0 pointer-events-none opacity-60" />
+
     <!-- Main Content -->
     <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8 w-full">
+
       <div class="text-center animate-fade-in-up">
         <!-- Heart Icon - Modernized -->
         <div class="animate-fade-in-up mb-8">
-          <div
-            class="w-24 h-24 mx-auto bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300 ease-in-out">
-            <Heart class="w-12 h-12 text-white" />
-          </div>
         </div>
 
-        <!-- Name will be rendered by particles -->
+        <!-- Particle Name Area -->
         <div class="h-32 sm:h-40 lg:h-48 mb-8 flex items-center justify-center">
-          <!-- Placeholder for particle name - ensures layout stability -->
           <span class="sr-only">সেঁজুতি</span>
         </div>
 
-        <!-- Inspirational Quote -->
-        <div class="animate-fade-in-up animation-delay-800 mb-8">
-          <blockquote
-            class="text-xl sm:text-2xl italic text-gray-700 max-w-4xl mx-auto bg-white/60 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-rose-200 shadow-xl relative overflow-hidden">
-            <span
-              class="absolute top-0 left-0 text-rose-300 text-6xl opacity-30 font-serif -translate-x-4 -translate-y-4">“</span>
-            "Your kindness is a gift to the world, and your gentle strength inspires everyone around you."
-            <span
-              class="absolute bottom-0 right-0 text-rose-300 text-6xl opacity-30 font-serif translate-x-4 translate-y-4">”</span>
-          </blockquote>
-        </div>
-
-        <!-- Action Button -->
-        <div class="animate-fade-in-up animation-delay-1000">
-          <button
-            class="inline-flex items-center px-10 py-4 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-pink-300 focus:ring-opacity-75">
-            <Heart class="w-6 h-6 mr-3" />
-            Spread More Love
-          </button>
+        <div
+          class="w-24 h-24 mx-auto bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300 ease-in-out">
+          <Heart class="w-12 h-12 text-white" />
         </div>
       </div>
     </div>
@@ -50,10 +33,10 @@
     <!-- Floating Hearts -->
     <div class="absolute inset-0 pointer-events-none z-5">
       <div v-for="n in 8" :key="n" class="absolute animate-float" :style="{
-        left: Math.random() * 100 + '%',
-        top: Math.random() * 100 + '%',
-        animationDelay: Math.random() * 3 + 's',
-        animationDuration: (4 + Math.random() * 3) + 's' // Slightly longer duration for smoother float
+        left: Math.random() * 1000 + '%',
+        top: Math.random() * 1000 + '%',
+        animationDelay: Math.random() * 5 + 's',
+        animationDuration: (4 + Math.random() * 5) + 's'
       }">
         <Heart class="w-5 h-5 text-rose-300 opacity-70" />
       </div>
@@ -71,10 +54,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup >
+
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Heart, Shield, Users, Sparkles, Flower } from 'lucide-vue-next'
-import { definePageMeta } from '#imports'
+import { Heart } from 'lucide-vue-next'
+import { definePageMeta, useHead } from '#imports'
 
 // Exclude default Nuxt layout if this component is used as a page
 definePageMeta({
@@ -83,6 +67,7 @@ definePageMeta({
 
 const canvasRef = ref(null)
 const bgCanvasRef = ref(null)
+const trailCanvasRef = ref(null)
 const mouseFollower = ref(null)
 const mousePosition = ref({ x: 0, y: 0 })
 const mousePositionRef = ref({ x: 0, y: 0 })
@@ -91,9 +76,11 @@ const isMouseMoving = ref(false)
 
 let particles = []
 let bgParticles = []
-let textImageData = null
+let trailParticles = []
+let svgPaths = []
 let animationFrameId = null
 let bgAnimationFrameId = null
+let trailAnimationFrameId = null
 let mouseTimeout = null
 
 // Enhanced color palette for a sweeter, modern design
@@ -106,11 +93,25 @@ const createBgParticle = () => {
   return {
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
-    vx: (Math.random() - 0.5) * 0.3, // Slower background particles
+    vx: (Math.random() - 0.5) * 0.3,
     vy: (Math.random() - 0.5) * 0.3,
-    size: Math.random() * 3 + 1, // Slightly larger background particles
-    opacity: Math.random() * 0.4 + 0.1, // More visible background particles
+    size: Math.random() * 3 + 1,
+    opacity: Math.random() * 0.4 + 0.1,
     color: sweetModernColors[Math.floor(Math.random() * sweetModernColors.length)]
+  }
+}
+
+const createTrailParticle = (x, y, color) => {
+  return {
+    x: x + (Math.random() - 0.5) * 100,
+    y: y + (Math.random() - 0.5) * 100,
+    vx: (Math.random() - 0.5) * 2,
+    vy: (Math.random() - 0.5) * 2,
+    size: Math.random() * 3 + 1,
+    opacity: 0.6,
+    color: color,
+    life: 30 + Math.random() * 20,
+    maxLife: 30 + Math.random() * 20
   }
 }
 
@@ -144,12 +145,12 @@ const animateBackground = () => {
       const dy = particle.y - bgParticles[j].y
       const distance = Math.sqrt(dx * dx + dy * dy)
 
-      if (distance < 150) { // Increased connection distance
+      if (distance < 150) {
         ctx.beginPath()
         ctx.moveTo(particle.x, particle.y)
         ctx.lineTo(bgParticles[j].x, bgParticles[j].y)
-        ctx.strokeStyle = particle.color + '20' // Slightly more opaque lines
-        ctx.lineWidth = 1.5 // Thicker lines
+        ctx.strokeStyle = particle.color + '50'
+        ctx.lineWidth = 1.5
         ctx.stroke()
       }
     }
@@ -158,82 +159,141 @@ const animateBackground = () => {
   bgAnimationFrameId = requestAnimationFrame(animateBackground)
 }
 
-const createTextImage = () => {
-  const canvas = canvasRef.value
-  if (!canvas) return 0
+const animateTrails = () => {
+  const canvas = trailCanvasRef.value
+  if (!canvas) return
 
   const ctx = canvas.getContext('2d')
-  if (!ctx) return 0
+  if (!ctx) return
 
-  ctx.fillStyle = '#be185d' // Rose-700 for better contrast
-  ctx.save()
+  // Fade the existing trails
+  ctx.fillStyle = 'rgba(253, 242, 248, 0.1)' // Very light pink fade
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-  // Adjust scale based on mobile status
-  const scale = isMobile.value ? 0.9 : 1.6 // Larger scale for mobile, slightly larger for desktop
-  const centerX = canvas.width / 2
-  const centerY = canvas.height / 2 - (isMobile.value ? 80 : 50) // Adjust vertical position for mobile
+  // Update and draw trail particles
+  for (let i = trailParticles.length - 1; i >= 0; i--) {
+    const particle = trailParticles[i]
 
-  ctx.translate(centerX, centerY)
-  ctx.scale(scale, scale)
+    particle.x += particle.vx
+    particle.y += particle.vy
+    particle.vx *= 0.98 // Slow down over time
+    particle.vy *= 0.98
+    particle.life--
 
-  // Bengali font support
-  const fontSize = isMobile.value ? 64 : 96 // Larger font size for better mobile visibility
-  ctx.font = `bold ${fontSize}px "Noto Sans Bengali", "SolaimanLipi", Arial, sans-serif`
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
+    const alpha = particle.life / particle.maxLife
+    particle.opacity = alpha * 0.6
 
-  const name = 'সেঁজুতি'
-  ctx.fillText(name, 0, 0)
+    if (particle.life <= 0) {
+      trailParticles.splice(i, 1)
+      continue
+    }
 
-  ctx.restore()
-  textImageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.beginPath()
+    ctx.arc(particle.x, particle.y, particle.size * alpha, 0, Math.PI * 2)
+    ctx.fillStyle = particle.color + Math.floor(particle.opacity * 255).toString(16).padStart(2, '0')
+    ctx.fill()
+  }
 
-  return scale
+  trailAnimationFrameId = requestAnimationFrame(animateTrails)
 }
 
-const createParticle = (scale) => {
-  const canvas = canvasRef.value
-  if (!canvas || !textImageData) return null
+const parseSVGPath = (pathData) => {
+  const points = []
+  const path = new Path2D(pathData)
 
-  const data = textImageData.data
+  // Sample points along the path
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  canvas.width = 682
+  canvas.height = 219
 
-  for (let attempt = 0; attempt < 100; attempt++) {
-    const x = Math.floor(Math.random() * canvas.width)
-    const y = Math.floor(Math.random() * canvas.height)
+  ctx.fillStyle = 'black'
+  ctx.fill(path)
 
-    if (data[(y * canvas.width + x) * 4 + 3] > 128) { // Check alpha channel for pixel presence
-      const centerX = canvas.width / 2
-      const distanceFromCenter = Math.abs(x - centerX)
-      const maxDistance = canvas.width / 2
-      const colorIndex = Math.floor((distanceFromCenter / maxDistance) * sweetModernColors.length)
-      return {
-        x: x,
-        y: y,
-        baseX: x,
-        baseY: y,
-        size: Math.random() * 1.5 + 0.5, // Smaller particles
-        color: '#be185d', // Original color
-        scatteredColor: sweetModernColors[Math.min(colorIndex, sweetModernColors.length - 1)], // Use new color palette
-        life: Math.random() * 250 + 200, // Longer particle life
-        originalLife: Math.random() * 250 + 200
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+  const data = imageData.data
+
+  // Sample every few pixels to get path points
+  for (let y = 0; y < canvas.height; y += 2) {
+    for (let x = 0; x < canvas.width; x += 2) {
+      const index = (y * canvas.width + x) * 4
+      if (data[index + 3] > 128) { // Alpha channel
+        points.push({ x, y })
       }
     }
   }
-  return null
+
+  return points
 }
 
-const createInitialParticles = (scale) => {
-  const canvas = canvasRef.value
-  if (!canvas) return
+const loadSVGPaths = async () => {
+  try {
+    const response = await fetch('/assets/img/sheju-mbg.svg')
+    const svgText = await response.text()
 
-  // Adjust particle count based on screen size for performance and visual density
-  const baseParticleCount = isMobile.value ? 5000 : 7000
-  const particleCount = Math.floor(baseParticleCount * Math.sqrt((canvas.width * canvas.height) / (1920 * 1080)))
+    // Parse SVG paths
+    const parser = new DOMParser()
+    const svgDoc = parser.parseFromString(svgText, 'image/svg+xml')
+    const paths = svgDoc.querySelectorAll('path')
+
+    svgPaths = []
+    paths.forEach(path => {
+      const pathData = path.getAttribute('d')
+      const points = parseSVGPath(pathData)
+      svgPaths.push(...points)
+    })
+
+    return true
+  } catch (error) {
+    console.error('Error loading SVG:', error)
+    return false
+  }
+}
+
+const createParticleFromSVG = () => {
+  if (svgPaths.length === 0) return null
+
+  const canvas = canvasRef.value
+  if (!canvas) return null
+
+  const randomPoint = svgPaths[Math.floor(Math.random() * svgPaths.length)]
+
+  // Scale and position the SVG to fit the canvas
+  const scale = isMobile.value ? 0.6 : 1.0
+  const centerX = canvas.width / 2
+  const centerY = canvas.height / 2 - (isMobile.value ? 60 : 40)
+
+  const scaledX = centerX + (randomPoint.x - 341) * scale // 341 is half of SVG width
+  const scaledY = centerY + (randomPoint.y - 110) * scale // 110 is half of SVG height
+
+  const centerDistance = Math.abs(scaledX - centerX)
+  const maxDistance = canvas.width / 2
+  const colorIndex = Math.floor((centerDistance / maxDistance) * sweetModernColors.length)
+
+  return {
+    x: scaledX,
+    y: scaledY,
+    baseX: scaledX,
+    baseY: scaledY,
+    size: Math.random() * 1.5 + 0.8,
+    color: '#be185d',
+    scatteredColor: sweetModernColors[Math.min(colorIndex, sweetModernColors.length - 1)],
+    life: Math.random() * 300 + 200,
+    originalLife: Math.random() * 300 + 200,
+    trail: []
+  }
+}
+
+const createInitialParticles = () => {
+  const canvas = canvasRef.value
+  if (!canvas || svgPaths.length === 0) return
+
+  const baseParticleCount = isMobile.value ? 3000 : 5000
+  const particleCount = Math.min(baseParticleCount, svgPaths.length)
 
   particles = []
   for (let i = 0; i < particleCount; i++) {
-    const particle = createParticle(scale)
+    const particle = createParticleFromSVG()
     if (particle) particles.push(particle)
   }
 }
@@ -242,7 +302,7 @@ const createBgParticles = () => {
   const canvas = bgCanvasRef.value
   if (!canvas) return
 
-  const particleCount = isMobile.value ? 100 : 60 // Fewer background particles on mobile
+  const particleCount = isMobile.value ? 80 : 50
   bgParticles = []
   for (let i = 0; i < particleCount; i++) {
     const particle = createBgParticle()
@@ -250,7 +310,7 @@ const createBgParticles = () => {
   }
 }
 
-const animate = (scale) => {
+const animate = () => {
   const canvas = canvasRef.value
   if (!canvas) return
 
@@ -260,13 +320,15 @@ const animate = (scale) => {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   const { x: mouseX, y: mouseY } = mousePositionRef.value
-  const maxDistance = isMobile.value ? 80 : 200 // Smaller repel distance on mobile
-  const repelForce = isMobile.value ? 25 : 50 // Weaker repel force on mobile
+  const maxDistance = isMobile.value ? 100 : 180
+  const repelForce = isMobile.value ? 30 : 60
 
   particles.forEach((p, i) => {
     const dx = mouseX - p.x
     const dy = mouseY - p.y
     const distance = Math.sqrt(dx * dx + dy * dy)
+
+    let isScattered = false
 
     if (distance < maxDistance) {
       const force = (maxDistance - distance) / maxDistance
@@ -278,20 +340,27 @@ const animate = (scale) => {
       p.y = p.baseY - moveY
 
       ctx.fillStyle = p.scatteredColor
-      if (Math.random() < 0.07) { // Slightly higher chance of shadow
+      isScattered = true
+
+      // Create trail particles when scattered
+      if (Math.random() < 0.3) {
+        trailParticles.push(createTrailParticle(p.x, p.y, p.scatteredColor))
+      }
+
+      if (Math.random() < 0.08) {
         ctx.shadowColor = p.scatteredColor
-        ctx.shadowBlur = 8 // Increased shadow blur
+        ctx.shadowBlur = 6
       }
     } else {
-      p.x += (p.baseX - p.x) * 0.08 // Faster return to base position
+      p.x += (p.baseX - p.x) * 0.08
       p.y += (p.baseY - p.y) * 0.08
       ctx.fillStyle = p.color
       ctx.shadowBlur = 0
     }
 
     const time = Date.now() * 0.001
-    const floatX = Math.sin(time + i * 0.01) * 0.2 // Reduced float
-    const floatY = Math.cos(time + i * 0.01) * 0.1 // Reduced float
+    const floatX = Math.sin(time + i * 0.01) * 0.3
+    const floatY = Math.cos(time + i * 0.01) * 0.2
 
     ctx.beginPath()
     ctx.arc(p.x + floatX, p.y + floatY, p.size, 0, Math.PI * 2)
@@ -299,25 +368,28 @@ const animate = (scale) => {
 
     p.life--
     if (p.life <= 0) {
-      const newParticle = createParticle(scale)
+      const newParticle = createParticleFromSVG()
       if (newParticle) {
         particles[i] = newParticle
       }
     }
   })
 
-  animationFrameId = requestAnimationFrame(() => animate(scale))
+  animationFrameId = requestAnimationFrame(animate)
 }
 
 const updateCanvasSize = () => {
   const canvas = canvasRef.value
   const bgCanvas = bgCanvasRef.value
-  if (!canvas || !bgCanvas) return
+  const trailCanvas = trailCanvasRef.value
+  if (!canvas || !bgCanvas || !trailCanvas) return
 
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
   bgCanvas.width = window.innerWidth
   bgCanvas.height = window.innerHeight
+  trailCanvas.width = window.innerWidth
+  trailCanvas.height = window.innerHeight
   isMobile.value = window.innerWidth < 768
 }
 
@@ -333,7 +405,7 @@ const handleMove = (x, y) => {
 }
 
 const handleMouseMove = (e) => {
-  if (!isMobile.value) { // Only track mouse on non-mobile devices
+  if (!isMobile.value) {
     handleMove(e.clientX, e.clientY)
   }
 }
@@ -345,26 +417,28 @@ const handleTouchMove = (e) => {
   }
 }
 
-const handleResize = () => {
+const handleResize = async () => {
   updateCanvasSize()
-  const newScale = createTextImage()
   particles = []
-  createInitialParticles(newScale)
+  createInitialParticles()
   createBgParticles()
 }
 
-onMounted(() => {
+onMounted(async () => {
   updateCanvasSize()
   createBgParticles()
   animateBackground()
+  animateTrails()
 
-  const scale = createTextImage()
-  createInitialParticles(scale)
-  animate(scale)
+  const svgLoaded = await loadSVGPaths()
+  if (svgLoaded) {
+    createInitialParticles()
+    animate()
+  }
 
   window.addEventListener('resize', handleResize)
   window.addEventListener('mousemove', handleMouseMove)
-  window.addEventListener('touchmove', handleTouchMove, { passive: false }) // Add touchmove listener
+  window.addEventListener('touchmove', handleTouchMove, { passive: false })
 })
 
 onUnmounted(() => {
@@ -378,6 +452,9 @@ onUnmounted(() => {
   if (bgAnimationFrameId) {
     cancelAnimationFrame(bgAnimationFrameId)
   }
+  if (trailAnimationFrameId) {
+    cancelAnimationFrame(trailAnimationFrameId)
+  }
 
   clearTimeout(mouseTimeout)
 })
@@ -386,11 +463,6 @@ useHead({
   title: 'sweetheart | সেঁজুতি',
   meta: [
     { name: 'description', content: 'between you and everything' }
-  ],
-  link: [
-    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700&display=swap' }
   ]
 })
 </script>
@@ -427,18 +499,15 @@ useHead({
 
   50% {
     transform: translateY(-25px) rotate(180deg);
-    /* Increased float distance */
   }
 }
 
 .animate-fade-in-up {
   animation: fade-in-up 0.9s ease-out forwards;
-  /* Slightly longer animation */
 }
 
 .animate-float {
   animation: float 5s ease-in-out infinite;
-  /* Slightly longer float duration */
 }
 
 .animation-delay-400 {
