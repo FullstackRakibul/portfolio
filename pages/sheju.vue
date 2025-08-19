@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-10 relative w-full min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 overflow-hidden">
+    class="relative w-full min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-rose-900 via-pink-900 to-purple-900 overflow-hidden">
     <!-- Background Particle Canvas -->
     <canvas ref="bgCanvasRef" class="w-full h-full absolute top-0 left-0 opacity-40" />
 
@@ -9,84 +9,100 @@
       aria-label="Interactive particle effect with Senjuti name" />
 
     <!-- Particle Trail Canvas -->
-    <canvas ref="trailCanvasRef" class="w-full h-full absolute top-0 left-0 pointer-events-none opacity-60" />
+    <canvas ref="trailCanvasRef" class="w-full h-full absolute top-0 left-0 pointer-events-none opacity-70" />
 
     <!-- Main Content -->
-    <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8 w-full ">
-      <div class="text-center animate-fade-in-up">
-        <!-- Heart Icon - Modernized -->
-        <div class="animate-fade-in-up mb-8">
+    <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 w-full">
+      <div class="animate-fade-in-up">
+        <!-- Name will be rendered by particles -->
+        <div class="h-32 sm:h-40 lg:h-48 mb-8"></div>
+        <!-- Heart Icon -->
+        <div class="animate-fade-in-up animation-delay-600 mb-8">
+          <div
+            class="w-16 h-16 mx-auto bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-500 ease-in-out animate-pulse">
+            <Heart class="w-8 h-8 text-white fill-current" />
+          </div>
         </div>
 
-        <!-- Particle Name Area -->
-        <div class="h-32 sm:h-40 lg:h-48 mb-8 flex items-center justify-center ">
-          <span class="sr-only">সেঁজুতি</span>
-        </div>
+        
+      </div>
+    </div>
 
-        <div
-          class="w-12 h-12 mx-auto bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300 ease-in-out">
-          <Heart class="w-8 h-8 text-white" />
+    <!-- Romantic Stats Cards -->
+    <div class="absolute bottom-8 left-4 right-4 z-10 animate-fade-in-up animation-delay-1200">
+      <div class="flex flex-row justify-around item-center gap-4 max-w-3xl mx-auto">
+        <div class="bg-rose-900/30 backdrop-blur-sm border border-rose-500/30 rounded-lg p-3 text-center">
+          <div class="text-rose-400 font-bold text-lg">∞</div>
+          <div class="text-rose-200 text-xs">Love for You</div>
         </div>
+        <div class="bg-pink-900/30 backdrop-blur-sm border border-pink-500/30 rounded-lg p-3 text-center">
+          <div class="text-pink-400 font-bold text-lg">24/7</div>
+          <div class="text-pink-200 text-xs">Thinking of You</div>
+        </div> 
       </div>
     </div>
 
     <!-- Floating Hearts -->
     <div class="absolute inset-0 pointer-events-none z-5">
-      <div v-for="n in 8" :key="n" class="absolute animate-float" :style="{
+      <div v-for="n in 12" :key="n" class="absolute animate-float" :style="{
         left: Math.random() * 100 + '%',
         top: Math.random() * 100 + '%',
-        animationDelay: Math.random() * 3 + 's',
-        animationDuration: (4 + Math.random() * 3) + 's'
+        animationDelay: Math.random() * 5 + 's',
+        animationDuration: (6 + Math.random() * 4) + 's'
       }">
-        <Heart class="w-5 h-5 text-rose-300 opacity-70" />
+        <Heart class="w-4 h-4 text-rose-300 opacity-60 fill-current" />
       </div>
     </div>
 
-    <!-- Mouse follower effect - hidden on mobile -->
+    <!-- Enhanced Mouse follower effect -->
     <div ref="mouseFollower"
-      class="fixed w-6 h-6 border-2 border-rose-400/60 rounded-full pointer-events-none z-20 transition-all duration-300 hidden sm:block"
+      class="fixed w-8 h-8 border-2 border-rose-400/60 rounded-full pointer-events-none z-20 transition-all duration-300 will-change-transform"
       :style="{
-        left: mousePosition.x - 12 + 'px',
-        top: mousePosition.y - 12 + 'px',
+        left: mousePosition.x - 16 + 'px',
+        top: mousePosition.y - 16 + 'px',
         opacity: isMouseMoving ? 0.9 : 0,
-        transform: isMouseMoving ? 'scale(1.5)' : 'scale(1)'
+        transform: isMouseMoving ? 'scale(1.5)' : 'scale(1)',
+        boxShadow: isMouseMoving ? '0 0 20px rgba(244, 114, 182, 0.6)' : 'none'
       }" />
   </div>
 </template>
 
 <script setup>
-
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Heart } from 'lucide-vue-next'
-import { definePageMeta, useHead } from '#imports'
 
-// Exclude default Nuxt layout if this component is used as a page
-definePageMeta({
-  layout: false
-})
-
+// Canvas Refs
 const canvasRef = ref(null)
 const bgCanvasRef = ref(null)
 const trailCanvasRef = ref(null)
 const mouseFollower = ref(null)
+
+// Mouse Tracking
 const mousePosition = ref({ x: 0, y: 0 })
 const mousePositionRef = ref({ x: 0, y: 0 })
 const isMobile = ref(false)
 const isMouseMoving = ref(false)
+let mouseTimeout = null
 
-let particles = []
-let bgParticles = []
-let trailParticles = []
+// Particles
+const particles = ref([])
+const bgParticles = ref([])
+const trailParticles = ref([])
 let svgPaths = []
+
+// Animation Frames
 let animationFrameId = null
 let bgAnimationFrameId = null
 let trailAnimationFrameId = null
-let mouseTimeout = null
 
-// Enhanced color palette for a sweeter, modern design
-const sweetModernColors = ['#f87171', '#fb7185', '#ec4899', '#f472b6', '#c084fc', '#e879f9']
+// Color Palette
+const romanticColors = [
+  '#fca5a5', '#fecaca', '#fda4af', '#fbcfe8',
+  '#f9a8d4', '#f472b6', '#ec4899', '#c084fc'
+]
 
-// Inline SVG data - Replace this with your SVG code
+
+// Inline SVG data
 const inlineSVGData = `
 <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 682.1271710084 219.4974743832">
   <path d="m592.1235632949,172.2980659429c8.0783135625,0,15.837755693.0014865313,23.5971978235-.0003978042,7.6598654706-.0018633984,15.3240021016.1383730375,22.9771677129-.0901549856,2.6634453447-.0795398955,5.6620511544-.4880219597,7.8369930028-1.8316997369,1.8362639571-1.1344955986,3.7277180058-3.8474781158,3.7104658679-5.8455646781-.0171683896-2.0012899326-1.9426242246-4.7589521385-3.8029239272-5.7805969772-2.4557497042-1.3485561124-5.6536763302-1.7563681906-8.5486855644-1.8189909407-9.5989722691-.2076956472-19.2095017956.0904062303-28.8062966104-.161445679-3.951577057-.1037012642-8.0111055982-.6686878609-11.794181192-1.7905165375-13.3714955844-3.965207211-20.8949351686-13.9734574615-21.0497856683-27.9290556097-.1636440651-14.7462862648-.0489508475-29.4956502776-.055692581-44.243684787-.0005862377-1.251083624-.0000837482-2.5021672479-.0000837482-4.2206498263h-15.5450974609v-15.7305898548c8.297775831-.7458513999,16.1483779231-2.9879489421,22.4345628521-8.8498026538,6.4112629286-5.9784940797,8.5267853991-13.8163457542,8.8849766307-22.3973165421h15.5707662971v30.9245314253h15.4702265324v15.7996612198h-15.3374018204v4.0996964237c-.000334993,13.719134979-.0159959142,27.438290895.0037686709,41.1574049369.0170008932,11.8016142282,5.6859194034,17.3859053195,17.447773774,17.5559142565,6.9550402648.1005188309,14.0480976326-.2508678674,20.8259266171.9872661842,11.911428731,2.1758422119,20.6120336067,8.943579751,23.2550443803,21.3367078324,2.6688889804,12.5134743093,1.2710470709,24.2673311009-9.4035876202,33.0613155496-5.9439477375,4.8968436236-13.096717602,7.1305139986-20.6878257658,7.1622127093-31.8963555005.1332434575-63.7942184694.1620109796-95.6904064735.0018005873-17.9945241728-.0903852932-29.9789813709-13.2189485867-30.0316171411-32.5919275743-.0751221732-27.6608099815-.019722711-55.321934019-.0189689768-82.9829324341.0002512447-8.2314788937-.0873075424-16.4642558852.0300656189-24.6940912195.1415345292-9.9275902222,6.0020271434-16.1132355855,15.1995940879-16.2818417394,9.7696093124-.179085153,15.9855713404,5.6926299145,16.1601445511,15.5644333371.1536361502,8.6860853037.0363467371,17.3769756629.0378960796,26.0657409105.0049830204,27.8955563118-.0358023735,55.791259183.0391941773,83.6866270613.0256688362,9.5646776717,2.7381487767,18.1946621199,10.7728713791,24.080572515,3.2486780608,2.3798319993,7.199627006,3.8694620301,10.9693028811,5.4300058873,1.2084033858.5002701405,2.9505761929.2175151289,4.2961173252-.1991952003,11.9933345118-3.7141718471,18.9884901846-11.7421320373,20.6144623057-24.2891056446.2043038367-1.5768328908.3889687106-3.1562410401.6380359827-5.184330411Z"/>
@@ -104,6 +120,7 @@ const inlineSVGData = `
 </svg>
 `
 
+// Particle Creation
 const createBgParticle = () => {
   const canvas = bgCanvasRef.value
   if (!canvas) return null
@@ -113,9 +130,10 @@ const createBgParticle = () => {
     y: Math.random() * canvas.height,
     vx: (Math.random() - 0.5) * 0.3,
     vy: (Math.random() - 0.5) * 0.3,
-    size: Math.random() * 3 + 1,
+    size: Math.random() * 2 + 1,
     opacity: Math.random() * 0.4 + 0.1,
-    color: sweetModernColors[Math.floor(Math.random() * sweetModernColors.length)]
+    color: romanticColors[Math.floor(Math.random() * romanticColors.length)],
+    pulse: Math.random() * Math.PI * 2
   }
 }
 
@@ -128,11 +146,12 @@ const createTrailParticle = (x, y, color) => {
     size: Math.random() * 3 + 1,
     opacity: 0.8,
     color: color,
-    life: 30 + Math.random() * 20,
-    maxLife: 30 + Math.random() * 20
+    life: 30 + Math.random() * 40,
+    maxLife: 30 + Math.random() * 40
   }
 }
 
+// Animation Functions
 const animateBackground = () => {
   const canvas = bgCanvasRef.value
   if (!canvas) return
@@ -142,33 +161,41 @@ const animateBackground = () => {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  bgParticles.forEach((particle, i) => {
-    particle.x += particle.vx
-    particle.y += particle.vy
+  const time = Date.now() * 0.001
 
-    // Wrap particles around the canvas
-    if (particle.x < 0) particle.x = canvas.width
-    if (particle.x > canvas.width) particle.x = 0
-    if (particle.y < 0) particle.y = canvas.height
-    if (particle.y > canvas.height) particle.y = 0
+  bgParticles.value.forEach((p, i) => {
+    p.x += p.vx
+    p.y += p.vy
+    p.pulse += 0.01
+
+    // Wrap around canvas edges
+    if (p.x < 0) p.x = canvas.width
+    if (p.x > canvas.width) p.x = 0
+    if (p.y < 0) p.y = canvas.height
+    if (p.y > canvas.height) p.y = 0
+
+    // Pulsing effect
+    const pulseSize = p.size + Math.sin(p.pulse) * 0.3
+    const alpha = p.opacity + Math.sin(time + i) * 0.1
 
     ctx.beginPath()
-    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
-    ctx.fillStyle = particle.color + Math.floor(particle.opacity * 255).toString(16).padStart(2, '0')
+    ctx.arc(p.x, p.y, pulseSize, 0, Math.PI * 2)
+    ctx.fillStyle = `${p.color}${Math.floor(alpha * 255).toString(16).padStart(2, '0')}`
     ctx.fill()
 
-    // Connect nearby particles with gentle lines
-    for (let j = i + 1; j < bgParticles.length; j++) {
-      const dx = particle.x - bgParticles[j].x
-      const dy = particle.y - bgParticles[j].y
+    // Connect nearby particles
+    for (let j = i + 1; j < bgParticles.value.length; j++) {
+      const p2 = bgParticles.value[j]
+      const dx = p.x - p2.x
+      const dy = p.y - p2.y
       const distance = Math.sqrt(dx * dx + dy * dy)
 
-      if (distance < 150) {
+      if (distance < 100) {
         ctx.beginPath()
-        ctx.moveTo(particle.x, particle.y)
-        ctx.lineTo(bgParticles[j].x, bgParticles[j].y)
-        ctx.strokeStyle = particle.color + '20'
-        ctx.lineWidth = 1.5
+        ctx.moveTo(p.x, p.y)
+        ctx.lineTo(p2.x, p2.y)
+        ctx.strokeStyle = `${p.color}${Math.floor((0.3 - distance / 100 * 0.3) * 255).toString(16).padStart(2, '0')}`
+        ctx.lineWidth = 0.8
         ctx.stroke()
       }
     }
@@ -184,32 +211,29 @@ const animateTrails = () => {
   const ctx = canvas.getContext('2d')
   if (!ctx) return
 
-  // Fade the existing trails
-  ctx.fillStyle = 'rgba(253, 242, 248, 0.1)' // Very light pink fade
+  // Fade out existing trails
+  ctx.fillStyle = 'rgba(136, 19, 55, 0.08)'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
   // Update and draw trail particles
-  for (let i = trailParticles.length - 1; i >= 0; i--) {
-    const particle = trailParticles[i]
+  for (let i = trailParticles.value.length - 1; i >= 0; i--) {
+    const p = trailParticles.value[i]
 
-    particle.x += particle.vx
-    particle.y += particle.vy
-    particle.vx *= 0.98 // Slow down over time
-    particle.vy *= 0.98
-    particle.life--
+    p.x += p.vx
+    p.y += p.vy
+    p.vx *= 0.96
+    p.vy *= 0.96
+    p.life--
 
-    const alpha = particle.life / particle.maxLife
-    particle.opacity = alpha * 0.6
-
-    if (particle.life <= 0) {
-      trailParticles.splice(i, 1)
-      continue
-    }
-
+    const alpha = p.life / p.maxLife
     ctx.beginPath()
-    ctx.arc(particle.x, particle.y, particle.size * alpha, 0, Math.PI * 2)
-    ctx.fillStyle = particle.color + Math.floor(particle.opacity * 255).toString(16).padStart(2, '0')
+    ctx.arc(p.x, p.y, p.size * alpha, 0, Math.PI * 2)
+    ctx.fillStyle = `${p.color}${Math.floor(alpha * 255).toString(16).padStart(2, '0')}`
     ctx.fill()
+
+    if (p.life <= 0) {
+      trailParticles.value.splice(i, 1)
+    }
   }
 
   trailAnimationFrameId = requestAnimationFrame(animateTrails)
@@ -219,7 +243,6 @@ const parseSVGPath = (pathData) => {
   const points = []
   const path = new Path2D(pathData)
 
-  // Sample points along the path
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
   canvas.width = 682
@@ -231,11 +254,11 @@ const parseSVGPath = (pathData) => {
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
   const data = imageData.data
 
-  // Sample every few pixels to get path points
+  // Sample points from the SVG
   for (let y = 0; y < canvas.height; y += 2) {
     for (let x = 0; x < canvas.width; x += 2) {
       const index = (y * canvas.width + x) * 4
-      if (data[index + 3] > 128) { // Alpha channel
+      if (data[index + 3] > 128) {
         points.push({ x, y })
       }
     }
@@ -244,10 +267,8 @@ const parseSVGPath = (pathData) => {
   return points
 }
 
-// Updated function to use inline SVG data instead of fetching from file
 const loadSVGPaths = () => {
   try {
-    // Parse inline SVG data
     const parser = new DOMParser()
     const svgDoc = parser.parseFromString(inlineSVGData, 'image/svg+xml')
     const paths = svgDoc.querySelectorAll('path')
@@ -261,7 +282,7 @@ const loadSVGPaths = () => {
 
     return true
   } catch (error) {
-    console.error('Error parsing inline SVG:', error)
+    console.error('Error parsing SVG:', error)
     return false
   }
 }
@@ -274,29 +295,19 @@ const createParticleFromSVG = () => {
 
   const randomPoint = svgPaths[Math.floor(Math.random() * svgPaths.length)]
 
-  // Scale and position the SVG to fit the canvas
-  const scale = isMobile.value ? 0.6 : 1.0
+  const scale = isMobile.value ? 0.9 : 1.2
   const centerX = canvas.width / 2
-  const centerY = canvas.height / 2 - (isMobile.value ? 60 : 40)
-
-  const scaledX = centerX + (randomPoint.x - 341) * scale // 341 is half of SVG width
-  const scaledY = centerY + (randomPoint.y - 110) * scale // 110 is half of SVG height
-
-  const centerDistance = Math.abs(scaledX - centerX)
-  const maxDistance = canvas.width / 2
-  const colorIndex = Math.floor((centerDistance / maxDistance) * sweetModernColors.length)
+  const centerY = canvas.height / 2 - (isMobile.value ? 20 : 40)
 
   return {
-    x: scaledX,
-    y: scaledY,
-    baseX: scaledX,
-    baseY: scaledY,
+    x: centerX + (randomPoint.x - 341) * scale,
+    y: centerY + (randomPoint.y - 110) * scale,
+    baseX: centerX + (randomPoint.x - 341) * scale,
+    baseY: centerY + (randomPoint.y - 110) * scale,
     size: Math.random() * 1.5 + 0.8,
-    color: '#be185d',
-    scatteredColor: sweetModernColors[Math.min(colorIndex, sweetModernColors.length - 1)],
-    life: Math.random() * 300 + 200,
-    originalLife: Math.random() * 300 + 200,
-    trail: []
+    color: '#fda4af',
+    life: Math.random() * 500 + 300,
+    pulse: Math.random() * Math.PI * 2
   }
 }
 
@@ -304,13 +315,12 @@ const createInitialParticles = () => {
   const canvas = canvasRef.value
   if (!canvas || svgPaths.length === 0) return
 
-  const baseParticleCount = isMobile.value ? 3000 : 5000
-  const particleCount = Math.min(baseParticleCount, svgPaths.length)
+  const particleCount = isMobile.value ? 4000 : 6000
+  particles.value = []
 
-  particles = []
   for (let i = 0; i < particleCount; i++) {
     const particle = createParticleFromSVG()
-    if (particle) particles.push(particle)
+    if (particle) particles.value.push(particle)
   }
 }
 
@@ -318,11 +328,12 @@ const createBgParticles = () => {
   const canvas = bgCanvasRef.value
   if (!canvas) return
 
-  const particleCount = isMobile.value ? 80 : 50
-  bgParticles = []
+  const particleCount = isMobile.value ? 30 : 60
+  bgParticles.value = []
+
   for (let i = 0; i < particleCount; i++) {
     const particle = createBgParticle()
-    if (particle) bgParticles.push(particle)
+    if (particle) bgParticles.value.push(particle)
   }
 }
 
@@ -336,15 +347,17 @@ const animate = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   const { x: mouseX, y: mouseY } = mousePositionRef.value
-  const maxDistance = isMobile.value ? 100 : 180
-  const repelForce = isMobile.value ? 30 : 60
+  const maxDistance = isMobile.value ? 120 : 250
+  const repelForce = isMobile.value ? 40 : 70
+  const time = Date.now() * 0.005
 
-  particles.forEach((p, i) => {
+  particles.value.forEach((p, i) => {
+    // Mouse interaction
     const dx = mouseX - p.x
     const dy = mouseY - p.y
     const distance = Math.sqrt(dx * dx + dy * dy)
 
-    let isScattered = false
+    p.pulse += 0.015
 
     if (distance < maxDistance) {
       const force = (maxDistance - distance) / maxDistance
@@ -355,38 +368,33 @@ const animate = () => {
       p.x = p.baseX - moveX
       p.y = p.baseY - moveY
 
-      ctx.fillStyle = p.scatteredColor
-      isScattered = true
-
-      // Create trail particles when scattered
-      if (Math.random() < 0.3) {
-        trailParticles.push(createTrailParticle(p.x, p.y, p.scatteredColor))
-      }
-
-      if (Math.random() < 0.08) {
-        ctx.shadowColor = p.scatteredColor
-        ctx.shadowBlur = 6
+      // Add trail particles when interacting
+      if (Math.random() < 0.2) {
+        trailParticles.value.push(createTrailParticle(p.x, p.y, p.color))
       }
     } else {
-      p.x += (p.baseX - p.x) * 0.08
-      p.y += (p.baseY - p.y) * 0.08
-      ctx.fillStyle = p.color
-      ctx.shadowBlur = 0
+      // Return to original position
+      p.x += (p.baseX - p.x) * 0.05
+      p.y += (p.baseY - p.y) * 0.05
     }
 
-    const time = Date.now() * 0.001
-    const floatX = Math.sin(time + i * 0.01) * 0.3
-    const floatY = Math.cos(time + i * 0.01) * 0.2
+    // Floating animation
+    const floatX = Math.sin(time + i * 0.01) * 0.5
+    const floatY = Math.cos(time + i * 0.01) * 0.3
+
+    // Pulsing size
+    const pulseSize = p.size + Math.sin(p.pulse) * 0.2
 
     ctx.beginPath()
-    ctx.arc(p.x + floatX, p.y + floatY, p.size, 0, Math.PI * 2)
+    ctx.arc(p.x + floatX, p.y + floatY, pulseSize, 0, Math.PI * 2)
+    ctx.fillStyle = p.color
     ctx.fill()
 
     p.life--
     if (p.life <= 0) {
       const newParticle = createParticleFromSVG()
       if (newParticle) {
-        particles[i] = newParticle
+        particles.value[i] = newParticle
       }
     }
   })
@@ -398,15 +406,20 @@ const updateCanvasSize = () => {
   const canvas = canvasRef.value
   const bgCanvas = bgCanvasRef.value
   const trailCanvas = trailCanvasRef.value
+
   if (!canvas || !bgCanvas || !trailCanvas) return
 
-  canvas.width = window.innerWidth
-  canvas.height = window.innerHeight
-  bgCanvas.width = window.innerWidth
-  bgCanvas.height = window.innerHeight
-  trailCanvas.width = window.innerWidth
-  trailCanvas.height = window.innerHeight
-  isMobile.value = window.innerWidth < 768
+  const width = window.innerWidth
+  const height = window.innerHeight
+
+  canvas.width = width
+  canvas.height = height
+  bgCanvas.width = width
+  bgCanvas.height = height
+  trailCanvas.width = width
+  trailCanvas.height = height
+
+  isMobile.value = width < 768
 }
 
 const handleMove = (x, y) => {
@@ -417,7 +430,7 @@ const handleMove = (x, y) => {
   clearTimeout(mouseTimeout)
   mouseTimeout = setTimeout(() => {
     isMouseMoving.value = false
-  }, 1500)
+  }, 500)
 }
 
 const handleMouseMove = (e) => {
@@ -435,20 +448,19 @@ const handleTouchMove = (e) => {
 
 const handleResize = () => {
   updateCanvasSize()
-  particles = []
+  particles.value = []
   createInitialParticles()
   createBgParticles()
 }
 
+// Lifecycle Hooks
 onMounted(() => {
   updateCanvasSize()
   createBgParticles()
   animateBackground()
   animateTrails()
 
-  // Use inline SVG data instead of fetching
-  const svgLoaded = loadSVGPaths()
-  if (svgLoaded) {
+  if (loadSVGPaths()) {
     createInitialParticles()
     animate()
   }
@@ -463,42 +475,19 @@ onUnmounted(() => {
   window.removeEventListener('mousemove', handleMouseMove)
   window.removeEventListener('touchmove', handleTouchMove)
 
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId)
-  }
-  if (bgAnimationFrameId) {
-    cancelAnimationFrame(bgAnimationFrameId)
-  }
-  if (trailAnimationFrameId) {
-    cancelAnimationFrame(trailAnimationFrameId)
-  }
-
+  cancelAnimationFrame(animationFrameId)
+  cancelAnimationFrame(bgAnimationFrameId)
+  cancelAnimationFrame(trailAnimationFrameId)
   clearTimeout(mouseTimeout)
-})
-
-useHead({
-  title: 'sweetheart | সেঁজুতি',
-  meta: [
-    { name: 'description', content: 'between you and everything' }
-  ]
 })
 </script>
 
 <style scoped>
-.cursor-none {
-  cursor: none;
-}
-
-@media (max-width: 768px) {
-  .cursor-none {
-    cursor: default;
-  }
-}
-
+/* Modern animations */
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
 
   to {
@@ -511,25 +500,20 @@ useHead({
 
   0%,
   100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translateY(0) rotate(0deg);
   }
 
   50% {
-    transform: translateY(-25px) rotate(180deg);
+    transform: translateY(-20px) rotate(5deg);
   }
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.9s ease-out forwards;
+  animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-float {
-  animation: float 5s ease-in-out infinite;
-}
-
-.animation-delay-400 {
-  animation-delay: 0.4s;
-  opacity: 0;
+  animation: float 6s ease-in-out infinite;
 }
 
 .animation-delay-600 {
@@ -537,13 +521,19 @@ useHead({
   opacity: 0;
 }
 
-.animation-delay-800 {
-  animation-delay: 0.8s;
+.animation-delay-1200 {
+  animation-delay: 1.2s;
   opacity: 0;
 }
 
-.animation-delay-1000 {
-  animation-delay: 1.0s;
-  opacity: 0;
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .cursor-none {
+    cursor: default;
+  }
+
+  .animate-float {
+    animation-duration: 8s;
+  }
 }
 </style>
