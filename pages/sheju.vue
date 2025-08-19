@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container p-10 relative w-full min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 overflow-hidden">
+    class="p-10 relative w-full min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 overflow-hidden">
     <!-- Background Particle Canvas -->
     <canvas ref="bgCanvasRef" class="w-full h-full absolute top-0 left-0 opacity-40" />
 
@@ -24,8 +24,8 @@
         </div>
 
         <div
-          class="w-24 h-24 mx-auto bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300 ease-in-out">
-          <Heart class="w-12 h-12 text-white" />
+          class="w-12 h-12 mx-auto bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300 ease-in-out">
+          <Heart class="w-8 h-8 text-white" />
         </div>
       </div>
     </div>
