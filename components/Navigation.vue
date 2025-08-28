@@ -10,12 +10,18 @@
         <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center space-x-8">
           <NuxtLink to="/" class="nav-link">Home</NuxtLink>
-          <NuxtLink to="/blog" class="nav-link">Blog</NuxtLink>
-          
+          <NuxtLink to="/onTheWayToBeCreative" class="nav-link">onTheWayToBeCreative</NuxtLink>
+
           <a href="#contact" class="nav-link">Contact</a>
           <a href="https://github.com/FullstackRakibul" target="_blank"
             class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors">
             <Github class="w-5 h-5" />
+
+          </a>
+          <a href="https://www.linkedin.com/in/fullstackrakibul" target="_blank"
+            class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors">
+
+            <Linkedin class="w-5 h-5" />
           </a>
         </div>
 
@@ -36,6 +42,11 @@
             <Github class="w-5 h-5" />
             <span>GitHub</span>
           </a>
+          <a href="https://www.linkedin.com/in/fullstackrakibul" target="_blank"
+            class="flex items-center space-x-2 nav-link">
+            <Linkedin class="w-5 h-5" />
+            <span>Linkedin</span>
+          </a>
         </div>
       </div>
     </div>
@@ -44,7 +55,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Menu, X, Github } from 'lucide-vue-next'
+import { Menu, X, Github, Linkedin } from 'lucide-vue-next'
 
 const mobileOpen = ref(false)
 

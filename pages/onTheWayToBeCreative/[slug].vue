@@ -1,7 +1,8 @@
 <template>
   <div class="pt-20 pb-16">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <NuxtLink to="/blog" class="inline-flex items-center text-blue-400 hover:text-blue-300 mb-8 transition-colors">
+      <NuxtLink to="/onTheWayToBeCreative"
+        class="inline-flex items-center text-blue-400 hover:text-blue-300 mb-8 transition-colors">
         <ArrowLeft class="w-4 h-4 mr-2" />
         Back to Blog
       </NuxtLink>

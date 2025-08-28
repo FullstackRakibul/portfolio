@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="`/blog/${slug}`" :class="[
+  <NuxtLink :to="`/onTheWayToBeCreative/${slug}`" :class="[
     'group block bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-[1.02]',
     featured ? 'lg:p-8' : ''
   ]">

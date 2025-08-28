@@ -23,7 +23,7 @@
             <span class="text-green-400">SQL</span> |
             <span class="text-emerald-400">Vue</span> |
             <span class="text-yellow-400">Django</span> |
-            <span class="text-red-400">Angular</span> |
+            <span class="text-red-400">Laravel</span> |
             <span class="text-pink-400">CMS</span>
           </p>
           <p class="animate-fade-in-up animation-delay-400 max-w-4xl mx-auto text-gray-300 italic">

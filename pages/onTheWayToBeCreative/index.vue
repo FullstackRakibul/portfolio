@@ -4,7 +4,8 @@
       <!-- Header -->
       <div class="text-center mb-16">
         <h1 class="text-4xl sm:text-5xl font-bold mb-6">
-          <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Blog</span>
+          <span
+            class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">onTheWayToBeCreative</span>
         </h1>
         <p class="text-xl text-gray-300 mb-8">Thoughts on development, technology, and building great software</p>
 
@@ -113,7 +114,7 @@ const filteredPosts = computed(() => {
 })
 
 useHead({
-  title: 'Blog - Rakibul H. Rabbi',
+  title: 'onTheWayToBeCreative - Rakibul H. Rabbi',
   meta: [
     { name: 'description', content: 'Read about software development, technology insights, and programming tutorials by Rakibul H. Rabbi.' }
   ]
