@@ -19,7 +19,7 @@
           <p class="animate-fade-in-up animation-delay-200 font-mono text-sm sm:text-base">
             <span class="text-blue-400">C#</span> |
             <span class="text-purple-400">.NET</span> |
-            <span class="text-cyan-400">React</span> |
+            <span class="text-cyan-400">Angular</span> |
             <span class="text-green-400">SQL</span> |
             <span class="text-emerald-400">Vue</span> |
             <span class="text-yellow-400">Django</span> |
