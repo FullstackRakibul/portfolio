@@ -10,6 +10,7 @@
         <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center space-x-8">
           <NuxtLink to="/" class="nav-link">Home</NuxtLink>
+          <NuxtLink to="/resume" class="nav-link">Resume</NuxtLink>
           <NuxtLink to="/onTheWayToBeCreative" class="nav-link">onTheWayToBeCreative</NuxtLink>
 
           <a href="#contact" class="nav-link">Contact</a>
@@ -36,6 +37,7 @@
       <div v-if="mobileOpen" class="md:hidden py-4 border-t border-gray-800">
         <div class="flex flex-col space-y-4">
           <NuxtLink to="/" class="nav-link" @click="mobileOpen = false">Home</NuxtLink>
+          <NuxtLink to="/resume" class="nav-link" @click="mobileOpen = false">Resume</NuxtLink>
           <NuxtLink to="/blog" class="nav-link" @click="mobileOpen = false">Blog</NuxtLink>
           <a href="#contact" class="nav-link" @click="mobileOpen = false">Contact</a>
           <a href="https://github.com/FullstackRakibul" target="_blank" class="flex items-center space-x-2 nav-link">

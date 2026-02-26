@@ -14,6 +14,7 @@
     "@tailwindcss/vite": "^4.1.11",
     "@vueuse/components": "^13.5.0",
     "@vueuse/core": "^13.5.0",
+    "html2pdf.js": "^0.10.1",
     "lucide-vue-next": "^0.460.0",
     "nuxt": "^3.17.7",
     "tailwindcss": "^4.1.11",
