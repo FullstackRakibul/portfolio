@@ -3,7 +3,7 @@
     <!-- Hero Section with Enhanced Particle Name Animation -->
     <section class="relative min-h-screen">
       <EnhancedNameParticles />
-      
+
     </section>
     <!-- About Section -->
     <section id="about" class="py-20 px-4 sm:px-6 lg:px-8">
@@ -101,7 +101,7 @@
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <ProjectCard v-for="project in projects" :key="project.url" :title="project.title" :url="project.url"
-            :description="project.description" />
+            :description="project.description" :category="project.category" />
         </div>
       </div>
     </section>
@@ -130,15 +130,34 @@
 
 
 const projects = [
-  { title: 'Global IT Solutions', url: 'https://globalitsolutions.com.bd', description: 'Corporate website with modern design' },
-  { title: 'Taash Clothing', url: 'https://taashclothing.com', description: 'E-commerce fashion platform' },
-  { title: 'Paakhi Home', url: 'https://paakhihome.com', description: 'Home decor and furniture store' },
-  { title: 'Ocean Gauge', url: 'http://oceangauge.com', description: 'Marine equipment solutions' },
-  { title: 'My Prime Box', url: 'https://myprimebox.com', description: 'Subscription box service' },
-  { title: 'RDT SQA', url: 'https://rdtsqa.com', description: 'Quality assurance services' },
-  { title: 'Discover Thailand Co', url: 'https://discoverthailandco.com', description: 'Travel and tourism platform' },
-  { title: 'Top Notch Assignments', url: 'http://topnotchassignments.net', description: 'Academic writing services' },
-  { title: 'Nagar Kantha', url: 'http://www.nagarkantha.com', description: 'News and media portal' }
+
+
+
+  // --- Advance Tech Projects & CRM ---
+  { title: 'Shobdo Bisharod', url: 'https://shobdo-bisharod21.vercel.app', description: 'Advanced dynamic web application tool', category: 'Web App' },
+  { title: 'Ha-Meem Group', url: 'https://ha-meemgroup.vercel.app/', description: 'Enterprise application and corporate portal', category: 'Enterprise' },
+  { title: 'Corporate Assistant', url: 'https://corporate-assistant-lac.vercel.app', description: 'Business management and corporate assistant tool', category: 'SaaS / CRM' },
+  { title: 'Channel 24 CRM', url: 'https://panel-ch24.vercel.app/#/login', description: 'Advanced administrative CRM panel for Channel 24', category: 'SaaS / CRM' },
+  { title: 'Weavo Go', url: 'https://weavo-go.vercel.app/', description: 'Scalable dynamic web platform', category: 'Web App' },
+  { title: 'Les Showdagar', url: 'https://les-showdagar.vercel.app/', description: 'Inventory management and digital storefront', category: 'Web App' },
+  { title: 'Art Sign Symbols', url: 'https://artsignsymbols.vercel.app/', description: 'Creative design and graphics portal', category: 'Web App' },
+  { title: '5 Lakhs Portal', url: 'https://5lakhs.vercel.app/login', description: 'Secure web portal with authentication dashboard', category: 'Web App' },
+
+  // --- Tech Sites ---
+  { title: 'Global IT Solutions', url: 'https://globalitsolutions.com.bd/', description: 'Corporate tech agency website with modern UI', category: 'Tech Agency' },
+
+  // --- Personal & Others ---
+  { title: 'Innovative BD', url: 'https://innovativebd.org/', description: 'Organization portfolio and initiatives platform', category: 'Organization' },
+  { title: 'My Prime Box', url: 'https://myprimebox.com/', description: 'Custom subscription box service', category: 'Personal' },
+  { title: 'Restaurant Basmati', url: 'https://restaurantbasmati.com/', description: 'Restaurant presentation, menu, and booking', category: 'Personal' },
+  { title: 'Miah Shop', url: 'https://miah.shop/', description: 'Personalized e-commerce storefront', category: 'Personal' },
+  // --- E-Commerce Websites ---
+  { title: 'Taash Clothing', url: 'https://taashclothing.com/', description: 'E-commerce fashion and apparel platform', category: 'E-Commerce' },
+  { title: 'Paakhi Home', url: 'https://paakhihome.com/', description: 'Online store for home decor and furniture', category: 'E-Commerce' },
+  { title: 'Spice N Organics', url: 'https://spice-n-organics.com/', description: 'Organic grocery and spice e-commerce', category: 'E-Commerce' },
+  { title: 'Green Foods Express', url: 'https://greenfoods.express/', description: 'Fresh food and grocery delivery platform', category: 'E-Commerce' },
+  { title: 'Opa Care', url: 'https://opacare.net/', description: 'Healthcare and personal care products store', category: 'E-Commerce' },
+  { title: 'Zeen Woman', url: 'https://zeenwoman.com/', description: 'Women\'s fashion and lifestyle e-commerce', category: 'E-Commerce' }
 ]
 
 useHead({
