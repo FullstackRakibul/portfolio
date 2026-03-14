@@ -1,6 +1,6 @@
 <template>
   <div
-    class="pt-20 min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8 print:py-0 print:px-0 print:bg-white text-gray-900 font-sans">
+    class="pt-20 min-h-screen overflow-y-scroll bg-gray-100 py-10 px-4 sm:px-6 lg:px-8 print:py-0 print:px-0 print:bg-white text-gray-900 font-sans">
     <!-- Download button (unchanged) -->
     <div class="max-w-4xl fixed right-10 bottom-10 mx-auto flex justify-end mb-6 print:hidden">
       <button @click="downloadPDF" :disabled="isDownloading"
@@ -13,12 +13,22 @@
     <main id="resume-document"
       class="max-w-4xl mx-auto bg-white p-12 sm:p-16 shadow-xl print:shadow-none print:p-0 print:m-0">
       <header class="border-b-2 border-gray-800 pb-6 mb-8">
-        <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-2 tracking-tight uppercase">
-          {{ resumeData.name }}
-        </h1>
-        <h2 class="text-xl text-gray-700 font-semibold mb-4 uppercase tracking-wider">
-          {{ resumeData.title }}
-        </h2>
+        <!-- Top row: name/title + photo -->
+        <div class="flex flex-row justify-between items-start gap-4 mb-4">
+          <div>
+            <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 tracking-tight uppercase">
+              {{ resumeData.name }}
+            </h1>
+            <h2 class="text-sm text-gray-700 font-semibold uppercase tracking-wider">
+              {{ resumeData.title }}
+            </h2>
+          </div>
+          <!-- Professional headshot -->
+          <img src="../public/assets/img/rakibul-hasan-passport-image.jpg" alt="Rakibul Hasan Rabbi"
+            class="w-20 h-20 sm:w-20 sm:h-20 rounded-full border-2 border-gray-300 shadow-sm " />
+        </div>
+
+        <!-- Contact details row (unchanged) -->
 
         <div class="flex flex-wrap gap-y-2 gap-x-6 text-sm text-gray-600">
           <div class="flex items-center gap-1.5">
@@ -245,6 +255,7 @@ const resumeData = {
 const downloadPDF = () => {
   isDownloading.value = true
   setTimeout(() => {
+
     window.print()
     isDownloading.value = false
   }, 150)
@@ -264,6 +275,8 @@ useHead({
   @page {
     size: A4;
     margin: 15mm 15mm 15mm 15mm;
+    margin-header: 0mm;
+    margin-footer: 0mm;
   }
 
   body {
@@ -301,6 +314,40 @@ useHead({
   /* Retain border lines for visual separation */
   .border-b {
     border-bottom-color: #000 !important;
+  }
+
+  /* Additional rule to hide browser-generated content */
+  body::before,
+  body::after,
+  header::before,
+  header::after,
+  footer::before,
+  footer::after,
+  #resume-document::before,
+  #resume-document::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Your existing print styles remain below */
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background-color: white !important;
+  }
+
+  /* Hide navigation, footers, and interactive elements */
+  nav,
+  footer,
+  .print\:hidden {
+    display: none !important;
+  }
+
+
+  /* Prevent awkward page breaks inside core sections */
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 }
 </style>
