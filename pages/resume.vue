@@ -247,7 +247,7 @@ const resumeData = {
       name: 'Shobdo Bisharod',
       technologies: 'Vue, Nuxt, Node',
       description: 'Dynamic educational web application tool.',
-      url: 'https://shobdobisharod.com/'
+      url: 'https://shobdo-bisharod21.vercel.app'
     }
   ]
 }
