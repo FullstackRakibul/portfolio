@@ -1,19 +1,17 @@
 <template>
   <div
     class="pt-20 min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8 print:py-0 print:px-0 print:bg-white text-gray-900 font-sans">
-
+    <!-- Download button (unchanged) -->
     <div class="max-w-4xl fixed right-10 bottom-10 mx-auto flex justify-end mb-6 print:hidden">
       <button @click="downloadPDF" :disabled="isDownloading"
-        class="flex  items-center gap-2 bg-[#1C2333] hover:bg-secondary/80 text-white p-2 rounded-full font-medium transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed">
+        class="flex items-center gap-2 bg-[#1C2333] hover:bg-secondary/80 text-white p-2 rounded-full font-medium transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed">
         <Download v-if="!isDownloading" class="w-5 h-5" />
         <Loader2 v-else class="w-5 h-5 animate-spin" />
-        {{ isDownloading ? '' : '' }}
       </button>
     </div>
 
     <main id="resume-document"
       class="max-w-4xl mx-auto bg-white p-12 sm:p-16 shadow-xl print:shadow-none print:p-0 print:m-0">
-
       <header class="border-b-2 border-gray-800 pb-6 mb-8">
         <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-2 tracking-tight uppercase">
           {{ resumeData.name }}
@@ -29,26 +27,28 @@
           </div>
           <div class="flex items-center gap-1.5">
             <Phone class="w-4 h-4 text-gray-500" />
-            <a :href="`tel:${resumeData.phone.replace(/\\s/g, '')}`" class="hover:text-blue-600">{{ resumeData.phone
+            <a :href="`tel:${resumeData.phone.replace(/\s/g, '')}`" class="hover:text-blue-600">{{ resumeData.phone
             }}</a>
           </div>
           <div class="flex items-center gap-1.5">
             <MapPin class="w-4 h-4 text-gray-500" />
             <span>{{ resumeData.location }}</span>
           </div>
-          <!-- <div class="flex items-center gap-1.5">
-            <Globe class="w-4 h-4 text-gray-500" />
-            <a :href="`https://${resumeData.portfolio}`" target="_blank" class="hover:text-blue-600">{{
-              resumeData.portfolio }}</a>
-          </div> -->
           <div class="flex items-center gap-1.5">
             <Github class="w-4 h-4 text-gray-500" />
             <a :href="`https://github.com/${resumeData.github}`" target="_blank"
               class="hover:text-blue-600">github.com/{{ resumeData.github }}</a>
           </div>
+          <!-- New LinkedIn link -->
+          <div class="flex items-center gap-1.5">
+            <Linkedin class="w-4 h-4 text-gray-500" />
+            <a :href="`https://linkedin.com/in/${resumeData.linkedin}`" target="_blank"
+              class="hover:text-blue-600">linkedin.com/in/{{ resumeData.linkedin }}</a>
+          </div>
         </div>
       </header>
 
+      <!-- Professional Summary -->
       <section class="mb-8 print:mb-6">
         <h3 class="text-lg font-bold text-gray-900 border-b border-gray-300 mb-3 uppercase tracking-wider pb-1">
           Professional Summary</h3>
@@ -57,6 +57,7 @@
         </p>
       </section>
 
+      <!-- Technical Skills -->
       <section class="mb-8 print:mb-6">
         <h3 class="text-lg font-bold text-gray-900 border-b border-gray-300 mb-3 uppercase tracking-wider pb-1">
           Technical Skills</h3>
@@ -75,16 +76,16 @@
         </div>
       </section>
 
+      <!-- Professional Experience -->
       <section class="mb-8 print:mb-6">
         <h3 class="text-lg font-bold text-gray-900 border-b border-gray-300 mb-4 uppercase tracking-wider pb-1">
           Professional Experience</h3>
-
         <div class="space-y-6">
           <div v-for="(job, index) in resumeData.experience" :key="index" class="break-inside-avoid">
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-2">
               <div>
                 <h4 class="text-base font-bold text-gray-900">{{ job.position }}</h4>
-                <div class="text-sm font-semibold text-gray-700">{{ job.company }} &bull; <span class="font-normal">{{
+                <div class="text-sm font-semibold text-gray-700">{{ job.company }} • <span class="font-normal">{{
                   job.location }}</span></div>
               </div>
               <div class="text-sm text-gray-600 font-medium mt-1 sm:mt-0 italic whitespace-nowrap">
@@ -100,6 +101,7 @@
         </div>
       </section>
 
+      <!-- Education -->
       <section class="mb-8 print:mb-6 break-inside-avoid">
         <h3 class="text-lg font-bold text-gray-900 border-b border-gray-300 mb-4 uppercase tracking-wider pb-1">
           Education</h3>
@@ -112,9 +114,10 @@
         </div>
       </section>
 
+      <!-- Notable Projects (Key Projects) -->
       <section class="mb-8 print:mb-0 break-inside-avoid">
-        <h3 class="text-lg font-bold text-gray-900 border-b border-gray-300 mb-4 uppercase tracking-wider pb-1">Notable
-          Projects</h3>
+        <h3 class="text-lg font-bold text-gray-900 border-b border-gray-300 mb-4 uppercase tracking-wider pb-1">
+          Key Projects</h3>
         <div class="space-y-4">
           <div v-for="(project, index) in resumeData.projects" :key="index">
             <div class="flex items-baseline gap-2 mb-1">
@@ -123,10 +126,13 @@
               <span class="text-sm text-gray-600 italic">{{ project.technologies }}</span>
             </div>
             <p class="text-sm text-gray-700 leading-relaxed">{{ project.description }}</p>
+            <a v-if="project.url" :href="project.url" target="_blank"
+              class="text-xs text-blue-600 hover:underline inline-block mt-1">
+              {{ project.url }}
+            </a>
           </div>
         </div>
       </section>
-
     </main>
   </div>
 </template>
@@ -134,11 +140,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useHead } from '#app'
-import { Download, Phone, Mail, Github, Globe, MapPin, Loader2 } from 'lucide-vue-next'
+import { Download, Phone, Mail, Github, Linkedin, MapPin, Loader2 } from 'lucide-vue-next'
 
 const isDownloading = ref(false)
 
-// Updated with your actual data for maximum context
 const resumeData = {
   name: 'Rakibul Hasan Rabbi',
   title: 'Full-Stack Software Developer',
@@ -146,13 +151,13 @@ const resumeData = {
   phone: '+880 1581 500678',
   location: 'Dhaka, Bangladesh',
   github: 'FullstackRakibul',
-  // portfolio: 'rabbitic.com',
-  summary: 'Passionate and results-driven Full-Stack Software Developer with over 2 years of experience specializing in enterprise application development, systems architecture, and UI engineering. Proven track record in overseeing ERP modules, Windows-based services, and complex integrations to streamline production workflows. Adept at bridging the gap between technical infrastructure and human-centric design using modern frameworks and robust backend architectures.',
+  linkedin: 'fullstackrakibul',
+  summary: 'Full-Stack Software Developer with experience building scalable enterprise software solutions using .NET, SQL Server, React, Angular, and Vue.js. Currently working with one of Bangladesh’s largest clothing export companies, maintaining core business systems including HRM, payroll, and production management platforms. Skilled at transforming complex business workflows into efficient and user-friendly applications. Passionate about clean architecture, database optimization, and building reliable enterprise systems. Currently expanding expertise in cloud technologies such as AWS and Azure.',
   skills: {
     languages: 'C#, JavaScript, TypeScript, Python, PHP',
-    frameworks: '.NET, ASP.NET Core, MVC, React, Vue.js, Angular, Nuxt.js, Next.js, Laravel',
-    databases: 'SQL Server, MySQL, PostgreSQL',
-    tools: 'Git, Docker, IIS, Nginx, Azure, AWS, CI/CD, Azure DevOps'
+    frameworks: '.NET / ASP.NET / ASP.NET Core, React, Vue.js, Angular, Laravel, Entity Framework',
+    databases: 'Microsoft SQL Server, MySQL, PostgreSQL',
+    tools: 'Git, IIS, SQL Server Management Studio, WordPress, Shopify, Webflow, Bubble.io, AWS (learning), Azure (learning)'
   },
   experience: [
     {
@@ -161,11 +166,11 @@ const resumeData = {
       period: 'Nov 2023 – Present',
       location: 'Dhaka, Bangladesh',
       responsibilities: [
-        'Maintain and improve enterprise-grade ERP systems utilizing .NET and SQL Server to streamline corporate operations.',
-        'Build scalable, performance-driven modules using ASP.NET Core, MVC, and React for cross-departmental functionality.',
-        'Manage and optimize workflows across HRM, payroll, production, and financial systems.',
-        'Administer Windows servers, IIS, and database infrastructure to ensure high availability and minimal downtime.',
-        'Developed and deployed automated communication microservices, including a customized internal anniversary email service.'
+        'Maintain and optimize enterprise ERP systems used for HRM, payroll, and production management.',
+        'Develop and support internal software solutions using ASP.NET MVC, React.js, and SQL Server.',
+        'Manage and optimize large-scale databases using Microsoft SQL Server Management Studio.',
+        'Monitor and maintain Windows Server and IIS infrastructure to ensure system stability.',
+        'Improved operational efficiency by resolving system bottlenecks and supporting business-critical applications.'
       ]
     },
     {
@@ -174,8 +179,9 @@ const resumeData = {
       period: 'Aug 2023 – Nov 2023',
       location: 'Dhaka, Bangladesh',
       responsibilities: [
-        'Developed and customized CMS-driven web applications utilizing WordPress, Webflow, Bubble.io, and Shopify.',
-        'Ensured responsive design and optimal user experience across various device resolutions and platforms.'
+        'Developed and maintained websites using WordPress, Shopify, Wix, and Webflow.',
+        'Built dynamic business websites and CMS platforms for international clients.',
+        'Implemented responsive UI designs and improved website performance.'
       ]
     },
     {
@@ -184,18 +190,20 @@ const resumeData = {
       period: 'Jun 2023 – Aug 2023',
       location: 'Dhaka, Bangladesh',
       responsibilities: [
-        'Led cross-functional teams to deliver highly optimized Vue.js and Laravel-based web solutions on schedule.',
-        'Focused on business logic modeling, robust backend API design, and seamless e-commerce integration.'
+        'Managed development teams delivering Laravel, Vue.js, and WordPress projects.',
+        'Designed database structures and coordinated backend development.',
+        'Oversaw project delivery timelines and client communication.'
       ]
     },
     {
       company: 'Creative Tech Park',
-      position: 'Web Developer & PM',
+      position: 'Web Developer',
       period: 'Jul 2022 – Jul 2023',
       location: 'Dhaka, Bangladesh',
       responsibilities: [
-        'Engineered full-stack web solutions utilizing Vue.js, Laravel, and MySQL environments.',
-        'Managed entire development lifecycles from requirement gathering through deployment and client handover.'
+        'Developed web applications using Laravel, Vue.js, PHP, and MySQL.',
+        'Implemented database design and version control using Git.',
+        'Delivered multiple business and e-commerce platforms.'
       ]
     }
   ],
@@ -208,26 +216,34 @@ const resumeData = {
   ],
   projects: [
     {
-      name: 'Rookie .NET Scaffolding CLI',
-      technologies: '.NET, Angular, CLI Tools',
-      description: 'Developed an advanced project scaffolding system that auto-generates a .NET API, a corresponding Angular administrative dashboard, and dedicated CLI commands for rapid enterprise development.'
-    },
-    {
       name: 'Calcifer Microservice API Template',
-      technologies: '.NET, NuGet',
-      description: 'Created and published an official open-source .NET microservice project template directly to NuGet to standardize API structures.'
+      technologies: 'C#, .NET, NuGet',
+      description: 'Microservice API template for .NET Core.',
+      url: 'https://www.nuget.org/packages/Calcifer.Microservice.Api.Template'
     },
     {
-      name: 'Channel 24 ERP / CRM',
-      technologies: 'Vue.js, UX/UI',
-      description: 'Implemented comprehensive UX updates and architectural restructuring for Times Media Limited\'s internal CRM and billing dashboard.'
+      name: 'Channel 24 CRM',
+      technologies: 'Vue, Admin Panel',
+      description: 'Administrative CRM panel designed for managing operations and internal processes.',
+      url: 'https://panel-ch24.vercel.app/#/login'
+    },
+    {
+      name: 'Ha-Meem Group',
+      technologies: 'Vue, Nuxt',
+      description: 'Enterprise corporate portal showcasing large scale manufacturing operations.',
+      url: 'https://ha-meemgroup.vercel.app/'
+    },
+    {
+      name: 'Shobdo Bisharod',
+      technologies: 'Vue, Nuxt, Node',
+      description: 'Dynamic educational web application tool.',
+      url: 'https://shobdobisharod.com/'
     }
   ]
 }
 
 const downloadPDF = () => {
   isDownloading.value = true
-  // Small delay to allow button state to update before the browser print dialog freezes the thread
   setTimeout(() => {
     window.print()
     isDownloading.value = false
