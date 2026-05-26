@@ -12,7 +12,7 @@
     <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 w-full">
       <div class="animate-fade-in-up">
         <!-- Name will be rendered by particles -->
-        <div class="h-24 sm:h-32 lg:h-40 mb-8"></div>
+        <div class="h-28 sm:h-32 md:h-36 lg:h-40 mb-6 sm:mb-8"></div>
 
         <!-- Tech Stack and Welcome Message -->
         <div class="text-lg sm:text-xl text-gray-300 mb-8 space-y-4">
@@ -34,11 +34,10 @@
         <!-- Additional Info -->
         <div class="animate-fade-in-up animation-delay-600 mb-8">
           <p class="font-mono text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
-            Full-Stack Software Developer specializing in{' '}
+            Full-Stack Software Developer specializing in
             <span class="text-purple-400 hover:text-cyan-400 transition-colors duration-300">
               Enterprise Applications
-            </span>{' '}
-            and{' '}
+            </span>
             <span class="text-cyan-400 hover:text-purple-400 transition-colors duration-300">
               Modern Web Technologies
             </span>
@@ -180,14 +179,14 @@ const createTextImage = () => {
   ctx.fillStyle = 'white'
   ctx.save()
 
-  const scale = isMobile.value ? 0.6 : 1.2
+  const scale = isMobile.value ? 0.9 : 1.2
   const centerX = canvas.width / 2
-  const centerY = canvas.height / 2 - 100
+  const centerY = canvas.height * 0.35
 
   ctx.translate(centerX, centerY)
   ctx.scale(scale, scale)
 
-  const fontSize = isMobile.value ? 36 : 64
+  const fontSize = isMobile.value ? 48 : 64
   ctx.font = `bold ${fontSize}px Inter, sans-serif`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
@@ -240,11 +239,12 @@ const createInitialParticles = (scale) => {
   const canvas = canvasRef.value
   if (!canvas) return
 
-  const baseParticleCount = 6000
+  const baseParticleCount = isMobile.value ? 2500 : 6000
   const particleCount = Math.floor(baseParticleCount * Math.sqrt((canvas.width * canvas.height) / (1920 * 1080)))
+  const cappedCount = Math.min(particleCount, isMobile.value ? 3000 : 8000)
 
   particles = []
-  for (let i = 0; i < particleCount; i++) {
+  for (let i = 0; i < cappedCount; i++) {
     const particle = createParticle(scale)
     if (particle) particles.push(particle)
   }
@@ -349,6 +349,17 @@ const handleMouseMove = (e) => {
   handleMove(e.clientX, e.clientY)
 }
 
+const handleTouchMove = (e) => {
+  if (e.touches.length > 0) {
+    isTouchingRef.value = true
+    handleMove(e.touches[0].clientX, e.touches[0].clientY)
+  }
+}
+
+const handleTouchEnd = () => {
+  isTouchingRef.value = false
+}
+
 const handleResize = () => {
   updateCanvasSize()
   const newScale = createTextImage()
@@ -368,11 +379,15 @@ onMounted(() => {
 
   window.addEventListener('resize', handleResize)
   window.addEventListener('mousemove', handleMouseMove)
+  window.addEventListener('touchmove', handleTouchMove, { passive: true })
+  window.addEventListener('touchend', handleTouchEnd)
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
   window.removeEventListener('mousemove', handleMouseMove)
+  window.removeEventListener('touchmove', handleTouchMove)
+  window.removeEventListener('touchend', handleTouchEnd)
 
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId)

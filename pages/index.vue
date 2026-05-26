@@ -3,33 +3,33 @@
     <!-- Hero Section with Enhanced Particle Name Animation -->
     <section class="relative min-h-screen">
       <EnhancedNameParticles />
-
     </section>
+
     <!-- About Section -->
-    <section id="about" class="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="about" class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
       <div class="max-w-4xl mx-auto">
-        <h2 class="text-3xl sm:text-4xl font-bold mb-8 text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-center">
           <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">About Me</span>
         </h2>
-        <div class="bg-gray-800/50 rounded-xl p-8 border border-gray-700">
-          <blockquote class="text-xl italic text-gray-300 mb-6 text-center">
+        <div class="bg-gray-800/50 rounded-lg sm:rounded-xl p-4 sm:p-6 md:p-8 border border-gray-700">
+          <blockquote class="text-base sm:text-lg md:text-xl italic text-gray-300 mb-4 sm:mb-6 text-center leading-relaxed">
             "The quiet architect of systems and spirit, a soul who sees code and cosmos as kin."
           </blockquote>
-          <p class="text-gray-300 leading-relaxed mb-6">
+          <p class="text-sm sm:text-base text-gray-300 leading-relaxed mb-4 sm:mb-6">
             I'm Rakibul Hasan Rabbi – a passionate software developer with a strong focus on enterprise application
             development,
             UI engineering, and systems architecture. My current role at Hameem Group has me overseeing ERP modules,
             Windows-based services, HRM integrations, and production streamlining – all built using .NET, SQL Server,
             and modern JavaScript frameworks like React and Next.js.
           </p>
-          <p class="text-gray-300 leading-relaxed mb-6">
+          <p class="text-sm sm:text-base text-gray-300 leading-relaxed mb-4 sm:mb-6">
             I've worn many hats across startups and agencies – from project management and UI/UX, to full-stack
             development
             and DevOps. Whether it's WordPress or ASP.NET Core, Vue.js or Angular – I make tools work together for
             humans,
             not the other way around.
           </p>
-          <p class="text-gray-300 leading-relaxed">
+          <p class="text-sm sm:text-base text-gray-300 leading-relaxed">
             🔧 I'm currently deepening my expertise in Azure and AWS, preparing for the next leap into cloud-native
             development.
           </p>
@@ -38,12 +38,12 @@
     </section>
 
     <!-- Tech Stack Section -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800/30">
+    <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gray-800/30">
       <div class="max-w-6xl mx-auto">
-        <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12 text-center">
           <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Tech Stack</span>
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           <TechCard title="Languages & Frameworks"
             :items="['C# / .NET / ASP.NET Core / MVC', 'JavaScript / TypeScript', 'React / Vue / Angular / Next.js', 'Python (Django) / PHP (Laravel, WordPress)']"
             icon="Code" />
@@ -61,12 +61,12 @@
     </section>
 
     <!-- Experience Section -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8">
+    <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
       <div class="max-w-4xl mx-auto">
-        <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12 text-center">
           <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Experience</span>
         </h2>
-        <div class="space-y-8">
+        <div class="space-y-6 sm:space-y-8">
           <ExperienceCard company="Hameem Group" position="Software Support Engineer" period="Nov 2023 – Present"
             location="Dhaka, Bangladesh" :responsibilities="[
               'Maintained & improved enterprise ERP systems with .NET and SQL Server',
@@ -93,13 +93,13 @@
     </section>
 
     <!-- Projects Section -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800/30">
+    <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gray-800/30">
       <div class="max-w-6xl mx-auto">
-        <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12 text-center">
           <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Featured
             Projects</span>
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <ProjectCard v-for="project in projects" :key="project.url" :title="project.title" :url="project.url"
             :description="project.description" :category="project.category" />
         </div>
@@ -107,13 +107,13 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="contact" class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
       <div class="max-w-4xl mx-auto text-center">
-        <h2 class="text-3xl sm:text-4xl font-bold mb-8">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8">
           <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Let's Connect</span>
         </h2>
-        <p class="text-xl text-gray-300 mb-12">Feel free to reach out for collaborations or just a friendly hello!</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <p class="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-12">Feel free to reach out for collaborations or just a friendly hello!</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <ContactCard icon="Phone" label="Phone" value="+880 1581 500678" href="tel:+8801581500678" />
           <ContactCard icon="Mail" label="Email" value="rakibul.cse.47@gmail.com"
             href="mailto:rakibul.cse.47@gmail.com" />
