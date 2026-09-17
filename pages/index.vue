@@ -93,7 +93,7 @@
     </section>
 
     <!-- Projects Section -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800/30">
+    <section id="projects" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800/30">
       <div class="max-w-6xl mx-auto">
         <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center">
           <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Featured
