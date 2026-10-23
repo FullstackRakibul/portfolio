@@ -2,11 +2,13 @@
   <div class="min-h-screen bg-gray-900 text-gray-100">
     <Navigation />
     <NuxtPage />
+    <SpeedInsights />
   </div>
 </template>
 
 <script setup>
 import { useHead } from '#app'
+import { SpeedInsights } from '@vercel/speed-insights/vue'
 
 useHead({
   title: 'Rakibul H. Rabbi - Full-Stack Developer',
