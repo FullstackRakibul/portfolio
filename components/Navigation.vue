@@ -1,117 +1,182 @@
 <template>
-  <nav :class="[
-    'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b',
-    isScrolled
-      ? 'bg-gray-900/95 backdrop-blur-md border-gray-800 shadow-lg shadow-blue-900/10 py-1'
-      : 'bg-gray-900/50 backdrop-blur-sm border-transparent py-2'
-  ]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-14 transition-all duration-300">
+  <header class="rail" :class="`rail--${variant}`">
+    <component :is="variant === 'rail' ? 'h1' : 'p'" class="name">
+      <NuxtLink to="/" @click="toTop">Rakibul H. Rabbi</NuxtLink>
+    </component>
 
-        <NuxtLink to="/" class="group text-xl font-bold tracking-tight relative overflow-hidden">
-          <span
-            class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent transition-all duration-300 group-hover:opacity-80">
-            Rakibul H. Rabbi
-          </span>
-          <span
-            class="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-400 to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-        </NuxtLink>
+    <nav class="links" aria-label="Sections">
+      <NuxtLink
+        v-for="s in linkSections"
+        :key="s.id"
+        :to="{ path: '/', hash: '#' + s.id }"
+        :aria-current="active === s.id ? 'true' : undefined"
+        @click="go($event, s.id)"
+      >
+        {{ s.label }}
+      </NuxtLink>
+    </nav>
 
-        <div class="hidden md:flex items-center space-x-8">
-          <NuxtLink to="/" class="desktop-link">Home</NuxtLink>
-          <NuxtLink to="/onTheWayToBeCreative" class="desktop-link" title="On The Way To Be Creative">OTWTBC</NuxtLink>
-          <a href="#contact" class="desktop-link">Contact</a>
-
-          <div class="flex items-center space-x-3 border-l border-gray-700 pl-6 ml-2">
-            <a href="https://github.com/FullstackRakibul" target="_blank"
-              class="p-2 rounded-lg bg-gray-800/50 text-gray-400 hover:bg-gray-700 hover:text-blue-400 hover:-translate-y-1 transition-all duration-300 group">
-              <Github class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-            </a>
-            <a href="https://www.linkedin.com/in/fullstackrakibul" target="_blank"
-              class="p-2 rounded-lg bg-gray-800/50 text-gray-400 hover:bg-gray-700 hover:text-blue-400 hover:-translate-y-1 transition-all duration-300 group">
-              <Linkedin class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-            </a>
-            <NuxtLink to="/resume" title="Resume"
-              class="p-2 rounded-lg bg-gray-800/50 text-gray-400 hover:bg-gray-700 hover:text-blue-400 hover:-translate-y-1 transition-all duration-300 group">
-              <Newspaper class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-            </NuxtLink>
-          </div>
-        </div>
-
-        <button @click="toggleMobile"
-          class="md:hidden p-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-blue-400 transition-colors focus:outline-none">
-          <Menu v-if="!mobileOpen" class="w-5 h-5 animate-in fade-in zoom-in duration-200" />
-          <X v-else class="w-5 h-5 animate-in fade-in zoom-in duration-200" />
-        </button>
-      </div>
-
-      <transition name="mobile-menu">
-        <div v-if="mobileOpen" class="md:hidden overflow-hidden border-t border-gray-800 mt-2">
-          <div class="flex flex-col space-y-1 py-4">
-            <NuxtLink to="/" class="mobile-link" @click="mobileOpen = false">Home</NuxtLink>
-            <NuxtLink to="/onTheWayToBeCreative" class="mobile-link" @click="mobileOpen = false">Creative</NuxtLink>
-            <a href="#contact" class="mobile-link" @click="mobileOpen = false">Contact</a>
-
-            <div class="h-px bg-gray-800 my-2"></div>
-
-            <a href="https://github.com/FullstackRakibul" target="_blank" class="mobile-link flex items-center gap-3">
-              <Github class="w-5 h-5 text-gray-400" />
-              <span>GitHub</span>
-            </a>
-            <a href="https://www.linkedin.com/in/fullstackrakibul" target="_blank"
-              class="mobile-link flex items-center gap-3">
-              <Linkedin class="w-5 h-5 text-gray-400" />
-              <span>LinkedIn</span>
-            </a>
-            <NuxtLink to="/resume" class="mobile-link flex items-center gap-3" @click="mobileOpen = false">
-              <Newspaper class="w-5 h-5 text-gray-400" />
-              <span>Resume</span>
-            </NuxtLink>
-          </div>
-        </div>
-      </transition>
+    <div class="tools">
+      <button
+        v-if="variant === 'rail'"
+        type="button"
+        class="icon"
+        :aria-label="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+        @click="toggle"
+      >
+        <Sun v-if="theme === 'dark'" :size="18" aria-hidden="true" />
+        <Moon v-else :size="18" aria-hidden="true" />
+      </button>
+      <button type="button" class="icon palette-key" aria-label="Open command palette (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K" @click="openPalette">
+        <Command :size="17" aria-hidden="true" />
+      </button>
+      <button type="button" class="menu" aria-haspopup="dialog" @click="openPalette">Menu</button>
+      <NuxtLink class="lab-button contact" :to="{ path: '/', hash: '#contact' }" @click="go($event, 'contact')">Contact</NuxtLink>
     </div>
-  </nav>
+  </header>
 </template>
 
-<script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import { Menu, X, Github, Linkedin, Newspaper } from 'lucide-vue-next'
+<script setup lang="ts">
+import { Sun, Moon, Command } from 'lucide-vue-next'
+import { SECTIONS } from '~/data/portfolio'
 
-const mobileOpen = ref(false)
-const isScrolled = ref(false)
+const props = withDefaults(defineProps<{ variant?: 'rail' | 'bar' }>(), { variant: 'bar' })
 
-const toggleMobile = () => {
-  mobileOpen.value = !mobileOpen.value
+const route = useRoute()
+const { theme, toggle } = useTheme()
+const palette = useState('lab-palette', () => false)
+const openPalette = () => { palette.value = true }
+
+const linkSections = SECTIONS.filter(s => s.id !== 'contact')
+const active = ref('')
+
+const go = (e: MouseEvent, id: string) => {
+  if (route.path !== '/') return
+  const el = document.getElementById(id)
+  if (!el) return
+  e.preventDefault()
+  el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+  history.replaceState(history.state, '', '#' + id)
 }
 
-// Handle scroll effect
-const handleScroll = () => {
-  isScrolled.value = window.scrollY > 20
+const toTop = (e: MouseEvent) => {
+  if (route.path !== '/') return
+  e.preventDefault()
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+let io: IntersectionObserver | null = null
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+  if (props.variant !== 'rail') return
+  io = new IntersectionObserver((entries) => {
+    for (const entry of entries) if (entry.isIntersecting) active.value = entry.target.id
+  }, { rootMargin: '-45% 0px -50% 0px' })
+  for (const s of SECTIONS) {
+    const el = document.getElementById(s.id)
+    if (el) io.observe(el)
+  }
 })
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
+onBeforeUnmount(() => io?.disconnect())
 </script>
 
 <style scoped>
-/* Vue Transition for Mobile Menu */
-.mobile-menu-enter-active,
-.mobile-menu-leave-active {
-  transition: all 0.3s ease-in-out;
-  max-height: 400px;
-  opacity: 1;
+.rail {
+  z-index: 40;
+  height: var(--rail-h);
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 0 var(--margin);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-text);
+  transition: background-color 400ms ease, color 400ms ease;
 }
 
-.mobile-menu-enter-from,
-.mobile-menu-leave-to {
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-10px);
+/* On the homepage the rail crosses the middle of the first screen and docks at the top. */
+.rail--rail {
+  position: sticky;
+  top: 0;
+  margin-top: calc(-50svh - var(--rail-h) / 2);
+}
+.rail--bar {
+  position: fixed;
+  inset: 0 0 auto;
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--step-head);
+  letter-spacing: -0.035em;
+  line-height: 1;
+  white-space: nowrap;
+  padding-top: 0.12em;
+}
+.name a { text-decoration: none; color: inherit; }
+
+.links {
+  display: flex;
+  gap: 26px;
+  margin-left: auto;
+  font-size: 16px;
+}
+.links a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 0;
+  transition: color var(--dur-hover) ease;
+}
+.links a:hover,
+.links a[aria-current] { color: var(--ink); }
+.links a[aria-current] {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 8px;
+  text-decoration-color: var(--accent);
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon,
+.menu {
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color var(--dur-hover) ease, transform var(--dur-press) var(--ease-out);
+}
+.icon:hover,
+.menu:hover { background: var(--surface-2); }
+.icon:active,
+.menu:active { transform: scale(0.94); }
+
+.menu {
+  display: none;
+  padding: 0 12px;
+  font: 600 16px var(--font-text);
+}
+
+.contact { margin-left: 10px; min-height: 40px; }
+
+@media (max-width: 1180px) {
+  .links, .palette-key { display: none; }
+  .menu { display: inline-grid; }
+  .tools { margin-left: auto; }
+}
+
+@media (max-width: 640px) {
+  .rail { gap: 12px; }
+  .contact { display: none; }
+  .name { font-size: 28px; }
 }
 </style>

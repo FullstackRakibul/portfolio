@@ -1,30 +1,23 @@
 <template>
-  <div class="min-h-screen bg-gray-900 text-gray-100">
-    <Navigation />
+  <NuxtPage v-if="isHome" />
+  <!-- The older pages keep their dark styling; the shared bar takes the laboratory's tokens. -->
+  <div v-else data-theme="dark" class="legacy min-h-svh bg-gray-900 text-gray-100">
+    <Navigation variant="bar" />
     <NuxtPage />
+    <LabCommandPalette />
   </div>
 </template>
 
-<script setup>
-import { useHead } from '#app'
+<script setup lang="ts">
+const route = useRoute()
+const isHome = computed(() => route.path === '/')
 
 useHead({
-  title: 'Rakibul H. Rabbi - Full-Stack Developer',
-  meta: [
-    { name: 'description', content: 'Full-Stack Software Developer specializing in .NET, React, Vue, and enterprise applications.' }
-  ],
-  link: [
-    { rel: 'icon', type: 'text', href: 'R' }
-  ]
+  titleTemplate: t => t ?? 'Rakibul H. Rabbi',
+  link: [{ rel: 'icon', href: '/favicon.ico' }],
 })
 </script>
 
 <style>
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
+.legacy { font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
 </style>

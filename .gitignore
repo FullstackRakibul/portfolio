@@ -22,3 +22,6 @@ logs
 .env
 .env.*
 !.env.example
+
+# Taste Skill working files (screenshots, reports)
+.taste-skill/
