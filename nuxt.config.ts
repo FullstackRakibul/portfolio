@@ -19,8 +19,8 @@ export default defineNuxtConfig({
       viewport: "width=device-width, initial-scale=1",
       htmlAttrs: { lang: "en" },
       meta: [
-        { name: "theme-color", content: "#151412", media: "(prefers-color-scheme: dark)" },
-        { name: "theme-color", content: "#ebeae5", media: "(prefers-color-scheme: light)" },
+        { name: "theme-color", content: "#17181a", media: "(prefers-color-scheme: dark)" },
+        { name: "theme-color", content: "#f3f2ef", media: "(prefers-color-scheme: light)" },
       ],
       script: [{ innerHTML: themeBoot, tagPosition: "head" }],
       link: [

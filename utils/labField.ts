@@ -1,8 +1,9 @@
 /**
  * The hero instrument: the portrait drawn in characters inside a dipole field.
- * Pole A is fixed in the upper left and radiates rings; pole B follows the pointer
- * (or rests above the portrait). Characters near the pointer bend away, and a lens
- * around it re-renders the face at twice the resolution.
+ * Pole A sits beside the portrait and radiates rings; pole B follows the pointer
+ * (or rests above the head). Characters near the pointer bend away, and a lens
+ * around it re-renders the face at twice the resolution. The field fades out behind
+ * the text it is given, so it never runs under the words.
  */
 
 const RAMP = ' .,:;i1tfLCG08@'
@@ -16,10 +17,14 @@ export interface LabFieldOptions {
   canvas: HTMLCanvasElement
   stage: HTMLElement
   portrait: HTMLImageElement
+  /** text the field must stay clear of */
+  quiet?: HTMLElement[]
   onReady?: (characters: number) => void
 }
 
-export function createLabField({ canvas, stage, portrait, onReady }: LabFieldOptions) {
+interface Zone { side: 'left' | 'top' | 'bottom'; edge: number; fade: number }
+
+export function createLabField({ canvas, stage, portrait, quiet = [], onReady }: LabFieldOptions) {
   const ctx = canvas.getContext('2d', { alpha: true })
   if (!ctx) return { destroy() {} }
 
@@ -39,6 +44,8 @@ export function createLabField({ canvas, stage, portrait, onReady }: LabFieldOpt
   let offX = new Float32Array(0), offY = new Float32Array(0)
   let glyph = new Uint8Array(0)
   let vig = new Float32Array(0)       // bust vignette, so the shoulders dissolve into the field
+  let edge = new Float32Array(0)      // tone change per cell: draws eyes, brows and outline on dark grounds
+  let zones: Zone[] = []
 
   let poleA: Pt = { x: 0, y: 0 }
   let rest: Pt = { x: 0, y: 0 }
@@ -49,7 +56,7 @@ export function createLabField({ canvas, stage, portrait, onReady }: LabFieldOpt
   let lines: { pts: Float32Array; n: number }[] = []
   const pulses = Array.from({ length: 3 }, (_, i) => ({ line: i * 7, t: Math.random(), speed: 0.12 + Math.random() * 0.1 }))
 
-  let ink = '236 230 218', signal = '#86b9ea', dark = true
+  let ink = '220 222 223', signal = '#9dbad6', dark = true
   let raf = 0, visible = true, lastFrame = 0, touchTimer = 0
   const frameMs = coarse ? 1000 / 20 : 1000 / 30
   const start = performance.now()
@@ -78,7 +85,19 @@ export function createLabField({ canvas, stage, portrait, onReady }: LabFieldOpt
     ch = Math.round(fontPx * 1.12)
     cols = Math.max(8, Math.floor(box.w / cw))
     rows = Math.max(8, Math.floor(box.h / ch))
-    poleA = compact ? { x: w * 0.14, y: h * 0.12 } : { x: Math.max(box.x * 0.34, w * 0.12), y: h * 0.26 }
+    poleA = { x: box.x + box.w * (compact ? 0.88 : 0.94), y: box.y + box.h * (compact ? 0.84 : 0.8) }
+    zones = []
+    if (compact) {
+      for (const el of quiet) {
+        const q = el.getBoundingClientRect()
+        const mid = (q.top + q.bottom) / 2 - s.top
+        if (mid < box.y) zones.push({ side: 'top', edge: q.bottom - s.top + 6, fade: 22 })
+        else if (mid > box.y + box.h / 2) zones.push({ side: 'bottom', edge: q.top - s.top - 6, fade: 22 })
+      }
+    } else if (quiet.length) {
+      const right = Math.max(...quiet.map(el => el.getBoundingClientRect().right)) - s.left
+      zones.push({ side: 'left', edge: right + 40, fade: 72 })
+    }
     rest = { x: box.x + box.w * 0.5, y: Math.max(12, box.y + box.h * 0.02) }
     if (!pointer) { poleB = { ...rest }; target = { ...rest } }
     sample()
@@ -141,6 +160,24 @@ export function createLabField({ canvas, stage, portrait, onReady }: LabFieldOpt
     }
     norm = sharp
 
+    // Edges: on a dark ground the dark hair and beard vanish, so the features are drawn by their outlines.
+    edge = new Float32Array(n)
+    const mags: number[] = []
+    const at = (x: number, y: number, i: number) => {
+      const j = y * cols + x
+      return x >= 0 && y >= 0 && x < cols && y < rows && mask[j] ? norm[j] : norm[i]
+    }
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      const i = y * cols + x
+      if (!mask[i]) continue
+      const gx = at(x + 1, y, i) - at(x - 1, y, i), gy = at(x, y + 1, i) - at(x, y - 1, i)
+      edge[i] = Math.hypot(gx, gy)
+      mags.push(edge[i])
+    }
+    mags.sort((p, q) => p - q)
+    const top = mags[Math.floor(mags.length * 0.94)] || 1
+    for (let i = 0; i < n; i++) edge[i] = Math.min(1, edge[i] / top)
+
     off.width = cols * 2; off.height = rows * 2
     octx.drawImage(portrait, 0, 0, cols * 2, rows * 2)
     fine = new Float32Array(n * 4); fineMask = new Uint8Array(n * 4)
@@ -184,11 +221,11 @@ export function createLabField({ canvas, stage, portrait, onReady }: LabFieldOpt
     c.lineWidth = 1
     for (let k = 0; k < 5; k++) {
       const r = still ? (k + 1) * maxR / 6 : ((t * 22 + k * maxR / 5) % maxR)
-      const a = 0.14 * (1 - r / maxR)
+      const a = 0.12 * (1 - r / maxR)
       c.strokeStyle = `rgb(${ink} / ${a.toFixed(3)})`
       c.beginPath(); c.arc(poleA.x, poleA.y, r, 0, Math.PI * 2); c.stroke()
     }
-    c.strokeStyle = `rgb(${ink} / 0.13)`
+    c.strokeStyle = `rgb(${ink} / 0.16)`
     c.beginPath()
     for (const l of lines) {
       if (l.n < 2) continue
@@ -220,6 +257,26 @@ export function createLabField({ canvas, stage, portrait, onReady }: LabFieldOpt
     }
   }
 
+  // Wipe the field from behind the text with a soft edge; the portrait is drawn afterwards.
+  function clearQuiet() {
+    const c = ctx!
+    c.save()
+    c.globalCompositeOperation = 'destination-out'
+    for (const z of zones) {
+      const g = z.side === 'left'
+        ? c.createLinearGradient(z.edge - z.fade, 0, z.edge + z.fade, 0)
+        : c.createLinearGradient(0, z.edge - z.fade, 0, z.edge + z.fade)
+      const solidFirst = z.side !== 'bottom'
+      g.addColorStop(0, `rgba(0,0,0,${solidFirst ? 1 : 0})`)
+      g.addColorStop(1, `rgba(0,0,0,${solidFirst ? 0 : 1})`)
+      c.fillStyle = g
+      if (z.side === 'left') c.fillRect(0, 0, z.edge + z.fade, h)
+      else if (z.side === 'top') c.fillRect(0, 0, w, z.edge + z.fade)
+      else c.fillRect(0, z.edge - z.fade, w, h)
+    }
+    c.restore()
+  }
+
   function drawPortrait(t: number, still: boolean) {
     const c = ctx!
     const n = cols * rows
@@ -233,7 +290,7 @@ export function createLabField({ canvas, stage, portrait, onReady }: LabFieldOpt
       bucket[i] = 255
       if (!mask[i]) continue
       const x = i % cols, y = (i / cols) | 0
-      let v = dark ? norm[i] ** 1.25 : 1 - norm[i]
+      let v = dark ? Math.min(1, 0.55 * norm[i] ** 1.2 + 0.75 * edge[i] ** 0.9) : 1 - norm[i]
       v = Math.max(0.1, v)
       if (!still) v *= 0.9 + 0.1 * Math.sin(t * 1.4 + phase[i])
       const scan = Math.exp(-((y - scanRow) ** 2) / 5)
@@ -304,6 +361,7 @@ export function createLabField({ canvas, stage, portrait, onReady }: LabFieldOpt
     ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx!.clearRect(0, 0, w, h)
     drawField(t, still)
+    clearQuiet()
     drawPortrait(t, still)
   }
 
@@ -335,6 +393,7 @@ export function createLabField({ canvas, stage, portrait, onReady }: LabFieldOpt
     touchTimer = window.setTimeout(onLeave, 2400)
   }
   const onResize = () => { measure(); kick() }
+  const onFonts = () => { if (cols) onResize() }
   const onTheme = () => { readColours(); kick() }
   const onVisibility = () => { visible = !document.hidden; kick() }
 
@@ -352,6 +411,7 @@ export function createLabField({ canvas, stage, portrait, onReady }: LabFieldOpt
     window.addEventListener('lab-theme', onTheme)
     document.addEventListener('visibilitychange', onVisibility)
     reduce.addEventListener('change', kick)
+    document.fonts?.ready.then(onFonts)
     kick()
   }
 

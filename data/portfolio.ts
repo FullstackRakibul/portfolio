@@ -3,6 +3,8 @@
 export interface Fact { label: string; value: string }
 export interface Role { company: string; position: string; period: string; start: string }
 export interface CapabilityGroup { id: string; name: string; note: string; items: string[] }
+/** A real stack: tools that work together in one piece of work, drawn as a connected path. */
+export interface CapabilityPath { id: string; label: string; note: string; items: string[] }
 export type ModuleStatus = 'building' | 'planned'
 export interface LabModule {
   id: string
@@ -23,7 +25,9 @@ export interface Project {
   category: ProjectCategory
   stack?: string[]
   image?: string
+  featured?: boolean
 }
+export type DiagramKind = 'local' | 'context' | 'gateway' | 'tracking' | 'template'
 export interface Experiment {
   id: string
   title: string
@@ -32,7 +36,9 @@ export interface Experiment {
   technology: string[]
   findings: string
   related: string[]
-  image: { src: string; alt: string; width: number; height: number; caption: string; video?: string }
+  /** drawn in code by components/lab/Diagram.vue */
+  diagram: DiagramKind
+  caption: string
 }
 export interface Article { title: string; url: string; date: string }
 
@@ -43,6 +49,8 @@ export const CONTACT = {
   website: 'https://rabbitic.com',
   medium: 'https://medium.com/@rakibul.h.rabbi',
 }
+
+export const LOCATION = { city: 'Dhaka, Bangladesh', lat: '23.8103° N', lon: '90.4125° E', timeZone: 'Asia/Dhaka' }
 
 export const FACTS: Fact[] = [
   { label: 'Based in', value: 'Dhaka, Bangladesh' },
@@ -97,6 +105,25 @@ export const CAPABILITIES: CapabilityGroup[] = [
   },
 ]
 
+// Paths through the toolkit, from the work itself: confirm before launch.
+export const CAPABILITY_PATHS: CapabilityPath[] = [
+  {
+    id: 'mostisko', label: 'Mostisko',
+    note: 'The local AI workspace: a Vue client over .NET services, SQL Server for state, Ollama for the models.',
+    items: ['Vue.js', '.NET 8', 'Microsoft SQL Server', 'Ollama', 'LLM context engineering', 'Agentic workflows'],
+  },
+  {
+    id: 'enterprise', label: 'Enterprise systems',
+    note: 'ERP and HRM work at Ha-Meem Group: C# services on IIS, SQL Server underneath, tuned queries for reporting.',
+    items: ['ASP.NET MVC', 'C#', 'ASP.NET Core', 'Microsoft SQL Server', 'Query optimization', 'IIS'],
+  },
+  {
+    id: 'tooling', label: 'Developer tools',
+    note: 'Calcifer and Rookie: the API foundation and the scaffolding that stop the same work being done twice.',
+    items: ['C#', 'ASP.NET Core', 'REST API architecture', 'Git'],
+  },
+]
+
 // Status per module: confirm before launch.
 export const MOSTISKO_MODULES: LabModule[] = [
   {
@@ -140,15 +167,15 @@ export const PROJECT_FILTERS: { id: ProjectCategory | 'all'; label: string }[] =
 const W = '/assets/work/'
 export const PROJECTS: Project[] = [
   { title: 'Shobdo Bisharod', url: 'https://shobdo-bisharod21.vercel.app', description: 'Dynamic web application', category: 'applications', stack: ['Vue'], image: W + 'shobdo-bisharod.jpg' },
-  { title: 'Ha-Meem Group', url: 'https://ha-meemgroup.vercel.app/', description: 'Corporate portal for the group', category: 'applications', stack: ['Vue'], image: W + 'ha-meem-group.jpg' },
-  { title: 'Corporate Assistant', url: 'https://corporate-assistant-lac.vercel.app', description: 'HR, finance and career tools', category: 'applications', stack: ['Vue'], image: W + 'corporate-assistant.jpg' },
-  { title: 'Channel 24 CRM', url: 'https://panel-ch24.vercel.app/#/login', description: 'Billing and client management panel', category: 'applications', stack: ['Vue'], image: W + 'channel-24-crm.jpg' },
+  { title: 'Ha-Meem Group', url: 'https://ha-meemgroup.vercel.app/', description: 'Corporate portal for the group', category: 'applications', stack: ['Vue'], image: W + 'ha-meem-group.jpg', featured: true },
+  { title: 'Corporate Assistant', url: 'https://corporate-assistant-lac.vercel.app', description: 'HR, finance and career tools', category: 'applications', stack: ['Vue'], image: W + 'corporate-assistant.jpg', featured: true },
+  { title: 'Channel 24 CRM', url: 'https://panel-ch24.vercel.app/#/login', description: 'Billing and client management panel', category: 'applications', stack: ['Vue'], image: W + 'channel-24-crm.jpg', featured: true },
   { title: 'Weavo Go', url: 'https://weavo-go.vercel.app/', description: 'Dynamic web platform', category: 'applications', image: W + 'weavo-go.jpg' },
-  { title: 'Les Showdagar', url: 'https://les-showdagar.vercel.app/', description: 'Inventory and premium storefront', category: 'applications', stack: ['Vue'], image: W + 'les-showdagar.jpg' },
-  { title: '5 Lakhs Portal', url: 'https://5lakhs.vercel.app/login', description: 'Secure portal with authentication', category: 'applications', stack: ['Vue'], image: W + 'five-lakhs.jpg' },
+  { title: 'Les Showdagar', url: 'https://les-showdagar.vercel.app/', description: 'Inventory and premium storefront', category: 'applications', stack: ['Vue'], image: W + 'les-showdagar.jpg', featured: true },
+  { title: '5 Lakhs Portal', url: 'https://5lakhs.vercel.app/', description: 'Secure portal with authentication', category: 'applications', stack: ['Vue'], image: W + 'five-lakhs.jpg' },
   { title: 'Art Sign Symbols', url: 'https://artsignsymbols.vercel.app/', description: 'Design and graphics portal', category: 'applications', stack: ['Vue'] },
   { title: 'Rookie', description: '.NET scaffolding CLI', category: 'tools', stack: ['C#', '.NET'] },
-  { title: 'Calcifer', url: 'https://github.com/FullstackRakibul/calcifer.cathedra', description: 'Microservice API template: core, auth, RBAC', category: 'tools', stack: ['C#', '.NET'] },
+  { title: 'Calcifer', url: 'https://www.nuget.org/packages/Calcifer.Microservice.Api.Template', description: 'Microservice API template: core, auth, RBAC', category: 'tools', stack: ['C#', '.NET'] },
   { title: 'Global IT Solutions', url: 'https://globalitsolutions.com.bd/', description: 'Technology agency website', category: 'commerce', image: W + 'global-it-solutions.jpg' },
   { title: 'Taash Clothing', url: 'https://taashclothing.com/', description: 'Fashion and apparel store', category: 'commerce' },
   { title: 'Paakhi Home', url: 'https://paakhihome.com/', description: 'Home decor and furniture store', category: 'commerce', image: W + 'paakhi-home.jpg' },
@@ -162,8 +189,7 @@ export const PROJECTS: Project[] = [
   { title: 'Innovative BD', url: 'https://innovativebd.org/', description: 'Organisation and initiatives', category: 'commerce' },
 ]
 
-const L = '/assets/lab/'
-// Findings marked "sample" in the report: confirm before launch.
+// "Findings so far" are sample wording: confirm before launch.
 export const EXPERIMENTS: Experiment[] = [
   {
     id: 'ollama',
@@ -173,7 +199,8 @@ export const EXPERIMENTS: Experiment[] = [
     technology: ['Ollama', '.NET 8', 'Local LLMs'],
     findings: 'Temperature is a task setting, not a personality: near zero for extracting invoice fields, higher only when variation is the point.',
     related: ['Mostisko', 'Oddity'],
-    image: { src: L + 'tesla-coil-firing-poster.jpg', video: L + 'tesla-coil-firing.webm', alt: 'A homemade Tesla coil firing arcs in a workshop', width: 1920, height: 1080, caption: 'A 225 W Tesla coil firing. Film by Airarcs, CC BY-SA 3.0' },
+    diagram: 'local',
+    caption: 'Documents stay inside the company network; the model runs beside them.',
   },
   {
     id: 'context',
@@ -183,7 +210,8 @@ export const EXPERIMENTS: Experiment[] = [
     technology: ['Embeddings', 'SQL Server', 'Vue.js'],
     findings: 'Similarity search decides what the model sees; the quality of that selection matters more than model size.',
     related: ['ContextSource', 'Mostisko'],
-    image: { src: L + 'us-patent-1119732-nikola-tesla-1907-apparatus.png', alt: 'Patent drawing of Tesla\'s apparatus for transmitting electrical energy', width: 1415, height: 2237, caption: 'Apparatus for transmitting electrical energy, US patent 1,119,732' },
+    diagram: 'context',
+    caption: 'Similarity search picks three pages of twenty-four for a small model.',
   },
   {
     id: 'gateway',
@@ -193,7 +221,8 @@ export const EXPERIMENTS: Experiment[] = [
     technology: ['ASP.NET Core', 'RBAC', 'Ollama API'],
     findings: 'Matching an existing protocol is the cheapest integration there is: every client that speaks Ollama works on day one.',
     related: ['Oddity'],
-    image: { src: L + 'wardenclyffe-tower.webp', alt: 'Wardenclyffe Tower and its brick laboratory building on Long Island', width: 1280, height: 1135, caption: 'Wardenclyffe Tower, around 1902' },
+    diagram: 'gateway',
+    caption: 'Any Ollama client, through Oddity, to the local model.',
   },
   {
     id: 'efcore',
@@ -203,7 +232,8 @@ export const EXPERIMENTS: Experiment[] = [
     technology: ['ASP.NET Core', 'EF Core', 'SQL Server'],
     findings: 'Turning off change tracking for read-only queries removes work the screen never needed.',
     related: ['Ha-Meem ERP'],
-    image: { src: L + 'colorado-springs-lab.webp', alt: 'Exterior of Tesla\'s Colorado Springs laboratory with its tall mast', width: 900, height: 1206, caption: 'Colorado Springs laboratory exterior, 1899' },
+    diagram: 'tracking',
+    caption: 'The same query with and without change tracking.',
   },
   {
     id: 'tooling',
@@ -213,7 +243,8 @@ export const EXPERIMENTS: Experiment[] = [
     technology: ['C#', '.NET CLI', 'Clean Architecture'],
     findings: 'A template earns its keep the third time; Calcifer and Rookie exist because the same foundation kept coming back.',
     related: ['Calcifer', 'Rookie'],
-    image: { src: L + 'tesla-oscillators-1919.jpg', alt: 'A magazine page showing twelve variants of Tesla oscillators and transformers', width: 1106, height: 1505, caption: 'Tesla’s oscillators, Electrical Experimenter, July 1919' },
+    diagram: 'template',
+    caption: 'One template, stamped into each new service.',
   },
 ]
 

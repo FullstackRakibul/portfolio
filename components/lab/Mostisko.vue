@@ -1,7 +1,7 @@
 <template>
-  <section id="mostisko" v-reveal class="most" aria-labelledby="most-h">
-    <div class="intro">
-      <h2 id="most-h" class="lab-heading" data-reveal>Currently building: Mostisko</h2>
+  <section id="mostisko" v-reveal class="most lab-section lab-wrap" aria-labelledby="most-h">
+    <div class="lab-head">
+      <h2 id="most-h" data-reveal>Currently building: Mostisko</h2>
       <p data-reveal>
         RabbitIC (মস্তিষ্ক, “the brain”) is an extensible, locally hosted AI workspace that brings together
         conversation, context engineering, document intelligence, automation and enterprise workflows. The goal is a
@@ -26,10 +26,6 @@
             <p>{{ current.summary }}</p>
           </template>
         </div>
-        <p class="out">
-          <a class="lab-link" :href="MOSTISKO_URL" target="_blank" rel="noopener">Open Mostisko</a>
-          <a class="lab-link" :href="MOSTISKO_REPO" target="_blank" rel="noopener">Source on GitHub</a>
-        </p>
       </div>
 
       <div class="controls">
@@ -54,11 +50,32 @@
       </div>
     </div>
 
-    <p class="stack" data-reveal>Built with {{ MOSTISKO_STACK.join(', ') }}.</p>
+    <div class="after">
+      <figure class="shot" data-reveal>
+        <div class="crop">
+          <img
+            src="/assets/work/mostisko.jpg" width="800" height="600" loading="lazy" decoding="async"
+            alt="Mostisko’s sign-in screen: a username and a secret, with a note that the secret is hashed on the server"
+          >
+        </div>
+        <figcaption>The sign-in, live at mostisko.vercel.app.</figcaption>
+      </figure>
+      <div class="facts" data-reveal>
+        <h3>Built with</h3>
+        <ul>
+          <li v-for="t in MOSTISKO_STACK" :key="t">{{ t }}</li>
+        </ul>
+        <p class="out">
+          <a v-magnetic="4" class="lab-button" :href="MOSTISKO_URL" target="_blank" rel="noopener">Open Mostisko <ArrowUpRight :size="18" aria-hidden="true" /></a>
+          <a class="lab-link" :href="MOSTISKO_REPO" target="_blank" rel="noopener">Source on GitHub</a>
+        </p>
+      </div>
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import { ArrowUpRight } from 'lucide-vue-next'
 import { MOSTISKO_CORE, MOSTISKO_MODULES, MOSTISKO_REPO, MOSTISKO_STACK, MOSTISKO_URL } from '~/data/portfolio'
 
 const selected = ref('oddity')
@@ -112,33 +129,27 @@ onBeforeUnmount(() => { cancelAnimationFrame(raf); clearTimeout(timer) })
 </script>
 
 <style scoped>
-.most { padding: var(--section-gap) var(--margin) 0 var(--line); }
-.intro, .panel, .stack { max-width: 1040px; }
-.intro { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: start; margin-bottom: 48px; }
-.intro p { max-width: 60ch; }
-
 .panel {
   display: grid;
-  grid-template-columns: minmax(0, 62fr) minmax(0, 38fr);
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
   background: var(--surface);
 }
-.demo { padding: 28px 28px 24px; display: grid; gap: 20px; align-content: start; }
-.readout { min-height: 112px; font-size: 16px; max-width: 58ch; }
+.demo { padding: var(--s-6) var(--s-6) var(--s-5); display: grid; gap: var(--s-5); align-content: start; }
+.readout { min-height: 112px; font-size: 16px; max-width: 64ch; }
 .readout p + p { margin-top: 6px; }
 .r-name { font-weight: 600; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
 .r-name span:not(.status) { color: var(--muted); font-weight: 400; }
 .status { font-size: var(--step-small); font-weight: 600; color: var(--accent); }
 .status.planned { color: var(--muted); }
-.out { display: flex; gap: 24px; font-size: 16px; }
 
-.controls { background: var(--surface-2); padding: 12px 0; display: grid; align-content: start; }
+.controls { background: var(--surface-2); padding: var(--s-3) 0; display: grid; align-content: start; }
 fieldset { border: 0; margin: 0; padding: 0; }
 .row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 44px;
+  min-height: 46px;
   padding: 0 22px;
   font-size: 16px;
   cursor: pointer;
@@ -148,30 +159,49 @@ fieldset { border: 0; margin: 0; padding: 0; }
 .row:hover { background: color-mix(in srgb, var(--surface-2) 70%, var(--ink) 6%); }
 .row input[type="radio"] { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
 .row:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
-.row.on::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--accent); }
+.row::before { content: ''; position: absolute; inset: 8px auto 8px 0; width: 3px; background: var(--accent); transform: scaleY(0); transition: transform var(--dur-hover) var(--ease-out); }
+.row.on::before { transform: none; }
 .row.on .r-label { font-weight: 600; }
 .r-value { color: var(--muted); font-size: var(--step-small); }
 
 .switch input { position: absolute; opacity: 0; width: 40px; height: 22px; right: 22px; margin: 0; cursor: pointer; }
 .track { width: 40px; height: 22px; border-radius: 11px; background: var(--bg); position: relative; transition: background-color var(--dur-hover) ease; }
-.track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--muted); transition: transform var(--dur-hover) var(--ease-out), background-color var(--dur-hover) ease; }
-.switch input:checked + .track { background: var(--accent); }
-.switch input:checked + .track::after { transform: translateX(18px); background: var(--accent-ink); }
+.track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--muted); transition: transform var(--dur-hover) var(--ease-spring), background-color var(--dur-hover) ease; }
+.switch input:checked + .track { background: var(--ink); }
+.switch input:checked + .track::after { transform: translateX(18px); background: var(--bg); }
 .switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .action { margin-top: 12px; cursor: default; }
 .action:hover { background: none; }
+.action::before { display: none; }
 .action .lab-button { width: 100%; }
 .action .lab-button:disabled { cursor: progress; opacity: 0.8; }
 
-.stack { margin-top: 20px; font-size: 16px; color: var(--muted); }
+.after {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap);
+  margin-top: var(--s-7);
+  align-items: end;
+}
+.shot { grid-column: 1 / span 6; margin: 0; }
+.crop { overflow: hidden; aspect-ratio: 4 / 3; background: #fff; }
+.crop img { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(1.7); transition: transform 900ms var(--ease-out); }
+.shot:hover .crop img { transform: scale(1.6); }
+.shot figcaption { margin-top: var(--s-3); font-size: var(--step-small); color: var(--muted); }
+.facts { grid-column: 8 / -1; }
+.facts h3 { font: 600 var(--step-body) / 1.3 var(--font-text); letter-spacing: 0; }
+.facts ul { display: flex; flex-wrap: wrap; gap: var(--s-2); list-style: none; margin: var(--s-4) 0 0; padding: 0; }
+.facts li { padding: 6px 12px; background: var(--surface); font-size: var(--step-small); }
+.out { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-6); margin-top: var(--s-6); font-size: 16px; }
 
-@media (max-width: 860px) {
-  .intro { grid-template-columns: 1fr; gap: 20px; }
+@media (max-width: 899px) {
   .panel { grid-template-columns: 1fr; }
-  .demo { padding: 20px 16px; }
+  .demo { padding: var(--s-5) var(--s-4); }
   .row { min-height: 52px; padding: 0 16px; }
   .switch input { right: 16px; }
   .action { padding-bottom: 8px; }
+  .after { grid-template-columns: 1fr; row-gap: var(--s-7); }
+  .shot, .facts { grid-column: 1; }
 }
 </style>

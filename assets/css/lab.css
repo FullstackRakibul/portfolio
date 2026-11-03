@@ -1,30 +1,33 @@
-/* Tesla Free Architecture: tokens and base for the laboratory pages.
-   Direction: "The quiet instrument" (tasteskill seed 896219522), palette kept from the brief. */
+/* Tokens and base for the homepage interface.
+   Direction: "The quiet instrument" (tasteskill seed 896219522): monochrome grounds and inks,
+   one restrained steel accent for active states and signals. */
 
 :root,
 [data-theme="dark"] {
-  --bg: #151412;
-  --surface: #1e1d1a;
-  --surface-2: #282622;
-  --ink: #e6e2da;
-  --muted: #a9a297;
-  --accent: #c39a6b;
-  --accent-ink: #151412;
-  --signal: #86b9ea;
-  --field: 230 226 218;
+  --bg: #17181a;
+  --surface: #1e2022;
+  --surface-2: #27292c;
+  --ink: #dcdedf;
+  --muted: #9a9ea3;
+  --accent: #9dbad6;
+  --accent-ink: #17181a;
+  --signal: #9dbad6;
+  --field: 220 222 223;
+  --header-bg: rgb(23 24 26 / 0.78);
   color-scheme: dark;
 }
 
 [data-theme="light"] {
-  --bg: #ebeae5;
-  --surface: #f6f5f1;
-  --surface-2: #dedcd5;
-  --ink: #1e1d1b;
-  --muted: #5b5751;
-  --accent: #85612f;
-  --accent-ink: #f6f5f1;
-  --signal: #2c6aa8;
-  --field: 30 29 27;
+  --bg: #f3f2ef;
+  --surface: #fbfaf8;
+  --surface-2: #e7e5e1;
+  --ink: #2a2b2d;
+  --muted: #64666a;
+  --accent: #3a6286;
+  --accent-ink: #fbfaf8;
+  --signal: #3a6286;
+  --field: 42 43 45;
+  --header-bg: rgb(243 242 239 / 0.8);
   color-scheme: light;
 }
 
@@ -32,24 +35,42 @@
   --font-display: "League Spartan", "Figtree", system-ui, sans-serif;
   --font-text: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
-  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
-  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
-  --step-head: clamp(2rem, 1.45rem + 1.9vw, 2.75rem);
+  /* Five sizes do the visible work. */
+  --step-small: 0.875rem;
+  --step-body: clamp(1.0625rem, 1rem + 0.2vw, 1.1875rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+  --step-head: clamp(2.25rem, 1.6rem + 2.2vw, 3.5rem);
+  --step-display: clamp(3.5rem, 1.5rem + 8vw, 9.5rem);
 
-  --margin: clamp(20px, 2.2vw, 32px);
-  --line: max(var(--margin), calc(22vw - 80px));
-  --section-gap: clamp(112px, 12vw, 200px);
-  --rail-h: 64px;
+  /* One spacing scale. */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* One frame: equal outer margins, one maximum width, one 12-column grid. */
+  --margin: clamp(20px, 3.2vw, 48px);
+  --max: 1360px;
+  --gap: clamp(16px, 2vw, 32px);
+  --section-gap: clamp(112px, 11vw, 176px);
+  --header-h: 72px;
+  --header-h-tight: 58px;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   --dur-press: 140ms;
-  --dur-hover: 180ms;
+  --dur-hover: 200ms;
+  --dur-move: 520ms;
 }
 
 html {
   background: var(--bg);
-  scroll-padding-top: calc(var(--rail-h) + 24px);
+  scroll-padding-top: calc(var(--header-h-tight) + 24px);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -61,7 +82,7 @@ html {
   color: var(--ink);
   font-family: var(--font-text);
   font-size: var(--step-body);
-  line-height: 1.5;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -72,7 +93,7 @@ html {
   font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 0.95;
+  line-height: 0.98;
   margin: 0;
 }
 
@@ -86,11 +107,41 @@ html {
   outline-offset: 3px;
 }
 
+/* The frame every section shares. */
+.lab-wrap {
+  width: min(var(--max), 100% - 2 * var(--margin));
+  margin-inline: auto;
+}
+.lab-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap);
+}
+.lab-section { padding-top: var(--section-gap); }
+
+/* Section opening: the heading on the left half, what the section holds on the right. */
+.lab-head {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap);
+  row-gap: var(--s-5);
+  align-items: end;
+  margin-bottom: var(--s-8);
+}
+.lab-head > h2 { grid-column: 1 / span 6; font-size: var(--step-head); text-wrap: balance; max-width: 16ch; }
+.lab-head > p { grid-column: 8 / -1; max-width: 52ch; }
+@media (max-width: 899px) {
+  .lab-head { grid-template-columns: 1fr; margin-bottom: var(--s-7); }
+  .lab-head > h2,
+  .lab-head > p { grid-column: 1; }
+}
+
 .lab-heading {
   font-size: var(--step-head);
   text-wrap: balance;
 }
 
+.lab-meta { font-size: var(--step-small); color: var(--muted); }
 .lab-num { font-variant-numeric: tabular-nums; }
 
 /* One button shape for the whole page: square, flat, one fill. */
@@ -103,25 +154,27 @@ html {
   padding: 0 22px;
   border: 0;
   border-radius: 0;
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--ink);
+  color: var(--bg);
   font: 600 16px / 1 var(--font-text);
   text-decoration: none;
   cursor: pointer;
   transition: transform var(--dur-press) var(--ease-out), background-color var(--dur-hover) ease;
 }
-.lab-button:hover { background: color-mix(in srgb, var(--accent) 86%, var(--ink)); }
+.lab-button:hover { background: var(--accent); color: var(--accent-ink); }
 .lab-button:active { transform: scale(0.97); }
+.lab-button svg { transition: transform var(--dur-hover) var(--ease-out); }
+.lab-button:hover svg { transform: translateX(3px); }
 
 .lab-link {
   color: var(--ink);
   text-decoration: underline;
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.25em;
-  text-decoration-color: color-mix(in srgb, var(--ink) 40%, transparent);
+  text-underline-offset: 0.28em;
+  text-decoration-color: color-mix(in srgb, var(--ink) 35%, transparent);
   transition: text-decoration-color var(--dur-hover) ease, color var(--dur-hover) ease;
 }
-.lab-link:hover { text-decoration-color: var(--accent); }
+.lab-link:hover { color: var(--accent); text-decoration-color: currentColor; }
 
 .sr-only {
   position: absolute;
@@ -135,7 +188,9 @@ html {
   border: 0;
 }
 
-/* Entrances: only hidden once the script has marked the page, so nothing stays hidden without it. */
+/* Entrances: only hidden once the script has marked the page, so nothing stays hidden without it.
+   States are attributes, so components that bind :class cannot wipe them. data-rest keeps content
+   far from the viewport visible; see plugins/lab-directives.ts. */
 @media (prefers-reduced-motion: no-preference) {
   html.js [data-reveal] {
     opacity: 0;
@@ -144,10 +199,12 @@ html {
       opacity 640ms var(--ease-out) calc(var(--i, 0) * 75ms),
       transform 760ms var(--ease-out) calc(var(--i, 0) * 75ms);
   }
-  html.js [data-reveal].is-in {
+  html.js [data-reveal][data-in],
+  html.js [data-reveal][data-rest] {
     opacity: 1;
     transform: none;
   }
+  html.js [data-reveal][data-rest] { transition: none; }
 }
 
 /* Theme change cross-fade (View Transitions where supported). */

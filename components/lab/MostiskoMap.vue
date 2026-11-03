@@ -1,5 +1,5 @@
 <template>
-  <svg class="map" viewBox="0 0 600 440" role="img" :aria-label="label">
+  <svg ref="svg" class="map" viewBox="0 0 600 440" role="img" :aria-label="label">
     <g class="edges">
       <line
         v-for="e in edges" :key="e.key"
@@ -19,6 +19,15 @@
       <text v-if="n.sub" class="sub" y="13">{{ n.sub }}</text>
     </g>
 
+    <!-- Ambient signals travel the implemented connections, inward to the model. -->
+    <g v-if="!pulse" class="ambient">
+      <circle v-for="(e, i) in liveEdges" :key="e.key" r="3.5">
+        <animateMotion
+          :path="'M' + e.a.x + ' ' + e.a.y + 'L' + e.b.x + ' ' + e.b.y" :dur="2.6 + (i % 3) * 0.7 + 's'"
+          :begin="-i * 0.45 + 's'" repeatCount="indefinite"
+        />
+      </circle>
+    </g>
     <circle v-if="pulse" class="pulse" :cx="pulse.x" :cy="pulse.y" r="6" />
   </svg>
 </template>
@@ -56,6 +65,10 @@ const edges = computed(() => {
   for (const m of props.modules) for (const l of m.links) add(m.id, l, m.status === 'planned')
   return out
 })
+
+const svg = ref<SVGSVGElement | null>(null)
+useSvgMotion(svg)
+const liveEdges = computed(() => edges.value.filter(e => !e.planned))
 
 const label = computed(() =>
   'System map of Mostisko: ' + props.modules.map(m => `${m.latin ?? m.name} (${m.status})`).join(', ') + ', around a local Ollama model.')
@@ -96,4 +109,6 @@ const label = computed(() =>
 .node.core text.sub { fill: var(--bg); opacity: 0.8; }
 
 .pulse { fill: var(--signal); }
+.ambient circle { fill: var(--signal); opacity: 0.85; }
+@media (prefers-reduced-motion: reduce) { .ambient { display: none; } }
 </style>

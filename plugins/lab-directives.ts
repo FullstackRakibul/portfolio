@@ -1,7 +1,7 @@
 import type { Directive } from 'vue'
 
 /**
- * v-reveal: marks the element's [data-reveal] descendants (or itself) as entered once it
+ * v-reveal: gives the element's [data-reveal] descendants (or itself) an entrance as each
  * scrolls into view. Children stagger by their --i index.
  *
  * v-magnetic: the element leans a few pixels toward the pointer (fine pointers only).
@@ -15,26 +15,41 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
   const reduce = matchMedia('(prefers-reduced-motion: reduce)')
 
-  const io = 'IntersectionObserver' in window
-    ? new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue
-        const el = entry.target as HTMLElement
-        const targets = el.hasAttribute('data-reveal') ? [el] : Array.from(el.querySelectorAll<HTMLElement>('[data-reveal]'))
-        targets.forEach(t => t.classList.add('is-in'))
-        io?.unobserve(el)
-      }
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0 })
-    : null
+  // An element waits hidden only while it is within two screens of the viewport. Further away it
+  // rests visible (data-rest), and once entered or scrolled past it stays shown (data-in), so a jump
+  // down the page never leaves content waiting for an entrance that will not come.
+  const pending = new Set<HTMLElement>()
+  let raf = 0
+  const check = () => {
+    raf = 0
+    const vh = innerHeight
+    for (const el of pending) {
+      const r = el.getBoundingClientRect()
+      if (r.top < vh * 0.92) {
+        el.setAttribute('data-in', '')
+        pending.delete(el)
+      } else if (r.top > vh * 2) el.setAttribute('data-rest', '')
+      else el.removeAttribute('data-rest')
+    }
+  }
+  const schedule = () => { if (!raf && pending.size) raf = requestAnimationFrame(check) }
+  addEventListener('scroll', schedule, { passive: true })
+  addEventListener('resize', schedule, { passive: true })
 
   const reveal: Directive<HTMLElement> = {
     mounted(el) {
       const targets = el.hasAttribute('data-reveal') ? [el] : Array.from(el.querySelectorAll<HTMLElement>('[data-reveal]'))
-      targets.forEach((t, i) => { if (!t.style.getPropertyValue('--i')) t.style.setProperty('--i', String(i % 8)) })
-      if (!io) { targets.forEach(t => t.classList.add('is-in')); return }
-      io.observe(el)
+      targets.forEach((t, i) => {
+        if (!t.style.getPropertyValue('--i')) t.style.setProperty('--i', String(i % 8))
+        pending.add(t)
+      })
+      // One frame in the hidden state first, so what is already on screen still makes its entrance.
+      requestAnimationFrame(schedule)
     },
-    unmounted(el) { io?.unobserve(el) },
+    unmounted(el) {
+      const targets = el.hasAttribute('data-reveal') ? [el] : Array.from(el.querySelectorAll<HTMLElement>('[data-reveal]'))
+      targets.forEach(t => pending.delete(t))
+    },
   }
 
   type MagEl = HTMLElement & { _mag?: { move: (e: PointerEvent) => void; leave: () => void } }

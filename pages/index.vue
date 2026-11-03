@@ -1,15 +1,17 @@
 <template>
   <div class="lab">
     <a class="skip" href="#about">Skip to content</a>
+    <Navigation variant="home" />
     <LabHero />
-    <Navigation variant="rail" />
-    <LabPlate />
     <main>
       <LabAbout />
+      <LabExperience />
+      <LabWave />
       <LabEngineering />
       <LabMostisko />
       <LabProjects />
       <LabExperiments />
+      <LabWave />
       <LabWriting />
       <LabContact />
     </main>
@@ -39,8 +41,8 @@ useSeoMeta({
   top: 12px;
   z-index: 60;
   padding: 10px 16px;
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--ink);
+  color: var(--bg);
   transform: translateY(-200%);
 }
 .skip:focus { transform: none; }

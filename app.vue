@@ -1,8 +1,8 @@
 <template>
   <NuxtPage v-if="isHome" />
-  <!-- The older pages keep their dark styling; the shared bar takes the laboratory's tokens. -->
+  <!-- The older pages keep their dark styling; the shared header takes the homepage tokens. -->
   <div v-else data-theme="dark" class="legacy min-h-svh bg-gray-900 text-gray-100">
-    <Navigation variant="bar" />
+    <Navigation variant="page" />
     <NuxtPage />
     <LabCommandPalette />
   </div>
