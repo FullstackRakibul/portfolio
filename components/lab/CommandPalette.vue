@@ -52,7 +52,7 @@ const router = useRouter()
 const route = useRoute()
 const { theme, toggle } = useTheme()
 
-const goSection = (id: string) => router.push({ path: '/', hash: '#' + id })
+const goSection = (id: string) => (route.path === '/' + id ? scrollToSection(id) : router.push('/' + id))
 const external = (url: string) => window.open(url, '_blank', 'noopener')
 
 const items = computed<Item[]>(() => [
@@ -60,7 +60,7 @@ const items = computed<Item[]>(() => [
   { id: 'resume', label: 'Résumé', hint: 'Page', action: () => router.push('/resume') },
   { id: 'notes', label: 'On the way to be creative', hint: 'Notes', action: () => router.push('/onTheWayToBeCreative') },
   { id: 'bookshelf', label: 'Bookshelf', hint: 'Page', action: () => router.push('/bookshelf') },
-  ...(route.path === '/' ? [{ id: 'theme', label: theme.value === 'dark' ? 'Switch to light theme' : 'Switch to dark theme', hint: 'Action', action: toggle }] : []),
+  ...(route.meta.home ? [{ id: 'theme', label: theme.value === 'dark' ? 'Switch to light theme' : 'Switch to dark theme', hint: 'Action', action: toggle }] : []),
   {
     id: 'copy', label: copied.value ? 'Email address copied' : 'Copy email address', hint: CONTACT.email,
     action: () => { navigator.clipboard?.writeText(CONTACT.email); copied.value = true },

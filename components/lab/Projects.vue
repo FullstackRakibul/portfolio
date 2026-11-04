@@ -32,6 +32,7 @@
           <component
             :is="p.url ? 'a' : 'div'" class="row" :href="p.url"
             :target="p.url ? '_blank' : undefined" :rel="p.url ? 'noopener' : undefined"
+            :data-cursor-label="p.url ? 'Open ↗' : undefined"
           >
             <span class="r-title">{{ p.title }}<span v-if="p.url" class="sr-only"> (opens in a new tab)</span></span>
             <span class="r-desc">{{ p.description }}<template v-if="p.stack">, {{ p.stack.join(' / ') }}</template></span>

@@ -29,7 +29,7 @@
         <li v-for="(c, i) in channels" :key="c.label" @pointerenter="touch(i)" @pointerleave="lit = -1" @focusin="touch(i)" @focusout="lit = -1">
           <span :ref="el => (nodes[i] = el as HTMLElement)" class="node" :class="{ lit: lit === i }" aria-hidden="true" />
           <span class="label">{{ c.label }}</span>
-          <a class="lab-link" :href="c.href" :target="c.external ? '_blank' : undefined" :rel="c.external ? 'noopener' : undefined">{{ c.text }}</a>
+          <a class="lab-link" :href="c.href" :target="c.external ? '_blank' : undefined" :rel="c.external ? 'noopener' : undefined" :data-cursor-label="c.external ? 'Open ↗' : undefined">{{ c.text }}</a>
         </li>
       </ul>
     </div>

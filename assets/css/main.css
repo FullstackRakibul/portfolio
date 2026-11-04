@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./lab.css";
+@import "./scrollbar.css";
 
 @layer base {
   body {

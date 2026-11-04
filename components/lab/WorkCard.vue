@@ -2,6 +2,7 @@
   <article class="wc lab-card" :class="{ wide: wide || project.featured, featured: project.featured }">
     <a
       class="media" :href="project.url" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"
+      data-cursor-label="View project"
     >
       <img
         v-if="project.image" :src="project.image" :alt="''" width="1120" height="700"
@@ -12,7 +13,7 @@
     <div class="body">
       <div class="title-row">
         <h3 :class="{ mono: project.featured }">
-          <a :href="project.url" target="_blank" rel="noopener">
+          <a :href="project.url" target="_blank" rel="noopener" data-cursor-label="View project">
             {{ project.title }}<span class="sr-only"> (opens in a new tab)</span>
           </a>
         </h3>
@@ -27,7 +28,7 @@
       <p v-if="project.translation" class="trans">{{ project.translation }}</p>
 
       <template v-if="project.featured">
-        <a v-magnetic="3" class="lab-button lab-button--block open" :href="project.url" target="_blank" rel="noopener">
+        <a v-magnetic="3" class="lab-button lab-button--block open" :href="project.url" target="_blank" rel="noopener" data-cursor-label="View project">
           Open {{ project.title }} <ArrowUpRight :size="18" aria-hidden="true" />
           <span class="sr-only"> (opens in a new tab)</span>
         </a>

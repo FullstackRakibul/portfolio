@@ -66,8 +66,8 @@
           <li v-for="t in MOSTISKO_STACK" :key="t">{{ t }}</li>
         </ul>
         <p class="out">
-          <a v-magnetic="4" class="lab-button" :href="MOSTISKO_URL" target="_blank" rel="noopener">Open Mostisko <ArrowUpRight :size="18" aria-hidden="true" /></a>
-          <a class="lab-link" :href="MOSTISKO_REPO" target="_blank" rel="noopener">Source on GitHub</a>
+          <a v-magnetic="4" class="lab-button" :href="MOSTISKO_URL" target="_blank" rel="noopener" data-cursor-label="Open ↗">Open Mostisko <ArrowUpRight :size="18" aria-hidden="true" /></a>
+          <a class="lab-link" :href="MOSTISKO_REPO" target="_blank" rel="noopener" data-cursor-label="Open ↗">Source on GitHub</a>
         </p>
       </div>
     </div>

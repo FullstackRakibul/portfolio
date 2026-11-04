@@ -11,9 +11,9 @@
       <div class="line lab-card-foot">
         <p>Dhaka, Bangladesh</p>
         <nav aria-label="Elsewhere" class="links">
-          <a :href="CONTACT.github" target="_blank" rel="noopener">GitHub</a>
-          <a :href="CONTACT.linkedin" target="_blank" rel="noopener">LinkedIn</a>
-          <a :href="CONTACT.medium" target="_blank" rel="noopener">Medium</a>
+          <a :href="CONTACT.github" target="_blank" rel="noopener" data-cursor-label="Open ↗">GitHub</a>
+          <a :href="CONTACT.linkedin" target="_blank" rel="noopener" data-cursor-label="Open ↗">LinkedIn</a>
+          <a :href="CONTACT.medium" target="_blank" rel="noopener" data-cursor-label="Open ↗">Medium</a>
           <NuxtLink to="/resume">Résumé</NuxtLink>
         </nav>
         <p class="end"><span class="lab-mono">© {{ year }} rabbitic</span><span class="lab-badge">Production</span></p>
@@ -84,7 +84,10 @@ onBeforeUnmount(() => ro?.disconnect())
 </script>
 
 <style scoped>
-.foot { padding: clamp(96px, 10vw, 160px) 0 28px; overflow: hidden; }
+/* Bottom room for the fixed corner controls (contact pill 52px + 12px + back-to-top 48px, from 24px / 16px),
+   so they never sit on the footer's last line. */
+.foot { padding: clamp(96px, 10vw, 160px) 0 152px; overflow: hidden; }
+@media (max-width: 639px) { .foot { padding-bottom: 140px; } }
 .field { display: block; width: 100%; height: auto; overflow: visible; }
 .field path { fill: none; stroke: rgb(var(--field)); stroke-width: 1.25; }
 .field path:nth-child(5) { stroke: var(--accent); }

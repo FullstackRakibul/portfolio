@@ -25,8 +25,8 @@
           Building scalable systems, engineering intelligent tools, and exploring the boundaries of technology.
         </p>
         <div class="actions" data-reveal>
-          <a v-magnetic="5" class="lab-button" href="#contact">Start a conversation <ArrowRight :size="18" aria-hidden="true" /></a>
-          <a class="lab-link" href="#projects">See the work</a>
+          <a v-magnetic="5" class="lab-button" href="#contact" data-floating-contact-hide>Start a conversation <ArrowRight :size="18" aria-hidden="true" /></a>
+          <a class="lab-link" href="#projects" data-cursor-label="Let’s see">See the work</a>
         </div>
       </div>
 
@@ -75,7 +75,7 @@ onBeforeUnmount(() => field?.destroy())
   --field: 220 222 223;
   --signal: #9dbad6;
 }
-:global([data-theme="light"]) .stage {
+[data-theme="light"] .stage {
   --field: 42 43 45;
   --signal: #3a6286;
 }

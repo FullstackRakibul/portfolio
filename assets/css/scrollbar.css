@@ -1,0 +1,35 @@
+/* The page's own scrollbar, in the site's colours: thin, a transparent track, a slate pill that turns
+   mint under the pointer. Chromium and Safari read ::-webkit-scrollbar; Firefox reads scrollbar-color.
+   (Chrome ignores ::-webkit-scrollbar on an element once scrollbar-color is set, so that is kept for
+   browsers without it.) */
+
+:root,
+[data-theme="dark"] {
+  --sb-thumb: #3d5459;
+  --sb-thumb-active: #5eead4;
+}
+[data-theme="light"] {
+  --sb-thumb: #8a9fa3;
+  --sb-thumb-active: #0e8177;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  html { scrollbar-width: thin; scrollbar-color: var(--sb-thumb) transparent; }
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: var(--sb-thumb);
+  border: 1px solid transparent; /* taste-skill-ignore: transparent inset that slims the thumb, not a visible line */
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active { background-color: var(--sb-thumb-active); }
+
+/* When the custom scroll rail runs (desktop, fine pointer, motion allowed) it replaces the page's
+   scrollbar, so there are never two. The class is set by components/ScrollRail.vue. */
+html.rail-on { scrollbar-width: none; }
+html.rail-on::-webkit-scrollbar { display: none; }

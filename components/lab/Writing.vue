@@ -13,14 +13,14 @@
         <h3>On Medium</h3>
         <ul>
           <li v-for="a in articles" :key="a.url">
-            <a :href="a.url" target="_blank" rel="noopener">
+            <a :href="a.url" target="_blank" rel="noopener" data-cursor-label="Open ↗">
               <time class="lab-num" :datetime="a.date">{{ short(a.date) }}</time>
               <span class="t">{{ a.title }}</span>
               <ArrowUpRight class="go" :size="18" aria-hidden="true" />
             </a>
           </li>
         </ul>
-        <p class="more"><a class="lab-link" :href="CONTACT.medium" target="_blank" rel="noopener">Everything on Medium</a></p>
+        <p class="more"><a class="lab-link" :href="CONTACT.medium" target="_blank" rel="noopener" data-cursor-label="Open ↗">Everything on Medium</a></p>
       </div>
       <div class="col side" data-reveal>
         <h3>On this site</h3>
@@ -42,7 +42,12 @@
 import { ArrowUpRight } from 'lucide-vue-next'
 import { ARTICLES, CONTACT } from '~/data/portfolio'
 
-const { data } = await useFetch('/api/writing', { default: () => ({ source: 'saved' as const, articles: ARTICLES }) })
+// The list is rendered into index.html at build time; reuse it when coming back to the home page
+// (a static host has no /api/writing to ask again).
+const { data } = await useFetch('/api/writing', {
+  default: () => ({ source: 'saved' as const, articles: ARTICLES }),
+  getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
+})
 const articles = computed(() => data.value.articles.slice(0, 10))
 const posts = useBlog().getAllPosts().slice(0, 6)
 

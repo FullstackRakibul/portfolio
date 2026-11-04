@@ -6,11 +6,17 @@
     <NuxtPage />
     <LabCommandPalette />
   </div>
+  <!-- Site-wide layers: they follow the theme toggle and add nothing to the layout. -->
+  <CustomCursor />
+  <ScrollRail />
+  <BackToTop />
+  <FloatingContact />
 </template>
 
 <script setup lang="ts">
 const route = useRoute()
-const isHome = computed(() => route.path === '/')
+// The home page answers at / and at each section's address (/#/projects).
+const isHome = computed(() => !!route.meta.home)
 
 useHead({
   titleTemplate: t => t ?? 'Rakibul H. Rabbi',

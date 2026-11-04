@@ -7,7 +7,7 @@
 
     <ul class="grid">
       <li v-for="c in CERTIFICATIONS" :key="c.credentialId" data-reveal>
-        <article class="cert lab-card">
+        <article class="cert lab-card" :data-cursor-label="c.url ? 'Verify' : undefined">
           <div class="top">
             <span class="mark" aria-hidden="true">A\</span>
             <span class="issuer lab-mono">{{ c.issuer }}</span>

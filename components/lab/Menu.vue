@@ -18,7 +18,7 @@
       <a
         v-for="(s, i) in sections"
         :key="s.id"
-        :href="'/#' + s.id"
+        :href="'/#/' + s.id"
         :style="{ '--i': i }"
         :aria-current="active === s.id ? 'location' : undefined"
         @click.prevent="pick(s.id)"
@@ -31,11 +31,11 @@
     <div class="foot lab-wrap" :style="{ '--i': sections.length }">
       <ul>
         <li><a :href="`mailto:${CONTACT.email}`">{{ CONTACT.email }}</a></li>
-        <li><a :href="CONTACT.github" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a :href="CONTACT.linkedin" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a :href="CONTACT.github" target="_blank" rel="noopener" data-cursor-label="Open ↗">GitHub</a></li>
+        <li><a :href="CONTACT.linkedin" target="_blank" rel="noopener" data-cursor-label="Open ↗">LinkedIn</a></li>
         <li><NuxtLink to="/resume" @click="close()">Résumé</NuxtLink></li>
       </ul>
-      <a class="lab-button" href="/#contact" @click.prevent="pick('contact')">Let’s talk</a>
+      <a class="lab-button" href="/#/contact" @click.prevent="pick('contact')">Let’s talk</a>
     </div>
   </dialog>
 </template>

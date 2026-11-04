@@ -17,7 +17,7 @@
           v-for="s in linkSections"
           :key="s.id"
           :ref="el => setLink(s.id, el)"
-          :to="{ path: '/', hash: '#' + s.id }"
+          :to="'/' + s.id"
           :aria-current="active === s.id ? 'location' : undefined"
           @pointerenter="hoverId = s.id"
           @focus="hoverId = s.id"
@@ -48,7 +48,7 @@
         <button type="button" class="icon palette-key" aria-label="Open command palette (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K" @click="palette = true">
           <Command :size="17" aria-hidden="true" />
         </button>
-        <NuxtLink v-magnetic="4" class="lab-button talk" :to="{ path: '/', hash: '#contact' }" @click="go($event, 'contact')">
+        <NuxtLink v-magnetic="4" class="lab-button talk" to="/contact" @click="go($event, 'contact')">
           Let’s talk
         </NuxtLink>
         <button type="button" class="burger" aria-haspopup="dialog" :aria-expanded="menu" aria-controls="site-menu" @click="menu = true">
@@ -100,25 +100,18 @@ const indicator = computed(() => {
   return { opacity: 1, width: el.offsetWidth + 'px', transform: `translateX(${el.offsetLeft}px)` }
 })
 
-const smooth = () => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth') as ScrollBehavior
-
+// Sections have their own address (/#/projects); the router scrolls to them (app/router.options.ts).
+// Asking again for the section already in the address scrolls back to it.
 const go = (e: MouseEvent | null, id: string) => {
-  if (route.path !== '/') {
-    if (!e) router.push({ path: '/', hash: '#' + id })
-    return
-  }
-  const el = document.getElementById(id)
-  if (!el) return
-  e?.preventDefault()
-  el.scrollIntoView({ behavior: smooth() })
-  history.replaceState(history.state, '', '#' + id)
+  const path = '/' + id
+  if (route.path === path) { e?.preventDefault(); scrollToSection(id); return }
+  if (!e) router.push(path)
 }
 
 const toTop = (e: MouseEvent) => {
   if (route.path !== '/') return
   e.preventDefault()
-  window.scrollTo({ top: 0, behavior: smooth() })
-  history.replaceState(history.state, '', '/')
+  scrollToSection('')
 }
 
 /* Scroll state: tighter bar after the first pixels, the name once the hero's own name has gone. */
