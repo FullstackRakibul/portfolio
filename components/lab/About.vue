@@ -4,7 +4,7 @@
       <figure ref="figure" class="figure" data-reveal>
         <div class="frame" data-ui>
           <img
-            src="/assets/img/rakibul-hasan-passport-image.jpg" width="472" height="591"
+            src="/assets/img/rakibul-h-hasan-office.jpg" width="472" height="591"
             alt="Rakibul H. Rabbi, photographed against a plain background" loading="lazy" decoding="async"
           >
           <span class="scan" :class="{ run: inView }" aria-hidden="true" />
