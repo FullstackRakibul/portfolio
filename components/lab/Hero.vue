@@ -4,7 +4,8 @@
 
     <div class="copy lab-wrap">
       <h1 ref="title" class="name">
-        <span>Rakibul H.</span> <span>Rabbi</span>
+        <!-- <span>Rakibul H.</span> <span>Rabbi</span> -->
+        <HeroNameParticles :lines="['Rakibul H.', 'Rabbi']" :density="3" :radius="110" />
       </h1>
 
       <img
@@ -40,6 +41,7 @@
 <script setup lang="ts">
 import { ArrowRight } from 'lucide-vue-next'
 import { createLabField } from '~/utils/labField'
+import HeroNameParticles from '../HeroNameParticles.vue'
 
 const stage = ref<HTMLElement | null>(null)
 const canvas = ref<HTMLCanvasElement | null>(null)
