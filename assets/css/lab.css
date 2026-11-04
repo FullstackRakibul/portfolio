@@ -95,6 +95,8 @@
   --step-lead: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
   --step-head: clamp(2.25rem, 1.6rem + 2.2vw, 3.5rem);
   --step-display: clamp(3.5rem, 1.5rem + 8vw, 9.5rem);
+  /* Page titles: one step below the home hero's name. */
+  --step-page: clamp(2.75rem, 1.2rem + 5vw, 6.25rem);
 
   /* One spacing scale. */
   --s-1: 4px;
@@ -343,4 +345,43 @@ html {
 ::view-transition-new(root) {
   animation-duration: 420ms;
   animation-timing-function: var(--ease-out);
+}
+
+/* A card that is one link: the whole card answers the pointer and the keyboard. Pair with .lab-card and
+   put .lab-stretch on the card's main link. */
+.lab-card-link {
+  position: relative;
+  transition: transform var(--dur-move) var(--ease-out), box-shadow var(--dur-move) var(--ease-out), border-color var(--dur-hover) ease;
+}
+.lab-card-link:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); border-color: color-mix(in srgb, var(--mint) 55%, transparent); } /* taste-skill-ignore: PIPILIKA card lifts on hover (brand) */
+.lab-card-link:has(.lab-stretch:focus-visible) { outline: 2px solid var(--mint); outline-offset: 3px; }
+.lab-stretch { color: inherit; text-decoration: none; }
+.lab-stretch:focus-visible { outline: none; }
+.lab-stretch::after { content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
+/* Secondary links inside a stretched card sit above the stretch. */
+.lab-card-link .lab-above { position: relative; z-index: 2; }
+@media (prefers-reduced-motion: reduce) {
+  .lab-card-link { transition: border-color var(--dur-hover) ease; }
+  .lab-card-link:hover { transform: none; }
+}
+
+/* "← Back" links on detail pages. */
+.lab-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--mint);
+  font: 500 12px / 1 var(--font-mono); /* taste-skill-ignore: PIPILIKA sets labels in mono (brand) */
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.lab-back:hover { text-decoration: underline; text-underline-offset: 0.35em; }
+
+/* Printing any page: the screen chrome stays on screen. */
+@media print {
+  .hdr, .fc, .btt, .rail, .cc, .lab::before { display: none !important; }
+  /* Paper has no scroll: every entrance prints finished. */
+  [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
 }

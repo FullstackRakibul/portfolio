@@ -1,155 +1,113 @@
 <template>
-  <div
-    class="pt-20 min-h-screen overflow-y-scroll bg-gray-100 py-10 px-4 sm:px-6 lg:px-8 print:py-0 print:px-0 print:bg-white text-gray-900 font-sans">
-    <!-- Download button (unchanged) -->
-    <div class="max-w-4xl fixed right-10 bottom-10 mx-auto flex justify-end mb-6 print:hidden">
-      <button @click="downloadPDF" :disabled="isDownloading"
-        class="flex items-center gap-2 bg-[#1C2333] hover:bg-secondary/80 text-white p-2 rounded-full font-medium transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed">
-        <Download v-if="!isDownloading" class="w-5 h-5" />
-        <Loader2 v-else class="w-5 h-5 animate-spin" />
+  <div class="resume">
+    <LabPageHeader eyebrow="Résumé" :title="resumeData.name" :intro="resumeData.title">
+      <button type="button" class="lab-button no-print" :disabled="isDownloading" @click="downloadPDF">
+        <Download v-if="!isDownloading" :size="18" aria-hidden="true" />
+        <Loader2 v-else class="spin" :size="18" aria-hidden="true" />
+        Download PDF
       </button>
-    </div>
+    </LabPageHeader>
 
-    <main id="resume-document"
-      class="max-w-4xl mx-auto bg-white p-12 sm:p-16 shadow-xl print:shadow-none print:p-0 print:m-0">
-      <header class="border-b-2 border-gray-800 pb-6 mb-8">
-        <!-- Top row: name/title + photo -->
-        <div class="flex flex-row justify-between items-start gap-4 mb-4">
-          <div>
-            <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 tracking-tight uppercase">
-              {{ resumeData.name }}
-            </h1>
-            <h2 class="text-sm text-gray-700 font-semibold uppercase tracking-wider">
-              {{ resumeData.title }}
-            </h2>
-          </div>
-          <!-- Professional headshot -->
-          <img src="../public/assets/img/rakibul-hasan-passport-image.jpg" alt="Rakibul Hasan Rabbi"
-            class="w-20 h-20 sm:w-20 sm:h-20 rounded-full border-2 border-gray-300 shadow-sm " />
+    <div id="resume-document" v-reveal class="doc lab-wrap">
+      <!-- Who and how to reach -->
+      <aside class="side" aria-label="Contact">
+        <div class="card lab-card id-card" data-reveal>
+          <img
+            src="/assets/img/rakibul-hasan-passport-image.jpg" alt="Rakibul Hasan Rabbi" class="photo"
+            width="96" height="96" loading="lazy" decoding="async"
+          >
+          <ul class="contact">
+            <li>
+              <Mail :size="16" aria-hidden="true" />
+              <a :href="`mailto:${resumeData.email}`">{{ resumeData.email }}</a>
+            </li>
+            <li>
+              <Phone :size="16" aria-hidden="true" />
+              <a :href="`tel:${resumeData.phone.replace(/\s/g, '')}`">{{ resumeData.phone }}</a>
+            </li>
+            <li>
+              <MapPin :size="16" aria-hidden="true" />
+              <span>{{ resumeData.location }}</span>
+            </li>
+            <li>
+              <Github :size="16" aria-hidden="true" />
+              <a :href="`https://github.com/${resumeData.github}`" target="_blank" rel="noopener" data-cursor-label="Open ↗">github.com/{{ resumeData.github }}</a>
+            </li>
+            <li>
+              <Linkedin :size="16" aria-hidden="true" />
+              <a :href="`https://linkedin.com/in/${resumeData.linkedin}`" target="_blank" rel="noopener" data-cursor-label="Open ↗">linkedin.com/in/{{ resumeData.linkedin }}</a>
+            </li>
+          </ul>
         </div>
+      </aside>
 
-        <!-- Contact details row (unchanged) -->
+      <div class="main">
+        <!-- Professional Summary -->
+        <section class="card lab-card sec break-inside-avoid" aria-labelledby="r-summary" data-reveal>
+          <h2 id="r-summary" class="sec-h lab-mono">Professional Summary</h2>
+          <p class="summary">{{ resumeData.summary }}</p>
+        </section>
 
-        <div class="flex flex-wrap gap-y-2 gap-x-6 text-sm text-gray-600">
-          <div class="flex items-center gap-1.5">
-            <Mail class="w-4 h-4 text-gray-500" />
-            <a :href="`mailto:${resumeData.email}`" class="hover:text-blue-600">{{ resumeData.email }}</a>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <Phone class="w-4 h-4 text-gray-500" />
-            <a :href="`tel:${resumeData.phone.replace(/\s/g, '')}`" class="hover:text-blue-600">{{ resumeData.phone
-            }}</a>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <MapPin class="w-4 h-4 text-gray-500" />
-            <span>{{ resumeData.location }}</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <Github class="w-4 h-4 text-gray-500" />
-            <a :href="`https://github.com/${resumeData.github}`" target="_blank"
-              class="hover:text-blue-600">github.com/{{ resumeData.github }}</a>
-          </div>
-          <!-- New LinkedIn link -->
-          <div class="flex items-center gap-1.5">
-            <Linkedin class="w-4 h-4 text-gray-500" />
-            <a :href="`https://linkedin.com/in/${resumeData.linkedin}`" target="_blank"
-              class="hover:text-blue-600">linkedin.com/in/{{ resumeData.linkedin }}</a>
-          </div>
-        </div>
-      </header>
+        <!-- Technical Skills -->
+        <section class="card lab-card sec break-inside-avoid" aria-labelledby="r-skills" data-reveal>
+          <h2 id="r-skills" class="sec-h lab-mono">Technical Skills</h2>
+          <dl class="skills">
+            <div><dt>Languages:</dt><dd>{{ resumeData.skills.languages }}</dd></div>
+            <div><dt>Frameworks:</dt><dd>{{ resumeData.skills.frameworks }}</dd></div>
+            <div><dt>Databases:</dt><dd>{{ resumeData.skills.databases }}</dd></div>
+            <div><dt>Tools &amp; Cloud:</dt><dd>{{ resumeData.skills.tools }}</dd></div>
+          </dl>
+        </section>
 
-      <!-- Professional Summary -->
-      <section class="mb-8 print:mb-6">
-        <h3 class="text-lg font-bold text-gray-900 border-b border-gray-300 mb-3 uppercase tracking-wider pb-1">
-          Professional Summary</h3>
-        <p class="text-gray-700 leading-relaxed text-sm sm:text-base">
-          {{ resumeData.summary }}
-        </p>
-      </section>
-
-      <!-- Technical Skills -->
-      <section class="mb-8 print:mb-6">
-        <h3 class="text-lg font-bold text-gray-900 border-b border-gray-300 mb-3 uppercase tracking-wider pb-1">
-          Technical Skills</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-sm text-gray-700">
-          <div class="font-semibold text-gray-900 sm:col-span-1">Languages:</div>
-          <div class="sm:col-span-3">{{ resumeData.skills.languages }}</div>
-
-          <div class="font-semibold text-gray-900 sm:col-span-1">Frameworks:</div>
-          <div class="sm:col-span-3">{{ resumeData.skills.frameworks }}</div>
-
-          <div class="font-semibold text-gray-900 sm:col-span-1">Databases:</div>
-          <div class="sm:col-span-3">{{ resumeData.skills.databases }}</div>
-
-          <div class="font-semibold text-gray-900 sm:col-span-1">Tools & Cloud:</div>
-          <div class="sm:col-span-3">{{ resumeData.skills.tools }}</div>
-        </div>
-      </section>
-
-      <!-- Professional Experience -->
-      <section class="mb-8 print:mb-6">
-        <h3 class="text-lg font-bold text-gray-900 border-b border-gray-300 mb-4 uppercase tracking-wider pb-1">
-          Professional Experience</h3>
-        <div class="space-y-6">
-          <div v-for="(job, index) in resumeData.experience" :key="index" class="break-inside-avoid">
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-2">
+        <!-- Professional Experience -->
+        <section class="sec" aria-labelledby="r-exp">
+          <h2 id="r-exp" class="sec-h lab-mono out" data-reveal>Professional Experience</h2>
+          <article v-for="(job, index) in resumeData.experience" :key="index" class="card lab-card job break-inside-avoid" data-reveal>
+            <div class="job-head">
               <div>
-                <h4 class="text-base font-bold text-gray-900">{{ job.position }}</h4>
-                <div class="text-sm font-semibold text-gray-700">{{ job.company }} • <span class="font-normal">{{
-                  job.location }}</span></div>
+                <h3 class="job-t">{{ job.position }}</h3>
+                <p class="job-co">{{ job.company }} · <span>{{ job.location }}</span></p>
               </div>
-              <div class="text-sm text-gray-600 font-medium mt-1 sm:mt-0 italic whitespace-nowrap">
-                {{ job.period }}
-              </div>
+              <span class="lab-pill">{{ job.period }}</span>
             </div>
-            <ul class="list-disc list-outside ml-5 text-sm text-gray-700 space-y-1.5 leading-relaxed">
-              <li v-for="(task, tIndex) in job.responsibilities" :key="tIndex" class="pl-1">
-                {{ task }}
-              </li>
+            <ul class="tasks">
+              <li v-for="(task, tIndex) in job.responsibilities" :key="tIndex">{{ task }}</li>
             </ul>
-          </div>
-        </div>
-      </section>
+          </article>
+        </section>
 
-      <!-- Education -->
-      <section class="mb-8 print:mb-6 break-inside-avoid">
-        <h3 class="text-lg font-bold text-gray-900 border-b border-gray-300 mb-4 uppercase tracking-wider pb-1">
-          Education</h3>
-        <div v-for="(edu, index) in resumeData.education" :key="index" class="mb-4 last:mb-0">
-          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1">
-            <h4 class="text-base font-bold text-gray-900">{{ edu.degree }}</h4>
-            <div class="text-sm text-gray-600 font-medium italic whitespace-nowrap">{{ edu.period }}</div>
-          </div>
-          <div class="text-sm text-gray-700">{{ edu.institution }}</div>
-        </div>
-      </section>
-
-      <!-- Notable Projects (Key Projects) -->
-      <section class="mb-8 print:mb-0 break-inside-avoid">
-        <h3 class="text-lg font-bold text-gray-900 border-b border-gray-300 mb-4 uppercase tracking-wider pb-1">
-          Key Projects</h3>
-        <div class="space-y-4">
-          <div v-for="(project, index) in resumeData.projects" :key="index">
-            <div class="flex items-baseline gap-2 mb-1">
-              <h4 class="text-base font-bold text-gray-900">{{ project.name }}</h4>
-              <span class="text-gray-400 text-sm">|</span>
-              <span class="text-sm text-gray-600 italic">{{ project.technologies }}</span>
+        <!-- Education -->
+        <section class="card lab-card sec break-inside-avoid" aria-labelledby="r-edu" data-reveal>
+          <h2 id="r-edu" class="sec-h lab-mono">Education</h2>
+          <div v-for="(edu, index) in resumeData.education" :key="index" class="edu">
+            <div class="job-head">
+              <h3 class="job-t">{{ edu.degree }}</h3>
+              <span class="lab-pill">{{ edu.period }}</span>
             </div>
-            <p class="text-sm text-gray-700 leading-relaxed">{{ project.description }}</p>
-            <a v-if="project.url" :href="project.url" target="_blank"
-              class="text-xs text-blue-600 hover:underline inline-block mt-1">
-              {{ project.url }}
-            </a>
+            <p class="job-co">{{ edu.institution }}</p>
           </div>
-        </div>
-      </section>
-    </main>
+        </section>
+
+        <!-- Notable Projects (Key Projects) -->
+        <section class="sec" aria-labelledby="r-proj">
+          <h2 id="r-proj" class="sec-h lab-mono out" data-reveal>Key Projects</h2>
+          <ul class="projects">
+            <li v-for="(project, index) in resumeData.projects" :key="index" class="card lab-card project break-inside-avoid" data-reveal>
+              <h3 class="job-t">{{ project.name }}</h3>
+              <p class="tech">{{ project.technologies }}</p>
+              <p class="desc">{{ project.description }}</p>
+              <a v-if="project.url" :href="project.url" target="_blank" rel="noopener" class="url" data-cursor-label="Open ↗">
+                {{ project.url }}<span class="sr-only"> (opens in a new tab)</span>
+              </a>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useHead } from '#app'
 import { Download, Phone, Mail, Github, Linkedin, MapPin, Loader2 } from 'lucide-vue-next'
 
 const isDownloading = ref(false)
@@ -269,6 +227,103 @@ useHead({
 })
 </script>
 
+<style scoped>
+.doc {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap);
+  align-items: start;
+}
+.side { grid-column: 1 / span 4; position: sticky; top: calc(var(--header-h-tight) + 24px); }
+.main { grid-column: 5 / -1; display: grid; gap: var(--gap); min-width: 0; }
+.card { padding: clamp(20px, 2.6vw, 32px); }
+
+.id-card { display: grid; gap: var(--s-5); }
+.photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 2px solid var(--mint);
+  object-fit: cover;
+  object-position: 50% 22%;
+}
+.contact { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); font-size: 15px; }
+.contact li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: var(--s-3); align-items: center; }
+.contact svg { color: var(--mint); }
+.contact a { color: var(--ink); overflow-wrap: anywhere; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 0.25em; }
+.contact a:hover { color: var(--mint); text-decoration-color: currentColor; }
+
+.sec { display: grid; gap: var(--gap); }
+.card.sec { gap: 0; }
+.sec-h { color: var(--mint); font-size: 12px; margin-bottom: var(--s-4); }
+.sec-h.out { margin-bottom: 0; }
+.summary { font-size: var(--step-body); line-height: 1.65; }
+
+.skills { margin: 0; display: grid; gap: var(--s-3); font-size: 16px; }
+.skills div { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: var(--s-4); }
+.skills dt { font-weight: 600; }
+.skills dd { margin: 0; color: var(--muted); }
+
+.job-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: var(--s-2) var(--s-4); }
+.job-t { font: 600 19px / 1.3 var(--font-text); letter-spacing: -0.01em; }
+.job-co { margin-top: 4px; font-size: 15px; font-weight: 600; color: var(--muted); }
+.job-co span { font-weight: 400; }
+.tasks { margin: var(--s-4) 0 0; padding-left: 1.2em; display: grid; gap: var(--s-2); font-size: 16px; line-height: 1.55; }
+.tasks li::marker { color: var(--mint); }
+.edu + .edu { margin-top: var(--s-4); }
+
+.projects { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
+.project { display: flex; flex-direction: column; gap: var(--s-2); min-width: 0; }
+.tech { font-size: 14px; color: var(--muted); font-style: italic; }
+.desc { font-size: 16px; }
+.url { margin-top: auto; padding-top: var(--s-2); color: var(--mint); font-size: 14px; overflow-wrap: anywhere; }
+
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+
+@media (max-width: 899px) {
+  .doc { grid-template-columns: 1fr; row-gap: var(--gap); }
+  .side, .main { grid-column: 1; }
+  .side { position: static; }
+  .projects { grid-template-columns: 1fr; }
+}
+@media (max-width: 479px) {
+  .skills div { grid-template-columns: 1fr; gap: 2px; }
+}
+
+/* Paper: the printed résumé is a plain, single-column, black-on-white document (ATS-friendly). */
+@media print {
+  .resume :deep(.ph) { padding: 0 0 12pt; }
+  .resume :deep(.ph .floor),
+  .resume :deep(.ph .eyebrow),
+  .no-print { display: none !important; }
+  .resume :deep(.ph .title) { font-size: 24pt; letter-spacing: 0; max-width: none; }
+  .resume :deep(.ph .intro) { margin-top: 4pt; font-size: 11pt; }
+  .doc, .main { display: block; width: auto; }
+  .side { position: static; margin-bottom: 12pt; }
+  .card {
+    padding: 0 !important;
+    margin-bottom: 14pt;
+    background: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important; /* taste-skill-ignore: removes the card shadow on paper */
+  }
+  .id-card { display: block; }
+  .photo { display: none; }
+  .contact { display: flex; flex-wrap: wrap; gap: 4pt 14pt; font-size: 9.5pt; }
+  .contact li { display: block; }
+  .contact svg { display: none; }
+  .contact a { text-decoration: none; }
+  .sec-h { font-family: inherit; font-size: 11pt; letter-spacing: 0.06em; border-bottom: 1px solid #000; padding-bottom: 3pt; margin-bottom: 8pt; } /* taste-skill-ignore: section rules on the printed résumé, as before */
+  .summary, .tasks, .skills, .desc { font-size: 10pt; }
+  .projects { display: block; }
+  .project { margin-bottom: 10pt; }
+  .lab-pill { border: 0; padding: 0; font-style: italic; }
+}
+</style>
+
 <style>
 /* Global print styles to enforce ATS-friendly clean PDF generation */
 @media print {
@@ -309,11 +364,6 @@ useHead({
   /* Ensure text is standard black for parsers */
   * {
     color: #000 !important;
-  }
-
-  /* Retain border lines for visual separation */
-  .border-b {
-    border-bottom-color: #000 !important;
   }
 
   /* Additional rule to hide browser-generated content */

@@ -1,69 +1,66 @@
 <template>
-  <NuxtLink :to="`/onTheWayToBeCreative/${slug}`" :class="[
-    'group block bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-[1.02]',
-    featured ? 'lg:p-8' : ''
-  ]">
-
-    <!-- Category Badge -->
-    <div class="flex items-center justify-between mb-4">
-      <span v-if="category" class="px-3 py-1 bg-blue-600/20 text-blue-400 text-xs rounded-full">
-        {{ category }}
-      </span>
-      <div class="flex items-center text-sm text-gray-400 space-x-4">
-        <span>{{ formatDate(date) }}</span>
-        <span>{{ readTime }}</span>
-      </div>
+  <article class="bc lab-card lab-card-link" :class="{ featured }">
+    <div class="meta">
+      <span v-if="category" class="lab-pill">{{ category }}</span>
+      <span class="when"><time :datetime="date">{{ formatDate(date) }}</time><template v-if="readTime"> · {{ readTime }}</template></span>
     </div>
 
-    <h2 :class="[
-      'font-semibold text-white group-hover:text-blue-400 transition-colors mb-4',
-      featured ? 'text-2xl' : 'text-xl'
-    ]">
-      {{ title }}
+    <h2 class="t">
+      <NuxtLink :to="`/onTheWayToBeCreative/${slug}`" class="lab-stretch" data-cursor-label="Read">{{ title }}</NuxtLink>
     </h2>
 
-    <p :class="[
-      'text-gray-300 mb-6 leading-relaxed',
-      featured ? 'text-base' : 'text-sm'
-    ]">
-      {{ excerpt }}
-    </p>
+    <p class="ex">{{ excerpt }}</p>
 
-    <div class="flex items-center justify-between">
-      <div class="flex flex-wrap gap-2">
-        <span v-for="tag in tags.slice(0, 3)" :key="tag"
-          class="px-3 py-1 bg-gray-700/50 text-gray-300 text-xs rounded-full hover:bg-gray-600/50 transition-colors">
-          {{ tag }}
-        </span>
-        <span v-if="tags.length > 3" class="px-3 py-1 bg-gray-700/50 text-gray-400 text-xs rounded-full">
-          +{{ tags.length - 3 }} more
-        </span>
-      </div>
-      <div class="flex items-center text-blue-400 text-sm font-medium">
-        <span>Read More</span>
-        <ArrowRight class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-      </div>
+    <span class="spacer" aria-hidden="true" />
+    <div class="foot lab-card-foot">
+      <ul class="lab-tags" :aria-label="`Tags, ${title}`">
+        <li v-for="tag in tags.slice(0, 3)" :key="tag">{{ tag }}</li>
+        <li v-if="tags.length > 3">+{{ tags.length - 3 }} more</li>
+      </ul>
+      <span class="more" aria-hidden="true">Read More <ArrowRight :size="16" /></span>
     </div>
-  </NuxtLink>
+  </article>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ArrowRight } from 'lucide-vue-next'
-import { useBlog } from '~/composables/useBlog'
+
+// A note from this site (data/blog-posts.json). The whole card opens the post.
+withDefaults(defineProps<{
+  title: string
+  excerpt: string
+  date: string
+  readTime?: string
+  tags?: string[]
+  slug: string
+  category?: string
+  featured?: boolean
+}>(), { tags: () => [], featured: false })
 
 const { formatDate } = useBlog()
-
-const props = defineProps({
-  title: String,
-  excerpt: String,
-  date: String,
-  readTime: String,
-  tags: Array,
-  slug: String,
-  category: String,
-  featured: {
-    type: Boolean,
-    default: false
-  }
-})
 </script>
+
+<style scoped>
+.bc { display: flex; flex-direction: column; min-width: 0; height: 100%; padding: var(--s-5); }
+.featured { padding: var(--s-6); }
+.meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-2) var(--s-4); }
+.when { font-size: 14px; color: var(--muted); }
+.t {
+  margin-top: var(--s-4);
+  font: 600 20px / 1.3 var(--font-text);
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+.featured .t { font-size: 24px; letter-spacing: -0.02em; }
+.t a { transition: color var(--dur-hover) ease; }
+.bc:hover .t a { color: var(--mint); }
+.ex { margin-top: var(--s-3); font-size: 16px; color: var(--muted); }
+.spacer { flex: 1; min-height: var(--s-5); }
+.foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3); padding-top: var(--s-4); }
+.more { display: inline-flex; align-items: center; gap: 6px; color: var(--mint); font-size: 15px; font-weight: 600; }
+.more svg { transition: transform var(--dur-hover) var(--ease-out); }
+.bc:hover .more svg { transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) {
+  .bc:hover .more svg { transform: none; }
+}
+</style>

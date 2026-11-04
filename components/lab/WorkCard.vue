@@ -26,6 +26,9 @@
         <template v-else>{{ project.pitch }}</template>
       </p>
       <p v-if="project.translation" class="trans">{{ project.translation }}</p>
+      <a v-if="project.related" class="rel" :href="project.related.url" target="_blank" rel="noopener" data-cursor-label="Read">
+        {{ project.related.label }} <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span>
+      </a>
 
       <template v-if="project.featured">
         <a v-magnetic="3" class="lab-button lab-button--block open" :href="project.url" target="_blank" rel="noopener" data-cursor-label="View project">
@@ -98,6 +101,7 @@ h3 a:hover { color: var(--mint); }
 .pitch { margin-top: var(--s-3); font-size: 16px; line-height: 1.5; }
 .pitch.bn { font-family: "Hind Siliguri", var(--font-text); font-size: 17px; line-height: 1.6; }
 .trans { margin-top: 4px; font-size: 15px; color: var(--muted); }
+.rel { align-self: flex-start; margin-top: var(--s-3); color: var(--mint); font-size: 15px; font-weight: 600; text-underline-offset: 0.25em; }
 
 .open { margin-top: var(--s-6); }
 .tagline { margin-top: var(--s-3); text-align: center; font-size: 15px; color: var(--muted); }

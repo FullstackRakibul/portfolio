@@ -30,7 +30,6 @@ export interface Experiment {
   diagram: DiagramKind
   caption: string
 }
-export interface Article { title: string; url: string; date: string }
 
 export const CONTACT = {
   email: 'rakibul.cse.47@gmail.com',
@@ -197,20 +196,6 @@ export const EXPERIMENTS: Experiment[] = [
     diagram: 'template',
     caption: 'One template, stamped into each new service.',
   },
-]
-
-// Fallback for the live Medium feed (server/api/writing.get.ts).
-export const ARTICLES: Article[] = [
-  { title: 'LLM Temperature Explained: How It Controls AI Responses', url: 'https://medium.com/@rakibul.h.rabbi/llm-temperature-explained-how-it-controls-ai-responses-ed6621ec2d8d', date: '2026-11-02' },
-  { title: 'Launching Calcifer 2.0', url: 'https://medium.com/@rakibul.h.rabbi/launching-calcifer-2-0-5d2fb7af9923', date: '2026-10-08' },
-  { title: 'Boosting ASP.NET Core Performance: A Guide to Read-Only EF Core Queries', url: 'https://medium.com/@rakibul.h.rabbi/boosting-asp-net-core-performance-a-guide-to-read-only-ef-core-queries-9ba8dfd8e8a5', date: '2026-09-28' },
-  { title: 'Docker, Explained Like You’re a Developer Who Just Wants It to Work', url: 'https://medium.com/@rakibul.h.rabbi/docker-explained-like-youre-a-developer-who-just-wants-it-to-work-d9bfa8090f57', date: '2026-09-16' },
-  { title: 'Can’t Restore a .bak File? Here’s the Trick That Actually Works.', url: 'https://medium.com/@rakibul.h.rabbi/cant-restore-a-bak-file-here-s-the-trick-that-actually-works-1ce5f0ecc8da', date: '2026-09-16' },
-  { title: 'MIT, Apache 2.0, or GPL? Pick the Right Open-Source License in 5 Minutes', url: 'https://medium.com/@rakibul.h.rabbi/mit-apache-2-0-or-gpl-stop-guessing-pick-the-right-open-source-license-in-5-minutes-20675f513ebe', date: '2026-09-07' },
-  { title: 'Logarithmic Time Complexity Explained Simply', url: 'https://medium.com/@rakibul.h.rabbi/logarithmic-time-complexity-explained-simply-understanding-o-log-n-as-a-beginner-ffadedfd50c9', date: '2026-09-05' },
-  { title: 'Stop Organizing by Controllers. Start Screaming Your Business Domain.', url: 'https://medium.com/@rakibul.h.rabbi/stop-organizing-by-controllers-start-screaming-your-business-domain-2ff823c36df0', date: '2026-09-03' },
-  { title: '6 Essential Cryptography Tools You Should Know in 2026', url: 'https://medium.com/@rakibul.h.rabbi/6-essential-cryptography-tools-you-should-know-in-2026-9825dfd4c244', date: '2026-08-30' },
-  { title: 'Finding Similarity in the Age of AI', url: 'https://medium.com/@rakibul.h.rabbi/finding-similarity-in-the-age-of-ai-1e770e5bc6a1', date: '2026-08-06' },
 ]
 
 /** Page sections in order. `bar: false` keeps a section out of the header bar (the menu and palette list all). */

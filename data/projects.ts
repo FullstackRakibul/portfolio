@@ -27,6 +27,8 @@ export interface Project {
   url: string
   /** Version shown in an outlined pill, as the product states it. */
   version?: string
+  /** Writing about this project, e.g. a Medium post. */
+  related?: { label: string; url: string }
   status: ProjectStatus
   /** Screenshot of the live site, 16:10, in public/assets/work. */
   image?: string
@@ -96,6 +98,7 @@ export const PROJECTS: Project[] = [
     pitch: 'Stop Writing Code. Start Controlling Value.',
     quote: true,
     url: 'https://calcifershop.vercel.app/',
+    related: { label: 'Read: Launching Calcifer 2.0', url: 'https://medium.com/@rakibul.h.rabbi/launching-calcifer-2-0-5d2fb7af9923' },
     status: 'live',
     image: W + 'calcifer-shop.jpg',
   },

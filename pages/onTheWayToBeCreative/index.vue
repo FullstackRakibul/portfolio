@@ -1,122 +1,185 @@
 <template>
-  <div class="pt-20 pb-16">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- Header -->
-      <div class="text-center mb-16">
-        <h1 class="text-4xl sm:text-5xl font-bold mb-6">
-          <span
-            class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">onTheWayToBeCreative</span>
-        </h1>
-        <p class="text-xl text-gray-300 mb-8">Thoughts on development, technology, and building great software</p>
+  <div>
+    <LabPageHeader
+      eyebrow="On the way to be creative"
+      title="onTheWayToBeCreative"
+      intro="Thoughts on development, technology, and building great software"
+      :pill="`${mediumPosts.length + allPosts.length} pieces`"
+    />
 
-        <!-- Search Bar -->
-        <div class="max-w-md mx-auto mb-8">
-          <div class="relative">
-            <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input v-model="searchQuery" type="text" placeholder="Search articles..."
-              class="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" />
-          </div>
-        </div>
+    <!-- Medium -->
+    <section v-reveal class="blk lab-wrap" aria-labelledby="medium-h">
+      <div class="lab-head">
+        <h2 id="medium-h" data-reveal>On Medium</h2>
+        <p data-reveal>Notes from the work: .NET performance, databases, local models and the habits that keep systems readable. Newest first.</p>
+      </div>
+      <ul v-if="mediumPosts.length" class="cards">
+        <li v-for="post in mediumPosts" :key="post.url" data-reveal>
+          <LabMediumCard :post="post" />
+        </li>
+      </ul>
+      <LabEmpty v-else title="No Medium posts to show" text="The feed could not be read; the posts are still on Medium." />
+      <p class="more" data-reveal>
+        <a class="lab-link" :href="MEDIUM_PROFILE" target="_blank" rel="noopener" data-cursor-label="Open ↗">
+          Everything on Medium <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span>
+        </a>
+      </p>
+    </section>
 
-        <!-- Filter Tabs -->
-        <div class="flex flex-wrap justify-center gap-2 mb-8">
-          <button @click="selectedCategory = 'all'" :class="[
-            'px-4 py-2 rounded-full text-sm font-medium transition-colors',
-            selectedCategory === 'all'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          ]">
-            All Posts
-          </button>
-          <button v-for="category in categories" :key="category" @click="selectedCategory = category" :class="[
-            'px-4 py-2 rounded-full text-sm font-medium transition-colors',
-            selectedCategory === category
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          ]">
-            {{ category }}
-          </button>
+    <!-- Notes on this site -->
+    <section v-reveal class="blk lab-wrap" aria-labelledby="site-h">
+      <div class="lab-head">
+        <h2 id="site-h" data-reveal>On this site</h2>
+        <div class="search" data-reveal>
+          <Search :size="18" aria-hidden="true" />
+          <label for="note-q" class="sr-only">Search articles</label>
+          <input id="note-q" v-model="searchQuery" type="search" placeholder="Search articles..." autocomplete="off">
         </div>
       </div>
 
-      <!-- Featured Posts -->
-      <div v-if="!searchQuery && selectedCategory === 'all'" class="mb-16">
-        <h2 class="text-2xl font-bold text-white mb-8">Featured Articles</h2>
-        <div class="grid md:grid-cols-2 gap-8">
-          <BlogCard v-for="post in featuredPosts" :key="post.slug" :title="post.title" :excerpt="post.excerpt"
-            :date="post.date" :readTime="post.readTime" :tags="post.tags" :slug="post.slug" :featured="true" />
-        </div>
+      <div class="tabs" role="group" aria-label="Filter by category" data-reveal>
+        <button type="button" :aria-pressed="selectedCategory === 'all'" @click="selectedCategory = 'all'">All Posts</button>
+        <button
+          v-for="category in categories" :key="category" type="button"
+          :aria-pressed="selectedCategory === category" @click="selectedCategory = category"
+        >
+          {{ category }}
+        </button>
       </div>
 
-      <!-- All Posts -->
-      <div>
-        <h2 class="text-2xl font-bold text-white mb-8">
-          {{ searchQuery ? `Search Results (${filteredPosts.length})` : 'All Articles' }}
-        </h2>
-        <div v-if="filteredPosts.length > 0" class="grid gap-8">
-          <BlogCard v-for="post in filteredPosts" :key="post.slug" :title="post.title" :excerpt="post.excerpt"
-            :date="post.date" :readTime="post.readTime" :tags="post.tags" :slug="post.slug" :category="post.category" />
-        </div>
-        <div v-else class="text-center py-16">
-          <div class="text-gray-400 mb-4">
-            <Search class="w-16 h-16 mx-auto mb-4 opacity-50" />
-            <p class="text-xl">No articles found</p>
-            <p class="text-sm">Try adjusting your search or filter criteria</p>
-          </div>
-        </div>
+      <div v-if="!searchQuery && selectedCategory === 'all'" class="group">
+        <h3 class="group-h">Featured Articles</h3>
+        <ul class="cards cards--two">
+          <li v-for="post in featuredPosts" :key="post.slug">
+            <BlogCard
+              :title="post.title" :excerpt="post.excerpt" :date="post.date" :read-time="post.readTime"
+              :tags="post.tags" :slug="post.slug" :category="post.category" featured
+            />
+          </li>
+        </ul>
       </div>
-    </div>
+
+      <div class="group">
+        <h3 class="group-h" aria-live="polite">{{ searchQuery ? `Search Results (${filteredPosts.length})` : 'All Articles' }}</h3>
+        <ul v-if="filteredPosts.length > 0" class="cards">
+          <li v-for="post in filteredPosts" :key="post.slug">
+            <BlogCard
+              :title="post.title" :excerpt="post.excerpt" :date="post.date" :read-time="post.readTime"
+              :tags="post.tags" :slug="post.slug" :category="post.category"
+            />
+          </li>
+        </ul>
+        <LabEmpty v-else label="No match" title="No articles found" text="Try adjusting your search or filter criteria">
+          <button type="button" class="reset" @click="searchQuery = ''; selectedCategory = 'all'">Show all articles</button>
+        </LabEmpty>
+      </div>
+    </section>
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue'
+<script setup lang="ts">
 import { Search } from 'lucide-vue-next'
-import { useBlog } from '~/composables/useBlog'
+import { MEDIUM_PROFILE } from '~/data/writing'
 
 const searchQuery = ref('')
 const selectedCategory = ref('all')
 
-const {
-  getAllPosts,
-  getFeaturedPosts,
-  getPostsByCategory,
-  searchPosts,
-  getAllCategories
-} = useBlog()
+const { getAllPosts, getFeaturedPosts, getPostsByCategory, searchPosts, getAllCategories } = useBlog()
 
 const allPosts = getAllPosts()
 const featuredPosts = getFeaturedPosts()
 const categories = getAllCategories()
 
+const { data: writing } = await useWriting()
+const mediumPosts = computed(() => writing.value?.posts ?? [])
+
 const filteredPosts = computed(() => {
   let posts = allPosts
-
-  // Apply search filter
-  if (searchQuery.value.trim()) {
-    posts = searchPosts(searchQuery.value.trim())
-  }
-
-  // Apply category filter
+  const q = searchQuery.value.trim()
+  if (q) posts = searchPosts(q)
   if (selectedCategory.value !== 'all') {
     posts = getPostsByCategory(selectedCategory.value)
-
-    // If there's also a search query, filter the category results
-    if (searchQuery.value.trim()) {
-      const searchResults = searchPosts(searchQuery.value.trim())
-      posts = posts.filter(post =>
-        searchResults.some(searchPost => searchPost.slug === post.slug)
-      )
+    if (q) {
+      const found = searchPosts(q)
+      posts = posts.filter(post => found.some(f => f.slug === post.slug))
     }
   }
-
   return posts
 })
 
 useHead({
   title: 'onTheWayToBeCreative - Rakibul H. Rabbi',
   meta: [
-    { name: 'description', content: 'Read about software development, technology insights, and programming tutorials by Rakibul H. Rabbi.' }
-  ]
+    { name: 'description', content: 'Read about software development, technology insights, and programming tutorials by Rakibul H. Rabbi.' },
+  ],
 })
 </script>
+
+<style scoped>
+.blk + .blk { padding-top: var(--section-gap); }
+
+/* Cards: three across on desktop, two on tablets, one on phones. */
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+}
+.cards > li { min-width: 0; }
+.cards--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.more { margin-top: var(--s-6); font-size: 16px; }
+
+.search {
+  grid-column: 8 / -1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+}
+.search svg { position: absolute; left: 16px; pointer-events: none; }
+.search input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px 0 46px;
+  border: 1px solid var(--line); /* taste-skill-ignore: a real form field keeps its edge */
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--ink);
+  font: 16px var(--font-text);
+  transition: border-color var(--dur-hover) ease;
+}
+.search input::placeholder { color: var(--muted); }
+.search input:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; border-color: transparent; }
+
+.tabs { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-bottom: var(--s-7); }
+.tabs button,
+.reset {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line); /* taste-skill-ignore: PIPILIKA's control edge (brand) */
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font: 500 15px var(--font-text);
+  cursor: pointer;
+  transition: background-color var(--dur-hover) ease, border-color var(--dur-hover) ease, color var(--dur-hover) ease;
+}
+.tabs button:hover,
+.reset:hover { border-color: var(--mint); }
+.tabs button[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: #fff; }
+
+.group + .group { margin-top: var(--s-8); }
+.group .group-h { margin-bottom: var(--s-5); font: 600 var(--step-lead) / 1.2 var(--font-text); letter-spacing: -0.01em; }
+
+@media (max-width: 1099px) {
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 899px) {
+  .search { grid-column: 1; }
+}
+@media (max-width: 639px) {
+  .cards, .cards--two { grid-template-columns: 1fr; }
+}
+</style>

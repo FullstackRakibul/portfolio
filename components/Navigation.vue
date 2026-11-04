@@ -13,18 +13,19 @@
       </NuxtLink>
 
       <nav ref="nav" class="links" aria-label="Sections" @pointerleave="hoverId = ''">
-        <NuxtLink
-          v-for="s in linkSections"
-          :key="s.id"
-          :ref="el => setLink(s.id, el)"
-          :to="'/' + s.id"
-          :aria-current="active === s.id ? 'location' : undefined"
-          @pointerenter="hoverId = s.id"
-          @focus="hoverId = s.id"
-          @blur="hoverId = ''"
-          @click="go($event, s.id)"
-        >
-          {{ s.label }}
+        <!-- custom: the router would otherwise overwrite aria-current with its own exact-match value. -->
+        <NuxtLink v-for="s in linkSections" :key="s.id" v-slot="{ href, navigate }" :to="'/' + s.id" custom>
+          <a
+            :ref="el => setLink(s.id, el as Element | null)"
+            :href="href"
+            :aria-current="active === s.id ? (variant === 'home' ? 'location' : 'page') : undefined"
+            @pointerenter="hoverId = s.id"
+            @focus="hoverId = s.id"
+            @blur="hoverId = ''"
+            @click="go($event, s.id); navigate($event)"
+          >
+            {{ s.label }}
+          </a>
         </NuxtLink>
         <span class="ind" :style="indicator" aria-hidden="true" />
       </nav>
@@ -34,7 +35,6 @@
           <span class="sr-only">Local time in </span>Dhaka <time>{{ time }}</time>
         </p>
         <button
-          v-if="variant === 'home'"
           type="button"
           class="icon"
           :aria-label="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
@@ -80,6 +80,12 @@ const linkSections = SECTIONS.filter(s => s.bar !== false)
 const ALIAS: Record<string, string> = { engineering: 'experience', mostisko: 'projects', experiments: 'certifications' }
 const active = ref('')
 const hoverId = ref('')
+
+// Other pages light the section they belong to: the notes under Writing, the résumé under Experience.
+const PAGE_SECTION: [prefix: string, id: string][] = [['/onTheWayToBeCreative', 'writing'], ['/resume', 'experience']]
+watch(() => route.path, (path) => {
+  if (props.variant === 'page') active.value = PAGE_SECTION.find(([prefix]) => path.startsWith(prefix))?.[1] ?? ''
+}, { immediate: true })
 
 const scrolled = ref(false)
 const showName = ref(props.variant === 'page')
