@@ -3,200 +3,128 @@
     <div class="lab-head">
       <h2 id="work-h" data-reveal>Selected projects</h2>
       <p data-reveal>
-        Enterprise applications, developer tools and the corporate and commerce sites built for clients. Every
-        picture is a screenshot of the live site.
+        PIPILIKA first, since this page borrows its look. Then work and client sites, one experiment written up as a
+        case study, and one made for the fun of it. Every picture is a screenshot of the live site.
       </p>
     </div>
 
-    <div class="filters" role="group" aria-label="Filter projects" data-reveal>
-      <button
-        v-for="f in PROJECT_FILTERS" :key="f.id" type="button"
-        :aria-pressed="filter === f.id" @click="filter = f.id"
-      >
-        <LabGlyph v-if="f.id !== 'all'" :kind="f.id" />{{ f.label }} <span class="lab-num">{{ count(f.id) }}</span>
-      </button>
+    <div v-if="featured" class="featured" data-reveal>
+      <LabWorkCard :project="featured" />
     </div>
 
-    <TransitionGroup tag="ul" name="card" class="grid" :class="{ 'has-featured': featured.length }">
-      <li v-for="p in pictured" :key="p.title" class="card" :class="{ featured: p.featured }">
-        <a :href="p.url" target="_blank" rel="noopener" class="hit">
-          <span class="media">
-            <img :src="p.image" :alt="`${p.title}: screenshot of the live site`" width="800" height="600" loading="lazy" decoding="async">
-          </span>
-          <span class="title">{{ p.title }}</span>
-          <svg class="trace" viewBox="0 0 120 8" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0 4 Q 7.5 0 15 4 T 30 4 T 45 4 T 60 4 T 75 4 T 90 4 T 105 4 T 120 4" />
-          </svg>
-          <span class="desc">{{ p.description }}</span>
-          <span class="meta">
-            <span class="cat"><LabGlyph :kind="p.category" />{{ label(p.category) }}</span>
-            <span class="host">{{ host(p) }}<ArrowUpRight :size="15" aria-hidden="true" /></span>
-          </span>
-          <span v-if="p.stack" class="tags"><span v-for="t in p.stack" :key="t">{{ t }}</span></span>
-        </a>
-      </li>
-    </TransitionGroup>
+    <div v-for="g in groups" :key="g.status" class="group" :class="g.status">
+      <h3 class="group-h" data-reveal>{{ g.title }}</h3>
+      <ul class="cards" :class="`n${g.items.length}`">
+        <li v-for="p in g.items" :key="p.id" data-reveal>
+          <LabWorkCard :project="p" :wide="g.items.length === 1">
+            <template v-if="p.caseStudy" #after>
+              <LabCaseStudy :study="p.caseStudy" />
+            </template>
+          </LabWorkCard>
+        </li>
+      </ul>
+    </div>
 
-    <div v-if="plain.length" class="more">
-      <h3>{{ pictured.length ? 'More work' : 'Tools and sites' }}</h3>
-      <TransitionGroup tag="ul" name="card" class="rows">
-        <li v-for="p in plain" :key="p.title">
+    <div v-if="EARLIER_PROJECTS.length" class="group earlier">
+      <h3 class="group-h" data-reveal>Earlier work</h3>
+      <ul class="rows">
+        <li v-for="p in EARLIER_PROJECTS" :key="p.title">
           <component
             :is="p.url ? 'a' : 'div'" class="row" :href="p.url"
             :target="p.url ? '_blank' : undefined" :rel="p.url ? 'noopener' : undefined"
           >
-            <LabGlyph :kind="p.category" />
-            <span class="r-title">{{ p.title }}</span>
+            <span class="r-title">{{ p.title }}<span v-if="p.url" class="sr-only"> (opens in a new tab)</span></span>
             <span class="r-desc">{{ p.description }}<template v-if="p.stack">, {{ p.stack.join(' / ') }}</template></span>
-            <span class="r-host">{{ host(p) }}<ArrowUpRight v-if="p.url" :size="15" aria-hidden="true" /></span>
+            <span class="r-host lab-mono">{{ host(p.url) }}<ArrowUpRight v-if="p.url" :size="14" aria-hidden="true" /></span>
           </component>
         </li>
-      </TransitionGroup>
+      </ul>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
 import { ArrowUpRight } from 'lucide-vue-next'
-import { PROJECTS, PROJECT_FILTERS, type Project, type ProjectCategory } from '~/data/portfolio'
+import { EARLIER_PROJECTS, PROJECTS, PROJECT_GROUPS } from '~/data/projects'
 
-const filter = ref<ProjectCategory | 'all'>('all')
-
-const visible = computed(() => PROJECTS.filter(p => filter.value === 'all' || p.category === filter.value))
-const featured = computed(() => visible.value.filter(p => p.featured && p.image))
-const pictured = computed(() => [...featured.value, ...visible.value.filter(p => p.image && !p.featured)])
-const plain = computed(() => visible.value.filter(p => !p.image))
-const count = (id: string) => (id === 'all' ? PROJECTS.length : PROJECTS.filter(p => p.category === id).length)
-const label = (c: ProjectCategory) => PROJECT_FILTERS.find(f => f.id === c)?.label ?? c
-const host = (p: Project) => (p.url ? new URL(p.url).hostname.replace(/^www\./, '') : 'No public link')
+const featured = PROJECTS.find(p => p.featured)
+const groups = PROJECT_GROUPS
+  .map(g => ({ ...g, items: PROJECTS.filter(p => !p.featured && p.status === g.status) }))
+  .filter(g => g.items.length)
+const host = (url?: string) => (url ? new URL(url).hostname.replace(/^www\./, '') : 'No public link')
 </script>
 
 <style scoped>
-.filters { display: flex; flex-wrap: wrap; gap: var(--s-1); margin-bottom: var(--s-6); }
-.filters button {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 0;
-  background: var(--surface);
-  color: var(--ink);
-  font: 16px var(--font-text);
-  cursor: pointer;
-  transition: background-color var(--dur-hover) ease, color var(--dur-hover) ease, transform var(--dur-press) var(--ease-out);
-}
-.filters button span { font-size: var(--step-small); color: var(--muted); }
-.filters button:hover { background: var(--surface-2); }
-.filters button:active { transform: scale(0.97); }
-.filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-.filters button[aria-pressed="true"] span { color: inherit; opacity: 0.7; }
+.featured { margin-bottom: var(--s-9); }
 
-.grid {
+.group + .group { margin-top: var(--s-9); }
+.group .group-h {
+  margin-bottom: var(--s-5);
+  font: 600 var(--step-lead) / 1.2 var(--font-text);
+  letter-spacing: -0.01em;
+}
+
+/* Cards share a six-column track: two wide cards per row, then three. Seven cards read 2 · 2 · 3. */
+.cards {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: var(--s-8) var(--gap);
+  gap: var(--gap);
 }
-.card { grid-column: span 2; min-width: 0; }
-.card.featured { grid-column: span 3; }
+.cards > li { grid-column: span 2; display: flex; min-width: 0; }
+.cards > li > * { flex: 1; }
+.cards.n1 > li { grid-column: 1 / -1; }
+.cards.n2 > li,
+.cards.n4 > li { grid-column: span 3; }
+.cards.n7 > li:nth-child(-n + 4) { grid-column: span 3; }
+.cards.n5 > li:nth-child(-n + 2) { grid-column: span 3; }
 
-.hit { display: grid; color: var(--ink); text-decoration: none; }
-.media { display: block; overflow: hidden; aspect-ratio: 4 / 3; background: var(--surface); }
-.media img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-  filter: saturate(0.35);
-  transition: transform 900ms var(--ease-out), filter 500ms ease;
-}
-.hit:hover .media img,
-.hit:focus-visible .media img { transform: scale(1.035); filter: none; }
-
-.meta {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--s-4);
-  margin-top: var(--s-3);
-  font-size: var(--step-small);
-  color: var(--muted);
-}
-.cat, .host { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
-.host svg { transition: transform var(--dur-hover) var(--ease-out); }
-.hit:hover .host svg { transform: translate(2px, -2px); }
-.title {
-  margin-top: var(--s-4);
-  font: 700 var(--step-lead) / 1.1 var(--font-display);
-  letter-spacing: -0.02em;
-  transition: color var(--dur-hover) ease;
-}
-.hit:hover .title { color: var(--accent); }
-
-/* A carrier wave draws under the title on hover. */
-.trace { width: 100%; height: 8px; margin-top: var(--s-2); overflow: visible; }
-.trace path {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 1.5;
-  vector-effect: non-scaling-stroke;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 700ms var(--ease-out);
-}
-.hit:hover .trace path,
-.hit:focus-visible .trace path { transform: none; }
-
-.desc { margin-top: var(--s-1); font-size: 16px; color: var(--muted); }
-.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--s-3); }
-.tags span { padding: 3px 10px; background: var(--surface); font-size: var(--step-small); }
-
-.more { margin-top: var(--s-9); }
-.more h3 { font: 600 var(--step-body) / 1.3 var(--font-text); letter-spacing: 0; margin-bottom: var(--s-4); }
+.rows > li { min-width: 0; }
 .rows {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2px var(--gap);
+  gap: 6px var(--gap);
 }
 .row {
   display: grid;
-  grid-template-columns: 14px minmax(0, 0.8fr) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr) auto;
+  min-width: 0;
   align-items: center;
   gap: var(--s-4);
-  min-height: 56px;
-  padding: 0 var(--s-4);
-  background: var(--surface);
+  min-height: 52px;
+  padding: 8px var(--s-4);
+  border-radius: var(--radius-control);
+  background: var(--surface-2);
   color: var(--ink);
   text-decoration: none;
-  transition: background-color var(--dur-hover) ease;
+  transition: background-color var(--dur-hover) ease, transform var(--dur-hover) var(--ease-out);
 }
-a.row:hover { background: var(--surface-2); }
-.r-title { font-weight: 600; }
-.r-desc, .r-host { font-size: var(--step-small); color: var(--muted); }
-.r-host { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-a.row:hover .r-title { color: var(--accent); }
-
-.card-enter-active, .card-leave-active { transition: opacity 280ms ease, transform 420ms var(--ease-out); }
-.card-enter-from, .card-leave-to { opacity: 0; transform: translateY(12px); }
-.card-leave-active { position: absolute; visibility: hidden; }
+a.row:hover { background: var(--surface-3); transform: translateY(-1px); }
+a.row:hover .r-title { color: var(--mint); }
+.r-title { font-weight: 600; font-size: 16px; transition: color var(--dur-hover) ease; }
+.r-desc { font-size: 15px; color: var(--muted); }
+.r-host { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 0.06em; text-transform: none; color: var(--muted); white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) {
-  .media img, .trace path, .card-enter-active { transition: none; }
+  .row { transition: background-color var(--dur-hover) ease; }
+  a.row:hover { transform: none; }
 }
 @media (max-width: 1099px) {
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--gap); }
-  .card, .card.featured { grid-column: span 1; }
-  .rows { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cards > li,
+  .cards.n7 > li:nth-child(-n + 4),
+  .cards.n5 > li:nth-child(-n + 2) { grid-column: span 1; }
+  .cards.n1 > li { grid-column: 1 / -1; }
+  .rows { grid-template-columns: minmax(0, 1fr); }
 }
-@media (max-width: 599px) {
-  .grid { grid-template-columns: 1fr; }
-  .row { grid-template-columns: 14px 1fr auto; padding: 12px var(--s-4); row-gap: 2px; }
-  .r-desc { grid-column: 2 / -1; grid-row: 2; }
+@media (max-width: 639px) {
+  .cards { grid-template-columns: 1fr; }
+  .row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 2px; padding: 12px var(--s-4); }
+  .r-desc { grid-column: 1 / -1; grid-row: 2; }
 }
 </style>

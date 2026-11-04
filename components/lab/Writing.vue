@@ -77,7 +77,8 @@ time { font-size: var(--step-small); color: var(--muted); white-space: nowrap; }
 .main .t { font-size: var(--step-body); }
 .side .t { font-size: 16px; }
 .go { align-self: center; color: var(--muted); opacity: 0; transform: translate(-6px, 6px); transition: opacity var(--dur-hover) ease, transform var(--dur-move) var(--ease-out); }
-li a:hover { background: var(--surface); }
+li a { border-radius: var(--radius-control); }
+li a:hover { background: var(--surface-2); }
 li a:hover .t { color: var(--accent); transform: translateX(4px); }
 li a:hover .go { opacity: 1; transform: none; color: var(--accent); }
 .more { margin-top: var(--s-5); font-size: 16px; }

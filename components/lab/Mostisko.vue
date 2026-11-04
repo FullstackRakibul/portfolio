@@ -133,6 +133,7 @@ onBeforeUnmount(() => { cancelAnimationFrame(raf); clearTimeout(timer) })
   display: grid;
   grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
   background: var(--surface);
+  border-radius: var(--radius);
 }
 .demo { padding: var(--s-6) var(--s-6) var(--s-5); display: grid; gap: var(--s-5); align-content: start; }
 .readout { min-height: 112px; font-size: 16px; max-width: 64ch; }
@@ -192,7 +193,7 @@ fieldset { border: 0; margin: 0; padding: 0; }
 .facts { grid-column: 8 / -1; }
 .facts h3 { font: 600 var(--step-body) / 1.3 var(--font-text); letter-spacing: 0; }
 .facts ul { display: flex; flex-wrap: wrap; gap: var(--s-2); list-style: none; margin: var(--s-4) 0 0; padding: 0; }
-.facts li { padding: 6px 12px; background: var(--surface); font-size: var(--step-small); }
+.facts li { padding: 6px 12px; border-radius: 6px; background: var(--surface); font-size: var(--step-small); }
 .out { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-6); margin-top: var(--s-6); font-size: 16px; }
 
 @media (max-width: 899px) {

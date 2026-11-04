@@ -138,6 +138,7 @@ const inView = useInView(figure, '0px')
   margin: var(--s-8) 0 0;
   padding: var(--s-6) var(--s-6) var(--s-6);
   background: var(--surface);
+  border-radius: var(--radius);
   max-width: 820px;
 }
 .quote p {
@@ -164,7 +165,7 @@ const inView = useInView(figure, '0px')
   .text { grid-column: 7 / -1; }
   .body { grid-template-columns: 1fr; }
 }
-@media (max-width: 759px) {
+@media (max-width: 899px) {
   .spread { grid-template-columns: 1fr; row-gap: var(--s-7); }
   .figure { grid-column: 1; position: static; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr); gap: var(--s-4); align-items: end; }
   .facts { margin: 0; }

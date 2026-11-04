@@ -94,7 +94,7 @@ server/               # Optional API routes & server middleware
 - Tailwind CSS v4 (latest) with utility classes
 - Custom animations in component `<style>` blocks
 - Responsive design using Tailwind breakpoints (`md:`, `lg:`, etc.)
-- Dark theme colors (grays: `gray-900` to `gray-100`, accent: `blue-400`, `purple-500`)
+- Homepage tokens in `assets/css/lab.css` (PIPILIKA teal theme, light variant); legacy pages still use Tailwind grays
 
 **Blog System:**
 - Blog posts stored as JSON with metadata (slug, title, date, tags, category)
@@ -130,8 +130,14 @@ server/               # Optional API routes & server middleware
 - Refer to `nuxt.config.ts` for Tailwind plugin setup (`@tailwindcss/vite`)
 
 **Resume/Project Data:**
-- Update `data/resume.ts` to modify resume content (experience, skills, education)
-- Update project list in `pages/index.vue` (hardcoded array) for featured projects
+- Homepage content lives in data files; components only render it:
+  - `data/experience.ts`: work history (companies → roles, months as 'YYYY-MM', newest first)
+  - `data/projects.ts`: project cards (status badge, featured card, case study) and the "Earlier work" list
+  - `data/certifications.ts`: licenses & certifications (add `url` only for a real credential page)
+  - `data/portfolio.ts`: everything else on the homepage (capabilities, Mostisko, experiments, articles, sections)
+- `data/resume.ts` feeds the separate `/resume` page only
+- Project screenshots: `public/assets/work/<id>.jpg`, 1120×700 (16:10)
+- Homepage theme follows PIPILIKA (tokens and shared `.lab-card`, `.lab-pill`, `.lab-badge`, `.lab-mono`, `.lab-tags` in `assets/css/lab.css`)
 - Contact info is in multiple places: `resume.ts`, components (ContactCard values), Navigation external links
 
 ## Configuration Notes
@@ -139,7 +145,7 @@ server/               # Optional API routes & server middleware
 - **Compatibility Date:** 2025-05-15 (Nuxt version lockstep)
 - **Devtools:** Disabled (`devtools: { enabled: false }`)
 - **CSS:** Main Tailwind directives in `assets/css/main.css`
-- **Fonts:** Google Fonts (Inter) loaded via head link in `nuxt.config.ts`
+- **Fonts:** Google Fonts (Inter, JetBrains Mono, Hind Siliguri for Bengali) loaded via head link in `nuxt.config.ts`
 - **Vite Plugins:** Tailwind Vite plugin configured for CSS processing
 
 ## Deployment

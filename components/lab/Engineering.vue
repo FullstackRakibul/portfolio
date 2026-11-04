@@ -126,6 +126,7 @@ onBeforeUnmount(() => ro?.disconnect())
 .board {
   position: relative;
   background: var(--surface);
+  border-radius: var(--radius);
   padding: var(--s-5);
 }
 
@@ -247,7 +248,7 @@ li {
   transition: color var(--dur-hover) ease;
 }
 /* Labels knock the wire out behind them, so it never strikes through a word. */
-.lbl { position: relative; padding: 2px 6px; margin-left: -6px; background: var(--surface); }
+.lbl { position: relative; padding: 2px 6px; margin-left: -6px; border-radius: 4px; background: var(--surface-solid); }
 .dot {
   position: relative;
   width: 12px;

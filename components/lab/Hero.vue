@@ -70,8 +70,14 @@ onBeforeUnmount(() => field?.destroy())
   position: relative;
   min-height: 100svh;
   overflow: hidden;
-  background: var(--bg);
   touch-action: pan-y;
+  /* The portrait keeps the colours it was drawn in, whatever the page theme. */
+  --field: 220 222 223;
+  --signal: #9dbad6;
+}
+:global([data-theme="light"]) .stage {
+  --field: 42 43 45;
+  --signal: #3a6286;
 }
 
 .field {

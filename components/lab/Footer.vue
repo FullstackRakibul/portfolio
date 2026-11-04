@@ -8,7 +8,7 @@
       </svg>
       <p class="name">Rakibul H. Rabbi</p>
       <p class="tag">Building scalable systems, engineering intelligent tools.</p>
-      <div class="line">
+      <div class="line lab-card-foot">
         <p>Dhaka, Bangladesh</p>
         <nav aria-label="Elsewhere" class="links">
           <a :href="CONTACT.github" target="_blank" rel="noopener">GitHub</a>
@@ -16,7 +16,7 @@
           <a :href="CONTACT.medium" target="_blank" rel="noopener">Medium</a>
           <NuxtLink to="/resume">Résumé</NuxtLink>
         </nav>
-        <p class="end lab-num">© {{ year }} · came for the chaos. stayed for the systems.</p>
+        <p class="end"><span class="lab-mono">© {{ year }} rabbitic</span><span class="lab-badge">Production</span></p>
       </div>
     </div>
   </footer>
@@ -102,18 +102,20 @@ onBeforeUnmount(() => ro?.disconnect())
   align-items: baseline;
   gap: var(--s-4);
   margin-top: var(--s-8);
+  padding-top: var(--s-5);
   font-size: var(--step-small);
   color: var(--muted);
 }
 .links { display: flex; gap: var(--s-5); font-size: 16px; }
 .links a { color: var(--ink); text-decoration: none; padding: 8px 0; transition: color var(--dur-hover) ease; }
 .links a:hover { color: var(--accent); }
-.end { text-align: right; }
+.end { display: flex; justify-content: flex-end; align-items: center; gap: var(--s-3); }
+.end .lab-mono { font-size: 12px; color: var(--muted); text-transform: lowercase; }
 
 @media (max-width: 899px) {
   .name { white-space: normal; font-size: clamp(3.25rem, 1rem + 11vw, 6rem); }
   .line { grid-template-columns: 1fr; gap: var(--s-2); }
   .links { flex-wrap: wrap; gap: 0 var(--s-5); }
-  .end { text-align: left; }
+  .end { justify-content: flex-start; }
 }
 </style>

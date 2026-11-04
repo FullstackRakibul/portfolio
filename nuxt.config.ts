@@ -19,8 +19,8 @@ export default defineNuxtConfig({
       viewport: "width=device-width, initial-scale=1",
       htmlAttrs: { lang: "en" },
       meta: [
-        { name: "theme-color", content: "#17181a", media: "(prefers-color-scheme: dark)" },
-        { name: "theme-color", content: "#f3f2ef", media: "(prefers-color-scheme: light)" },
+        { name: "theme-color", content: "#0d2b30", media: "(prefers-color-scheme: dark)" },
+        { name: "theme-color", content: "#eef4f3", media: "(prefers-color-scheme: light)" },
       ],
       script: [{ innerHTML: themeBoot, tagPosition: "head" }],
       link: [
@@ -28,7 +28,8 @@ export default defineNuxtConfig({
         { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" },
         {
           rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&family=Figtree:wght@400;600&display=swap",
+          // Inter for UI and text, JetBrains Mono for labels and badges (as in PIPILIKA), Hind Siliguri for Bengali.
+          href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Hind+Siliguri:wght@400;600&display=swap",
         },
       ],
     },

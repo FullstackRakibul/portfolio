@@ -3,15 +3,11 @@
 
 @layer base {
   body {
-    font-family: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* taste-skill-ignore: Inter is PIPILIKA's face (brand) */
+    font-family: "Inter", "Hind Siliguri", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--bg);
     color: var(--ink);
     margin: 0;
   }
 }
 
-@layer utilities {
-  .text-gradient {
-    @apply bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent;
-  }
-}

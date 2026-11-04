@@ -1,7 +1,7 @@
 // Content for the homepage. Edit here; components only render it.
+// Experience, projects and certifications have their own files: experience.ts, projects.ts, certifications.ts.
 
 export interface Fact { label: string; value: string }
-export interface Role { company: string; position: string; period: string; start: string }
 export interface CapabilityGroup { id: string; name: string; note: string; items: string[] }
 /** A real stack: tools that work together in one piece of work, drawn as a connected path. */
 export interface CapabilityPath { id: string; label: string; note: string; items: string[] }
@@ -16,16 +16,6 @@ export interface LabModule {
   x: number
   y: number
   links: string[]
-}
-export type ProjectCategory = 'applications' | 'tools' | 'commerce'
-export interface Project {
-  title: string
-  url?: string
-  description: string
-  category: ProjectCategory
-  stack?: string[]
-  image?: string
-  featured?: boolean
 }
 export type DiagramKind = 'local' | 'context' | 'gateway' | 'tracking' | 'template'
 export interface Experiment {
@@ -56,13 +46,6 @@ export const FACTS: Fact[] = [
   { label: 'Based in', value: 'Dhaka, Bangladesh' },
   { label: 'Works at', value: 'Ha-Meem Group' },
   { label: 'Role', value: 'Software Support Engineer, full-stack developer' },
-]
-
-export const EXPERIENCE: Role[] = [
-  { company: 'Ha-Meem Group', position: 'Software Support Engineer', period: 'Nov 2023 – Present', start: '2023' },
-  { company: 'bdCalling IT Ltd', position: 'Web Developer', period: 'Aug 2023 – Nov 2023', start: '2023' },
-  { company: 'Global IT Solutions', position: 'Project Manager', period: 'Jun 2023 – Aug 2023', start: '2023' },
-  { company: 'Creative Tech Park', position: 'Web Developer & Project Manager', period: 'Jul 2022 – Jul 2023', start: '2022' },
 ]
 
 export const BEYOND_WORK = [
@@ -157,38 +140,6 @@ export const MOSTISKO_STACK = ['.NET 8', 'Vue.js', 'SQL Server', 'Ollama', 'Loca
 export const MOSTISKO_URL = 'https://mostisko.vercel.app'
 export const MOSTISKO_REPO = 'https://github.com/FullstackRakibul/rabbitiChat'
 
-export const PROJECT_FILTERS: { id: ProjectCategory | 'all'; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'applications', label: 'Enterprise & applications' },
-  { id: 'tools', label: 'Developer tools' },
-  { id: 'commerce', label: 'Corporate & e-commerce' },
-]
-
-const W = '/assets/work/'
-export const PROJECTS: Project[] = [
-  { title: 'Shobdo Bisharod', url: 'https://shobdo-bisharod21.vercel.app', description: 'Dynamic web application', category: 'applications', stack: ['Vue'], image: W + 'shobdo-bisharod.jpg' },
-  { title: 'Ha-Meem Group', url: 'https://ha-meemgroup.vercel.app/', description: 'Corporate portal for the group', category: 'applications', stack: ['Vue'], image: W + 'ha-meem-group.jpg', featured: true },
-  { title: 'Corporate Assistant', url: 'https://corporate-assistant-lac.vercel.app', description: 'HR, finance and career tools', category: 'applications', stack: ['Vue'], image: W + 'corporate-assistant.jpg', featured: true },
-  { title: 'Channel 24 CRM', url: 'https://panel-ch24.vercel.app/#/login', description: 'Billing and client management panel', category: 'applications', stack: ['Vue'], image: W + 'channel-24-crm.jpg', featured: true },
-  { title: 'Weavo Go', url: 'https://weavo-go.vercel.app/', description: 'Dynamic web platform', category: 'applications', image: W + 'weavo-go.jpg' },
-  { title: 'Les Showdagar', url: 'https://les-showdagar.vercel.app/', description: 'Inventory and premium storefront', category: 'applications', stack: ['Vue'], image: W + 'les-showdagar.jpg', featured: true },
-  { title: '5 Lakhs Portal', url: 'https://5lakhs.vercel.app/', description: 'Secure portal with authentication', category: 'applications', stack: ['Vue'], image: W + 'five-lakhs.jpg' },
-  { title: 'Art Sign Symbols', url: 'https://artsignsymbols.vercel.app/', description: 'Design and graphics portal', category: 'applications', stack: ['Vue'] },
-  { title: 'Rookie', description: '.NET scaffolding CLI', category: 'tools', stack: ['C#', '.NET'] },
-  { title: 'Calcifer', url: 'https://www.nuget.org/packages/Calcifer.Microservice.Api.Template', description: 'Microservice API template: core, auth, RBAC', category: 'tools', stack: ['C#', '.NET'] },
-  { title: 'Global IT Solutions', url: 'https://globalitsolutions.com.bd/', description: 'Technology agency website', category: 'commerce', image: W + 'global-it-solutions.jpg' },
-  { title: 'Taash Clothing', url: 'https://taashclothing.com/', description: 'Fashion and apparel store', category: 'commerce' },
-  { title: 'Paakhi Home', url: 'https://paakhihome.com/', description: 'Home decor and furniture store', category: 'commerce', image: W + 'paakhi-home.jpg' },
-  { title: 'Spice N Organics', url: 'https://spice-n-organics.com/', description: 'Organic grocery and spices', category: 'commerce' },
-  { title: 'Green Foods Express', url: 'https://greenfoods.express/', description: 'Fresh food delivery', category: 'commerce', image: W + 'green-foods-express.jpg' },
-  { title: 'Opa Care', url: 'https://opacare.net/', description: 'Personal care products store', category: 'commerce' },
-  { title: 'Zeen Woman', url: 'https://zeenwoman.com/', description: "Women's fashion and lifestyle", category: 'commerce', image: W + 'zeen-woman.jpg' },
-  { title: 'Miah Shop', url: 'https://miah.shop/', description: 'E-commerce storefront', category: 'commerce', image: W + 'miah-shop.jpg' },
-  { title: 'Restaurant Basmati', url: 'https://restaurantbasmati.com/', description: 'Restaurant menu and booking', category: 'commerce', image: W + 'restaurant-basmati.jpg' },
-  { title: 'My Prime Box', url: 'https://myprimebox.com/', description: 'Subscription box service', category: 'commerce' },
-  { title: 'Innovative BD', url: 'https://innovativebd.org/', description: 'Organisation and initiatives', category: 'commerce' },
-]
-
 // "Findings so far" are sample wording: confirm before launch.
 export const EXPERIMENTS: Experiment[] = [
   {
@@ -262,11 +213,14 @@ export const ARTICLES: Article[] = [
   { title: 'Finding Similarity in the Age of AI', url: 'https://medium.com/@rakibul.h.rabbi/finding-similarity-in-the-age-of-ai-1e770e5bc6a1', date: '2026-08-06' },
 ]
 
-export const SECTIONS = [
+/** Page sections in order. `bar: false` keeps a section out of the header bar (the menu and palette list all). */
+export const SECTIONS: { id: string; label: string; bar?: false }[] = [
   { id: 'about', label: 'About' },
-  { id: 'engineering', label: 'Engineering' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'engineering', label: 'Engineering', bar: false },
   { id: 'projects', label: 'Projects' },
-  { id: 'experiments', label: 'Experiments' },
+  { id: 'certifications', label: 'Certifications' },
+  { id: 'experiments', label: 'Experiments', bar: false },
   { id: 'writing', label: 'Writing' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'contact', label: 'Contact', bar: false },
 ]

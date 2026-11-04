@@ -10,6 +10,7 @@
       <LabEngineering />
       <LabMostisko />
       <LabProjects />
+      <LabCertifications />
       <LabExperiments />
       <LabWave />
       <LabWriting />

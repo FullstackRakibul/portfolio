@@ -95,6 +95,7 @@ onBeforeUnmount(() => {
   margin: 0;
   padding: var(--s-6);
   background: var(--surface);
+  border-radius: var(--radius);
 }
 .stack { display: grid; }
 .stack .d {
@@ -139,7 +140,7 @@ onBeforeUnmount(() => {
 .entry.on h3 { color: var(--accent); }
 .objective { margin-top: var(--s-3); max-width: 56ch; }
 dl { margin: var(--s-5) 0 0; display: grid; gap: 2px; font-size: 16px; }
-dl div { display: grid; grid-template-columns: 9.5rem 1fr; gap: var(--s-4); padding: 12px 16px; background: var(--surface); }
+dl div { display: grid; grid-template-columns: 9.5rem 1fr; gap: var(--s-4); padding: 12px 16px; background: var(--surface); border-radius: var(--radius-control); }
 dt { color: var(--muted); }
 dd { margin: 0; }
 .m-dia { display: none; }
@@ -153,7 +154,7 @@ dd { margin: 0; }
   .split { grid-template-columns: 1fr; }
   .plate-col { display: none; }
   .entries { grid-column: 1; }
-  .m-dia { display: block; padding: var(--s-4); margin-bottom: var(--s-5); background: var(--surface); box-sizing: border-box; }
+  .m-dia { display: block; padding: var(--s-4); margin-bottom: var(--s-5); background: var(--surface); border-radius: var(--radius); box-sizing: border-box; }
   dl div { grid-template-columns: 1fr; gap: 4px; }
   .entry { padding-bottom: var(--s-8); }
 }

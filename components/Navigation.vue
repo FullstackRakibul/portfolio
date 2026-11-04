@@ -2,14 +2,14 @@
   <header class="hdr" :class="[`hdr--${variant}`, { scrolled, named: showName }]">
     <div class="inner lab-wrap">
       <NuxtLink to="/" class="brand" @click="toTop">
-        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+        <span class="tile" aria-hidden="true"><svg class="mark" viewBox="0 0 32 32">
           <path class="loop" d="M8 16C11 5 21 5 24 16" />
           <path class="loop" d="M8 16C11 27 21 27 24 16" />
           <path class="axis" d="M8 16H24" />
           <circle cx="8" cy="16" r="3" />
           <circle cx="24" cy="16" r="3" />
-        </svg>
-        <span class="brand-name">Rakibul H. Rabbi</span>
+        </svg></span>
+        <span class="brand-name lab-mono">Rakibul H. Rabbi</span>
       </NuxtLink>
 
       <nav ref="nav" class="links" aria-label="Sections" @pointerleave="hoverId = ''">
@@ -75,9 +75,9 @@ const { theme, toggle } = useTheme()
 const palette = useState('lab-palette', () => false)
 const menu = ref(false)
 
-const linkSections = SECTIONS.filter(s => s.id !== 'contact')
-// Sections without their own link light the nearest one.
-const ALIAS: Record<string, string> = { experience: 'about', mostisko: 'projects' }
+const linkSections = SECTIONS.filter(s => s.bar !== false)
+// Sections without their own link in the bar light the nearest one.
+const ALIAS: Record<string, string> = { engineering: 'experience', mostisko: 'projects', experiments: 'certifications' }
 const active = ref('')
 const hoverId = ref('')
 
@@ -181,8 +181,8 @@ onBeforeUnmount(() => {
 .hdr--page,
 .hdr.scrolled {
   background: var(--header-bg);
-  backdrop-filter: blur(14px) saturate(1.1); /* taste-skill-ignore: the brief asks for a blurred bar once the page scrolls */
-  -webkit-backdrop-filter: blur(14px) saturate(1.1); /* taste-skill-ignore: same bar, Safari prefix */
+  backdrop-filter: blur(8px); /* taste-skill-ignore: a light blur under the bar once the page scrolls (earlier brief) */
+  -webkit-backdrop-filter: blur(8px); /* taste-skill-ignore: same bar, Safari prefix */
 }
 
 .inner {
@@ -203,17 +203,28 @@ onBeforeUnmount(() => {
   text-decoration: none;
   color: inherit;
 }
-.mark { width: 30px; height: 30px; flex: none; overflow: visible; }
-.mark path { fill: none; stroke: currentColor; stroke-width: 1.6; }
-.mark .axis { stroke: var(--accent); stroke-dasharray: 2 3; }
+/* PIPILIKA's logo tile: a teal square with soft corners, the loop mark inside. */
+.tile {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: var(--radius-control);
+  background: var(--teal);
+  color: #fff;
+}
+.mark { width: 24px; height: 24px; overflow: visible; }
+.mark path { fill: none; stroke: currentColor; stroke-width: 1.8; }
+.mark .axis { stroke: #a7f3e4; stroke-dasharray: 2 3; }
 .mark circle { fill: currentColor; }
 .mark .loop { transform-origin: 16px 16px; transition: transform 420ms var(--ease-spring); }
 .brand:hover .mark .loop:first-of-type { transform: scaleY(1.25); }
 .brand:hover .mark .loop:nth-of-type(2) { transform: scaleY(1.25); }
 .brand-name {
-  font: 700 var(--step-body) / 1 var(--font-display);
-  letter-spacing: -0.02em;
-  padding-top: 0.12em;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
   white-space: nowrap;
   opacity: 0;
   transform: translateX(-6px);
@@ -309,7 +320,7 @@ onBeforeUnmount(() => {
   .burger { display: inline-grid; }
 }
 @media (max-width: 380px) {
-  .brand-name { font-size: 18px; }
+  .brand-name { font-size: 11px; letter-spacing: 0.1em; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ind, .inner, .brand-name, .mark .loop { transition: none; }
