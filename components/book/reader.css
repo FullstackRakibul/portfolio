@@ -1,0 +1,215 @@
+/* The reader: one calm room per page theme. The page sits on a ground of its own colour, so the
+   sheet's edges fall away and only the text is left, as in a book app. */
+.reader {
+  --r-ground: #fbfaf7;
+  --r-ink: #1d1d1f;
+  --r-muted: #6e6e73;
+  --r-sheet: #ffffff;
+  --r-control: rgb(0 0 0 / 0.06);
+  --r-control-hover: rgb(0 0 0 / 0.1);
+  --r-filter: none;
+  --r-blend: multiply;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: block;
+  height: 100svh;
+  background: var(--r-ground);
+  color: var(--r-ink);
+  font-family: var(--font-text);
+  outline: none;
+  transition: background-color 320ms ease, color 320ms ease;
+  animation: r-in 260ms var(--ease-out);
+}
+.reader[data-r="sepia"] {
+  --r-ground: #f3e8d2;
+  --r-ink: #3b2c1c;
+  --r-muted: #7a6650;
+  --r-sheet: #faf2e2;
+  --r-control: rgb(59 44 28 / 0.08);
+  --r-control-hover: rgb(59 44 28 / 0.14);
+}
+.reader[data-r="night"] {
+  --r-ground: #141414;
+  --r-ink: #e4e4e4;
+  --r-muted: #9a9a9f;
+  --r-sheet: #232325;
+  --r-control: rgb(255 255 255 / 0.08);
+  --r-control-hover: rgb(255 255 255 / 0.14);
+  /* White paper turns to the ground's black, ink to soft grey; colours keep their hue. */
+  --r-filter: invert(0.92) hue-rotate(180deg);
+  --r-blend: normal;
+}
+.reader[data-r="original"] {
+  --r-ground: #1c1c1e;
+  --r-ink: #f2f2f7;
+  --r-muted: #a1a1a6;
+  --r-sheet: #2c2c2e;
+  --r-control: rgb(255 255 255 / 0.08);
+  --r-control-hover: rgb(255 255 255 / 0.14);
+  --r-blend: normal;
+}
+@keyframes r-in { from { opacity: 0; transform: translateY(12px); } }
+
+/* Controls float over the page and step aside while reading. */
+.top, .bottom {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 3;
+  transition: opacity 240ms ease, transform 300ms var(--ease-out);
+}
+.reader.bare .top { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+.reader.bare .bottom { opacity: 0; transform: translateY(8px); pointer-events: none; }
+
+.top {
+  top: 0;
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 12px;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) max(12px, env(safe-area-inset-right, 0px)) 10px max(12px, env(safe-area-inset-left, 0px));
+}
+.who { min-width: 0; text-align: center; }
+.who h1 {
+  margin: 0;
+  font: 600 15px / 1.3 var(--font-text);
+  letter-spacing: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.who p { margin: 0; font-size: 13px; color: var(--r-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ic {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--r-control);
+  color: var(--r-ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--dur-hover) ease, transform var(--dur-press) var(--ease-out);
+}
+.ic:active { transform: scale(0.92); }
+.aa-btn { font: 600 16px 'Charter', 'Bitstream Charter', Georgia, serif; }
+.aa-btn[aria-expanded="true"] { background: var(--teal); color: #fff; }
+.reader :focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; }
+
+.stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 64px) 12px calc(env(safe-area-inset-bottom, 0px) + 64px);
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.stage.zoomed { place-items: start center; overflow: auto; touch-action: auto; }
+.spread { display: flex; align-items: center; justify-content: center; }
+.pg {
+  display: block;
+  filter: var(--r-filter);
+  mix-blend-mode: var(--r-blend);
+  transition: filter 320ms ease;
+}
+.reader[data-r="original"] .pg { box-shadow: 0 20px 50px -20px rgb(0 0 0 / 0.8); border-radius: 2px; } /* taste-skill-ignore: the original page is a sheet lying on the desk */
+
+/* Side arrows: visible on a mouse, invisible tap zones cover the same job on touch. */
+.turn {
+  position: absolute;
+  top: 50%;
+  display: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-top: -24px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--r-control);
+  color: var(--r-ink);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 200ms ease, background-color var(--dur-hover) ease, transform var(--dur-press) var(--ease-out);
+}
+.turn.prev { left: max(16px, env(safe-area-inset-left, 0px)); }
+.turn.next { right: max(16px, env(safe-area-inset-right, 0px)); }
+.turn:disabled { visibility: hidden; }
+.turn:focus-visible { opacity: 1; }
+.turn:active { transform: scale(0.92); }
+@media (hover: hover) and (pointer: fine) {
+  .turn { display: grid; }
+  .stage:hover .turn { opacity: 0.85; }
+  .turn:hover, .ic:hover { background: var(--r-control-hover); }
+}
+
+.bottom {
+  bottom: 0;
+  padding: 8px max(20px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 12px) max(20px, env(safe-area-inset-left, 0px));
+  width: min(720px, 100%);
+  margin-inline: auto;
+}
+.where { display: flex; justify-content: space-between; gap: 12px; margin: 6px 0 0; font-size: 13px; color: var(--r-muted); }
+.left { color: var(--r-muted); }
+
+/* The scrubber: a thin track that fills as you read, a large thumb for a thumb. */
+.scrub {
+  --p: 0%;
+  display: block;
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.scrub::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--teal) var(--p), var(--r-control-hover) var(--p)); /* taste-skill-ignore: two-colour progress fill, a hard stop */
+}
+.scrub::-moz-range-track { height: 4px; border-radius: 999px; background: var(--r-control-hover); }
+.scrub::-moz-range-progress { height: 4px; border-radius: 999px; background: var(--teal); }
+.scrub::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  margin-top: -7px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35); /* taste-skill-ignore: the thumb floats over its track */
+  -webkit-appearance: none;
+  transition: transform var(--dur-press) var(--ease-out);
+}
+.scrub::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.35); } /* taste-skill-ignore: the thumb floats over its track */
+.scrub:active::-webkit-slider-thumb { transform: scale(1.2); }
+
+.state { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; }
+.spin {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--r-control-hover);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.err { max-width: 380px; text-align: center; }
+.err-t { margin: 0; font-size: 20px; font-weight: 600; }
+.err-x { margin: 8px 0 20px; color: var(--r-muted); }
+
+.stage--embed { padding: calc(env(safe-area-inset-top, 0px) + 64px) 0 env(safe-area-inset-bottom, 0px); touch-action: auto; }
+.stage--embed iframe { display: block; width: 100%; height: 100%; border: 0; background: #000; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reader { animation: none; }
+  .top, .bottom, .pg { transition: opacity 120ms ease; }
+  .reader.bare .top, .reader.bare .bottom { transform: none; }
+  .spin { animation-duration: 2s; }
+}
