@@ -16,12 +16,12 @@
           <input id="tool-q" v-model="q" type="search" placeholder="Find a tool, e.g. Docker" autocomplete="off">
         </div>
         <div class="paths" role="group" aria-label="Show the stack behind a piece of work">
-          <button
-            v-for="p in CAPABILITY_PATHS" :key="p.id" type="button"
+          <UiButton
+            v-for="p in CAPABILITY_PATHS" :key="p.id" size="sm" :variant="path === p.id ? 'default' : 'outline'"
             :aria-pressed="path === p.id" @click="path = path === p.id ? '' : p.id"
           >
             {{ p.label }}
-          </button>
+          </UiButton>
         </div>
         <p class="count lab-num" role="status">{{ q ? `${shown} of ${total}` : `${total} tools` }}</p>
       </div>
@@ -125,8 +125,10 @@ onBeforeUnmount(() => ro?.disconnect())
 <style scoped>
 .board {
   position: relative;
-  background: var(--surface);
-  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border); /* taste-skill-ignore: card edge (the brief's design system) */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card); /* taste-skill-ignore: hairline, light mode only */
   padding: var(--s-5);
 }
 
@@ -143,34 +145,25 @@ onBeforeUnmount(() => ro?.disconnect())
   flex: 0 1 300px;
   display: flex;
   align-items: center;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 .search svg { position: absolute; left: 12px; pointer-events: none; }
 .search input {
   width: 100%;
-  height: 44px;
+  height: 40px;
   padding: 0 12px 0 38px;
-  border: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font: 16px var(--font-text);
+  border: 1px solid var(--input); /* taste-skill-ignore: a real form field keeps its edge */
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  font: 15px var(--font-text);
+  transition: border-color var(--dur-hover) ease;
 }
-.search input:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
-.paths { display: flex; flex-wrap: wrap; gap: var(--s-1); }
-.paths button {
-  min-height: 44px;
-  padding: 0 14px;
-  border: 0;
-  background: var(--surface-2);
-  color: var(--ink);
-  font: 16px var(--font-text);
-  cursor: pointer;
-  transition: background-color var(--dur-hover) ease, color var(--dur-hover) ease, transform var(--dur-press) var(--ease-out);
-}
-.paths button:hover { background: color-mix(in srgb, var(--surface-2) 80%, var(--ink)); }
-.paths button:active { transform: scale(0.97); }
-.paths button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-.count { margin-left: auto; font-size: var(--step-small); color: var(--muted); }
+.search input::placeholder { color: var(--muted-foreground); }
+.search input:hover { border-color: var(--border-strong); }
+.search input:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.paths { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.count { margin-left: auto; font-size: var(--step-small); color: var(--muted-foreground); }
 .path-note {
   position: relative;
   z-index: 2;
@@ -178,7 +171,7 @@ onBeforeUnmount(() => ro?.disconnect())
   min-height: 3em;
   max-width: 72ch;
   font-size: 16px;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 .wires {
@@ -192,14 +185,14 @@ onBeforeUnmount(() => ro?.disconnect())
 }
 .wire {
   fill: none;
-  stroke: var(--accent);
+  stroke: var(--primary);
   stroke-width: 1.75;
-  opacity: 0.55;
+  opacity: 0.6;
   stroke-dasharray: 3000;
   animation: draw 1.1s var(--ease-out) both;
 }
 @keyframes draw { from { stroke-dashoffset: 3000; } }
-.pulse { fill: var(--accent); }
+.pulse { fill: var(--primary); }
 
 .clusters {
   position: relative;
@@ -220,11 +213,11 @@ onBeforeUnmount(() => ro?.disconnect())
   width: 12px;
   height: 12px;
   flex: none;
-  background: var(--ink);
+  background: var(--foreground);
   transition: background-color var(--dur-hover) ease, transform 420ms var(--ease-spring);
 }
-.cluster.lit .hub { background: var(--accent); transform: rotate(45deg); }
-.note { margin: var(--s-2) 0 var(--s-4); font-size: var(--step-small); color: var(--muted); min-height: 4.2em; }
+.cluster.lit .hub { background: var(--primary); transform: rotate(45deg); }
+.note { margin: var(--s-2) 0 var(--s-4); font-size: var(--step-small); color: var(--muted-foreground); min-height: 4.2em; }
 
 ul { position: relative; list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
 /* The cluster's spine: a filled bar through the dots. */
@@ -235,7 +228,7 @@ ul::before {
   top: 14px;
   bottom: 14px;
   width: 2px;
-  background: var(--surface-2);
+  background: var(--border);
 }
 li {
   position: relative;
@@ -248,7 +241,7 @@ li {
   transition: color var(--dur-hover) ease;
 }
 /* Labels knock the wire out behind them, so it never strikes through a word. */
-.lbl { position: relative; padding: 2px 6px; margin-left: -6px; border-radius: 4px; background: var(--surface-solid); }
+.lbl { position: relative; padding: 2px 6px; margin-left: -6px; border-radius: 4px; background: var(--card); }
 .dot {
   position: relative;
   width: 12px;
@@ -256,18 +249,18 @@ li {
   flex: none;
   box-sizing: border-box;
   border-radius: 50%;
-  border: 2px solid var(--muted);
-  background: var(--surface);
+  border: 2px solid var(--muted-foreground);
+  background: var(--card);
   transition: background-color var(--dur-hover) ease, border-color var(--dur-hover) ease, transform 360ms var(--ease-spring);
 }
-li.hover .dot { transform: scale(1.35); border-color: var(--ink); }
-li.on .dot { background: var(--accent); border-color: var(--accent); }
-li.on { color: var(--ink); font-weight: 600; }
-li.hit .dot { background: var(--ink); border-color: var(--ink); transform: scale(1.2); }
+li.hover .dot { transform: scale(1.35); border-color: var(--foreground); }
+li.on .dot { background: var(--primary); border-color: var(--primary); }
+li.on { color: var(--foreground); font-weight: 600; }
+li.hit .dot { background: var(--foreground); border-color: var(--foreground); transform: scale(1.2); }
 li.hit { font-weight: 600; }
-li.miss { color: color-mix(in srgb, var(--muted) 70%, transparent); }
-li.miss .dot { border-color: var(--surface-2); }
-.none { position: relative; z-index: 2; margin-top: var(--s-5); color: var(--muted); }
+li.miss { color: color-mix(in srgb, var(--muted-foreground) 70%, transparent); }
+li.miss .dot { border-color: var(--border); }
+.none { position: relative; z-index: 2; margin-top: var(--s-5); color: var(--muted-foreground); }
 
 @media (prefers-reduced-motion: reduce) {
   .wire { animation: none; }

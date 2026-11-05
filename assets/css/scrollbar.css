@@ -1,16 +1,19 @@
-/* The page's own scrollbar, in the site's colours: thin, a transparent track, a slate pill that turns
-   mint under the pointer. Chromium and Safari read ::-webkit-scrollbar; Firefox reads scrollbar-color.
-   (Chrome ignores ::-webkit-scrollbar on an element once scrollbar-color is set, so that is kept for
-   browsers without it.) */
+/* The page's own scrollbar, in the site's tokens: thin, a transparent track, a neutral pill that turns
+   to the accent (black in light mode) under the pointer. Chromium and Safari read ::-webkit-scrollbar;
+   Firefox reads scrollbar-color. (Chrome ignores ::-webkit-scrollbar on an element once scrollbar-color
+   is set, so that is kept for browsers without it.)
+
+   Thumb: --disabled in dark mode (a decorative line, 3.9:1 on the page, so it never disappears) and
+   --subtle in light mode (4.8:1); --border-strong would sit under 2:1 against the page. */
 
 :root,
 [data-theme="dark"] {
-  --sb-thumb: #3d5459;
-  --sb-thumb-active: #5eead4;
+  --sb-thumb: var(--disabled);
+  --sb-thumb-active: var(--primary);
 }
 [data-theme="light"] {
-  --sb-thumb: #8a9fa3;
-  --sb-thumb-active: #0e8177;
+  --sb-thumb: var(--subtle);
+  --sb-thumb-active: var(--primary);
 }
 
 @supports not selector(::-webkit-scrollbar) {

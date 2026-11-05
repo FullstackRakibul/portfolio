@@ -1,83 +1,66 @@
-/* Tokens and base for the homepage interface.
-   Theme: PIPILIKA (pipilika-terminal.vercel.app), sampled from the live login screen on 2026-11-04:
-   a deep teal room, dark glass cards, a teal primary action, mint for small accents, Inter with a
-   monospace for labels, versions and badges. Text colours are tuned for WCAG AA on the lightest
-   part of the ground. */
+/* Design tokens and base for the whole site.
+   Minimal, high-clarity theme in the spirit of shadcn/ui and GitHub: neutral surfaces, 1px borders,
+   one accent that appears only where an action needs it. Token names follow shadcn/ui; every colour
+   on the site comes from here (Tailwind reads the same tokens, see main.css).
+
+   Dark: an earthy palette. Light: strictly black and white, no accent at all. */
 
 :root,
 [data-theme="dark"] {
-  --ground-a: #0d2b30;
-  --ground-b: #113a40;
-  --ground-c: #175050;
-  --bg: #0f3237;
-  --surface: rgb(18 44 52 / 0.9);
-  --surface-solid: #142f37;
-  --surface-2: rgb(255 255 255 / 0.06);
-  --surface-3: rgb(255 255 255 / 0.1);
-  --line: rgb(255 255 255 / 0.1);
-  --line-strong: rgb(255 255 255 / 0.24);
-  --ink: #e6eef0;
-  --muted: #a9bec1;
-  --teal: #0e8177;
-  --teal-hover: #0b6c64;
-  --mint: #5eead4;
-  --accent: #5eead4;
-  --accent-ink: #0b2226;
-  --signal: #5eead4;
-  --field: 230 238 240;
-  --shadow: 0 25px 60px -20px rgb(2 6 23 / 0.85);
-  --shadow-lift: 0 30px 70px -22px rgb(2 6 23 / 0.95);
-  --header-bg: rgb(13 43 48 / 0.86);
+  --background: #0B0D06;
+  --background-deep: #060701;
+  --card: #141413;
+  --card-foreground: var(--foreground);
+  --popover: #141413;
+  --popover-foreground: var(--foreground);
+  --muted: #212D2D;
+  --border: #363F3A;
+  --input: #363F3A;
+  --border-strong: #40423B;
+  --foreground: #E2D2B8;
+  --foreground-body: #C9C8BF;
+  --muted-foreground: #AFACA1;
+  --subtle: #BDBBB2;
+  --primary: #B89B6F;
+  --primary-foreground: #0B0D06;
+  /* "Hover at 90% opacity", composed onto the page so the label keeps its contrast. */
+  --primary-hover: color-mix(in srgb, var(--primary) 90%, var(--background));
+  --secondary: var(--muted);
+  --secondary-foreground: var(--foreground);
+  --ring: #B89B6F;
+  /* Disabled states and decorative lines only: 3.9:1, never readable text. */
+  --disabled: #66726B;
 
-  --floor-a: #5b6670;
-  --floor-b: #8a949c;
-
-  --b-production: #5eead4;
-  --b-production-bg: rgb(20 184 166 / 0.18);
-  --b-live: #a7f3d0;
-  --b-live-bg: rgb(52 211 153 / 0.14);
-  --b-experiment: #fcd9a0;
-  --b-experiment-bg: rgb(251 191 36 / 0.14);
-  --b-hobby: #d6e2e4;
-  --b-hobby-bg: rgb(255 255 255 / 0.09);
+  --shadow-card: none;
+  --shadow-float: 0 12px 32px -12px rgb(0 0 0 / 0.7); /* taste-skill-ignore: the one soft shadow, for floating controls */
+  /* Scattered name particles: the accent in dark mode. */
+  --name-scatter-opacity: 1;
   color-scheme: dark;
 }
 
 [data-theme="light"] {
-  --ground-a: #eef4f3;
-  --ground-b: #e3eeec;
-  --ground-c: #d3e5e2;
-  --bg: #e6efed;
-  --surface: rgb(255 255 255 / 0.86);
-  --surface-solid: #f8fbfa;
-  --surface-2: rgb(15 42 46 / 0.05);
-  --surface-3: rgb(15 42 46 / 0.09);
-  --line: rgb(15 42 46 / 0.1);
-  --line-strong: rgb(15 42 46 / 0.26);
-  --ink: #0f2a2e;
-  --muted: #45595d;
-  --teal: #0e8177;
-  --teal-hover: #0b6c64;
-  --mint: #0a6a62;
-  --accent: #0a6a62;
-  --accent-ink: #ffffff;
-  --signal: #0e8177;
-  --field: 15 42 46;
-  --shadow: 0 24px 50px -24px rgb(15 42 46 / 0.28);
-  --shadow-lift: 0 30px 60px -24px rgb(15 42 46 / 0.36);
-  --header-bg: rgb(238 244 243 / 0.88);
+  --background: #FFFFFF;
+  --background-deep: #FAFAFA;
+  --card: #FFFFFF;
+  --popover: #FFFFFF;
+  --muted: #F4F4F5;
+  --border: #E4E4E7;
+  --input: #E4E4E7;
+  --border-strong: #D4D4D8;
+  --foreground: #09090B;
+  --foreground-body: #18181B;
+  --muted-foreground: #52525B;
+  --subtle: #71717A;
+  --primary: #09090B;
+  --primary-foreground: #FFFFFF;
+  --primary-hover: #27272A;
+  --ring: #09090B;
+  --disabled: #A1A1AA;
 
-  --floor-a: #b7c2c8;
-  --floor-b: #d5dde1;
-
-  --b-production: #075e56;
-  --b-production-bg: rgb(20 184 166 / 0.16);
-  --b-live: #065f46;
-  --b-live-bg: rgb(52 211 153 / 0.18);
-  --b-experiment: #7a4b05;
-  --b-experiment-bg: rgb(251 191 36 / 0.22);
-  --b-hobby: #34484c;
-  --b-hobby-bg: rgb(15 42 46 / 0.08);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04); /* taste-skill-ignore: the hairline card shadow of the light theme */
+  --shadow-float: 0 10px 28px -12px rgb(0 0 0 / 0.2), 0 1px 2px rgb(0 0 0 / 0.04); /* taste-skill-ignore: floating controls */
+  /* No accent in light mode: the particles scatter in the foreground, softened. */
+  --name-scatter-opacity: 0.4;
   color-scheme: light;
 }
 
@@ -85,9 +68,12 @@
   /* Inter for UI and text; Hind Siliguri carries any Bengali (Inter has no Bengali glyphs). */
   --font-display: "Inter", "Hind Siliguri", system-ui, sans-serif;
   --font-text: "Inter", "Hind Siliguri", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace; /* taste-skill-ignore: PIPILIKA sets labels, versions and badges in mono (brand) */
-  --radius: 16px;
-  --radius-control: 10px;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace; /* taste-skill-ignore: mono labels, versions and badges (kept from the previous theme) */
+
+  /* Radius: buttons and inputs 8px, cards 12px, tags 6px, avatars full. */
+  --radius: 8px;
+  --radius-lg: calc(var(--radius) + 4px);
+  --radius-sm: calc(var(--radius) - 2px);
 
   /* Five sizes do the visible work. */
   --step-small: 0.875rem;
@@ -119,13 +105,13 @@
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
-  --dur-press: 140ms;
-  --dur-hover: 200ms;
+  --dur-press: 100ms;
+  --dur-hover: 150ms;
   --dur-move: 520ms;
 }
 
 html {
-  background: var(--bg);
+  background: var(--background);
   scroll-padding-top: calc(var(--header-h-tight) + 24px);
 }
 
@@ -136,41 +122,35 @@ html {
 .lab {
   position: relative;
   isolation: isolate;
-  color: var(--ink);
+  background: var(--background);
+  color: var(--foreground-body);
   font-family: var(--font-text);
   font-size: var(--step-body);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
-/* The room: PIPILIKA's diagonal teal, held still behind the scrolling page. */
-.lab::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(118deg, var(--ground-a) 0%, var(--ground-b) 46%, var(--ground-c) 100%); /* taste-skill-ignore: the PIPILIKA ground is a diagonal teal gradient (brand) */
-  pointer-events: none;
-}
 
 .lab h1,
 .lab h2,
 .lab h3 {
+  color: var(--foreground);
   font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 1;
   margin: 0;
 }
+.lab strong { color: var(--foreground); }
 
 .lab p { margin: 0; }
 .lab :where(a) { color: inherit; }
 
-.lab ::selection { background: var(--accent); color: var(--accent-ink); }
+.lab ::selection { background: var(--primary); color: var(--primary-foreground); }
 
 .lab :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 
 /* The frame every section shares. */
@@ -207,59 +187,37 @@ html {
   text-wrap: balance;
 }
 
-.lab-meta { font-size: var(--step-small); color: var(--muted); }
+.lab-meta { font-size: var(--step-small); color: var(--muted-foreground); }
 .lab-num { font-variant-numeric: tabular-nums; }
 
-/* PIPILIKA's primary action: one teal fill, uppercase and bold, 10px corners. */
-.lab-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 0 24px;
-  border: 0;
-  border-radius: var(--radius-control);
-  background: var(--teal);
-  color: #fff;
-  font: 700 15px / 1 var(--font-text);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  text-decoration: none;
-  cursor: pointer;
-  box-shadow: 0 10px 24px -12px rgb(13 148 136 / 0.9); /* taste-skill-ignore: PIPILIKA's button carries this soft drop (brand) */
-  transition: transform var(--dur-press) var(--ease-out), background-color var(--dur-hover) ease;
-}
-.lab-button:hover { background: var(--teal-hover); transform: translateY(-1px); }
-.lab-button:active { transform: translateY(0) scale(0.98); }
-.lab-button svg { transition: transform var(--dur-hover) var(--ease-out); }
-.lab-button:hover svg { transform: translateX(3px); }
-.lab-button--block { display: flex; width: 100%; }
-
+/* Standalone text links: the Button's "link" variant for text that is not a button.
+   Links inside running prose keep a resting underline (pages/onTheWayToBeCreative/[slug].vue). */
 .lab-link {
-  color: var(--mint);
+  color: var(--foreground);
+  font-weight: 500;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.28em;
-  text-decoration-color: color-mix(in srgb, var(--mint) 40%, transparent);
+  text-decoration-color: transparent;
   transition: text-decoration-color var(--dur-hover) ease, color var(--dur-hover) ease;
 }
-.lab-link:hover { text-decoration-color: currentColor; }
+.lab-link:hover { text-decoration-color: var(--primary); }
 
-/* PIPILIKA's card: dark glass, a hairline edge, 16px corners, one large soft shadow. No blur. */
+/* Card: the card surface, a 1px border, 12px corners; light mode adds a hairline lift (--shadow-card). */
 .lab-card {
-  background: var(--surface);
-  border: 1px solid var(--line); /* taste-skill-ignore: PIPILIKA's card edge (brand) */
-  border-radius: var(--radius);
-  box-shadow: var(--shadow); /* taste-skill-ignore: PIPILIKA's card shadow (brand) */
+  background: var(--card);
+  border: 1px solid var(--border); /* taste-skill-ignore: shadcn card edge (the brief's design system) */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card); /* taste-skill-ignore: hairline shadow, light mode only */
 }
 .lab-card-foot {
-  border-top: 1px solid var(--line); /* taste-skill-ignore: PIPILIKA's card footer divider (brand) */
+  border-top: 1px solid var(--border); /* taste-skill-ignore: card footer divider (the brief's design system) */
 }
 
-/* Mono labels: PIPILIKA's wordmark, version and footer voice. Short strings only. */
+/* Mono labels: wordmark, versions, dates, eyebrows. Short strings only. */
 .lab-mono {
-  font-family: var(--font-mono); /* taste-skill-ignore: PIPILIKA sets labels, versions and badges in mono (brand) */
+  color: var(--muted-foreground);
+  font-family: var(--font-mono); /* taste-skill-ignore: mono labels (the brief keeps them) */
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.14em;
@@ -272,39 +230,48 @@ html {
   align-items: center;
   gap: 6px;
   padding: 3px 8px;
-  border: 1px solid var(--line-strong); /* taste-skill-ignore: PIPILIKA's outlined version pill (brand) */
-  border-radius: 4px;
-  color: var(--mint);
-  font: 500 12px / 1.3 var(--font-mono); /* taste-skill-ignore: PIPILIKA sets labels, versions and badges in mono (brand) */
+  border: 1px solid var(--border); /* taste-skill-ignore: outlined version pill (the brief's design system) */
+  border-radius: var(--radius-sm);
+  color: var(--muted-foreground);
+  font: 500 12px / 1.3 var(--font-mono); /* taste-skill-ignore: mono labels (the brief keeps them) */
   letter-spacing: 0.04em;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
-/* Filled status badge, after PIPILIKA's PRODUCTION mark. */
+/* Status badge: a neutral outline. LIVE and PRODUCTION carry the accent as a dot, never a fill. */
 .lab-badge {
   display: inline-flex;
   align-items: center;
-  padding: 3px 7px;
-  border-radius: 4px;
-  font: 600 11px / 1.3 var(--font-mono); /* taste-skill-ignore: PIPILIKA sets labels, versions and badges in mono (brand) */
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--border); /* taste-skill-ignore: outline badge (the brief's design system) */
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted-foreground);
+  font: 600 11px / 1.3 var(--font-mono); /* taste-skill-ignore: mono labels (the brief keeps them) */
   letter-spacing: 0.1em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--b-production);
-  background: var(--b-production-bg);
 }
-.lab-badge[data-status="live"] { color: var(--b-live); background: var(--b-live-bg); }
-.lab-badge[data-status="experiment"] { color: var(--b-experiment); background: var(--b-experiment-bg); }
-.lab-badge[data-status="hobby"] { color: var(--b-hobby); background: var(--b-hobby-bg); }
+.lab-badge[data-status="live"],
+.lab-badge[data-status="production"] { color: var(--foreground); }
+.lab-badge[data-status="live"]::before,
+.lab-badge[data-status="production"]::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+}
 
-/* Small muted skill tags. */
+/* Small muted tags. */
 .lab-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .lab-tags > * {
   padding: 3px 9px;
-  border-radius: 6px;
-  background: var(--surface-2);
-  color: var(--muted);
+  border-radius: var(--radius-sm);
+  background: var(--muted);
+  color: var(--muted-foreground);
   font-size: 13px;
   line-height: 1.4;
 }
@@ -340,30 +307,26 @@ html {
   html.js [data-reveal][data-rest] { transition: none; }
 }
 
-/* Theme change cross-fade (View Transitions where supported). */
+/* Theme change: a 150ms cross-fade (View Transitions where supported). */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 420ms;
-  animation-timing-function: var(--ease-out);
+  animation-duration: 150ms;
+  animation-timing-function: ease;
 }
 
 /* A card that is one link: the whole card answers the pointer and the keyboard. Pair with .lab-card and
-   put .lab-stretch on the card's main link. */
+   put .lab-stretch on the card's main link. Hover strengthens the border; nothing lifts. */
 .lab-card-link {
   position: relative;
-  transition: transform var(--dur-move) var(--ease-out), box-shadow var(--dur-move) var(--ease-out), border-color var(--dur-hover) ease;
+  transition: border-color var(--dur-hover) ease;
 }
-.lab-card-link:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); border-color: color-mix(in srgb, var(--mint) 55%, transparent); } /* taste-skill-ignore: PIPILIKA card lifts on hover (brand) */
-.lab-card-link:has(.lab-stretch:focus-visible) { outline: 2px solid var(--mint); outline-offset: 3px; }
+.lab-card-link:hover { border-color: var(--border-strong); }
+.lab-card-link:has(.lab-stretch:focus-visible) { outline: 2px solid var(--ring); outline-offset: 2px; }
 .lab-stretch { color: inherit; text-decoration: none; }
 .lab-stretch:focus-visible { outline: none; }
 .lab-stretch::after { content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
 /* Secondary links inside a stretched card sit above the stretch. */
 .lab-card-link .lab-above { position: relative; z-index: 2; }
-@media (prefers-reduced-motion: reduce) {
-  .lab-card-link { transition: border-color var(--dur-hover) ease; }
-  .lab-card-link:hover { transform: none; }
-}
 
 /* "← Back" links on detail pages. */
 .lab-back {
@@ -371,17 +334,18 @@ html {
   align-items: center;
   gap: 8px;
   min-height: 44px;
-  color: var(--mint);
-  font: 500 12px / 1 var(--font-mono); /* taste-skill-ignore: PIPILIKA sets labels in mono (brand) */
+  color: var(--muted-foreground);
+  font: 500 12px / 1 var(--font-mono); /* taste-skill-ignore: mono labels (the brief keeps them) */
   letter-spacing: 0.14em;
   text-transform: uppercase;
   text-decoration: none;
+  transition: color var(--dur-hover) ease;
 }
-.lab-back:hover { text-decoration: underline; text-underline-offset: 0.35em; }
+.lab-back:hover { color: var(--foreground); }
 
 /* Printing any page: the screen chrome stays on screen. */
 @media print {
-  .hdr, .fc, .btt, .rail, .cc, .lab::before { display: none !important; }
+  .hdr, .fc, .btt, .rail, .cc { display: none !important; }
   /* Paper has no scroll: every entrance prints finished. */
   [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
 }

@@ -1,11 +1,10 @@
 <template>
   <div class="resume">
     <LabPageHeader eyebrow="Résumé" :title="resumeData.name" :intro="resumeData.title">
-      <button type="button" class="lab-button no-print" :disabled="isDownloading" @click="downloadPDF">
-        <Download v-if="!isDownloading" :size="18" aria-hidden="true" />
-        <Loader2 v-else class="spin" :size="18" aria-hidden="true" />
+      <UiButton class="no-print" :loading="isDownloading" @click="downloadPDF">
+        <template #leading><Download aria-hidden="true" /></template>
         Download PDF
-      </button>
+      </UiButton>
     </LabPageHeader>
 
     <div id="resume-document" v-reveal class="doc lab-wrap">
@@ -108,7 +107,7 @@
 </template>
 
 <script setup>
-import { Download, Phone, Mail, Github, Linkedin, MapPin, Loader2 } from 'lucide-vue-next'
+import { Download, Phone, Mail, Github, Linkedin, MapPin } from 'lucide-vue-next'
 
 const isDownloading = ref(false)
 
@@ -243,44 +242,42 @@ useHead({
   width: 96px;
   height: 96px;
   border-radius: 50%;
-  border: 2px solid var(--mint);
+  border: 1px solid var(--border);
   object-fit: cover;
   object-position: 50% 22%;
 }
 .contact { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); font-size: 15px; }
 .contact li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: var(--s-3); align-items: center; }
-.contact svg { color: var(--mint); }
-.contact a { color: var(--ink); overflow-wrap: anywhere; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 0.25em; }
-.contact a:hover { color: var(--mint); text-decoration-color: currentColor; }
+.contact svg { color: var(--subtle); }
+.contact a { color: var(--foreground); overflow-wrap: anywhere; text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 0.25em; }
+.contact a:hover { text-decoration-color: var(--primary); }
 
 .sec { display: grid; gap: var(--gap); }
 .card.sec { gap: 0; }
-.sec-h { color: var(--mint); font-size: 12px; margin-bottom: var(--s-4); }
+.sec-h { font-size: 12px; margin-bottom: var(--s-4); }
 .sec-h.out { margin-bottom: 0; }
 .summary { font-size: var(--step-body); line-height: 1.65; }
 
 .skills { margin: 0; display: grid; gap: var(--s-3); font-size: 16px; }
 .skills div { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: var(--s-4); }
 .skills dt { font-weight: 600; }
-.skills dd { margin: 0; color: var(--muted); }
+.skills dd { margin: 0; color: var(--muted-foreground); }
 
 .job-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: var(--s-2) var(--s-4); }
 .job-t { font: 600 19px / 1.3 var(--font-text); letter-spacing: -0.01em; }
-.job-co { margin-top: 4px; font-size: 15px; font-weight: 600; color: var(--muted); }
+.job-co { margin-top: 4px; font-size: 15px; font-weight: 600; color: var(--muted-foreground); }
 .job-co span { font-weight: 400; }
 .tasks { margin: var(--s-4) 0 0; padding-left: 1.2em; display: grid; gap: var(--s-2); font-size: 16px; line-height: 1.55; }
-.tasks li::marker { color: var(--mint); }
+.tasks li::marker { color: var(--muted-foreground); }
 .edu + .edu { margin-top: var(--s-4); }
 
 .projects { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
 .project { display: flex; flex-direction: column; gap: var(--s-2); min-width: 0; }
-.tech { font-size: 14px; color: var(--muted); font-style: italic; }
+.tech { font-size: 14px; color: var(--muted-foreground); font-style: italic; }
 .desc { font-size: 16px; }
-.url { margin-top: auto; padding-top: var(--s-2); color: var(--mint); font-size: 14px; overflow-wrap: anywhere; }
+.url { margin-top: auto; padding-top: var(--s-2); color: var(--foreground); font-size: 14px; overflow-wrap: anywhere; text-decoration: underline; text-underline-offset: 0.25em; text-decoration-color: var(--border-strong); }
+.url:hover { text-decoration-color: var(--primary); }
 
-.spin { animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
 
 @media (max-width: 899px) {
   .doc { grid-template-columns: 1fr; row-gap: var(--gap); }

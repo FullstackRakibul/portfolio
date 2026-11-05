@@ -125,10 +125,10 @@ onBeforeUnmount(() => { removeEventListener('scroll', onScroll); cancelAnimation
   bottom: 26px;
   width: 3px;
   border-radius: 2px;
-  background: var(--surface-3);
+  background: var(--border-strong);
 }
 .timeline::after {
-  background: var(--mint);
+  background: var(--muted-foreground);
   transform-origin: top;
   transform: scaleY(var(--fill));
   transition: transform 120ms linear;
@@ -143,18 +143,19 @@ onBeforeUnmount(() => { removeEventListener('scroll', onScroll); cancelAnimation
   height: 16px;
   box-sizing: border-box;
   border-radius: 50%;
-  border: 3px solid var(--surface-3);
-  background: var(--ground-b);
+  border: 3px solid var(--border-strong);
+  background: var(--background);
   z-index: 1;
   transition: border-color 300ms ease, background-color 300ms ease, transform 420ms var(--ease-spring);
 }
-.reached .node { border-color: var(--mint); background: var(--mint); }
+.reached .node { border-color: var(--muted-foreground); background: var(--muted-foreground); }
+.now.reached .node { border-color: var(--foreground); background: var(--foreground); }
 .now .node::after {
   content: '';
   position: absolute;
   inset: -8px;
   border-radius: 50%;
-  border: 2px solid var(--mint);
+  border: 2px solid var(--foreground);
   opacity: 0;
 }
 .now.reached .node::after { animation: ring 2.4s var(--ease-out) infinite; }
@@ -169,24 +170,24 @@ onBeforeUnmount(() => { removeEventListener('scroll', onScroll); cancelAnimation
   width: calc(var(--yc) - 8px);
   top: 26px;
   text-align: right;
-  color: var(--muted);
+  color: var(--muted-foreground);
   font-size: 12px;
   letter-spacing: 0.08em;
   line-height: 1.3;
 }
-.now .years { color: var(--mint); }
+.now .years { color: var(--foreground); }
 
 .co { padding: var(--s-5) var(--s-5) var(--s-5); min-width: 0; }
 .co h3 { font-size: var(--step-lead); letter-spacing: -0.02em; line-height: 1.15; }
-.meta { margin-top: 6px; font-size: 15px; color: var(--muted); }
-.motto { margin-top: var(--s-2); font-size: 15px; font-style: italic; color: var(--ink); }
+.meta { margin-top: 6px; font-size: 15px; color: var(--muted-foreground); }
+.motto { margin-top: var(--s-2); font-size: 15px; font-style: italic; color: var(--foreground); }
 
 .roles { list-style: none; margin: var(--s-4) 0 0; padding: 0; display: grid; gap: var(--s-4); }
 /* Several roles at one company: a short connecting rail inside the card. */
-.roles.many { padding-left: var(--s-4); border-left: 2px solid var(--line); } /* taste-skill-ignore: groups roles held at one company */
+.roles.many { padding-left: var(--s-4); border-left: 2px solid var(--border); } /* taste-skill-ignore: groups roles held at one company */
 .role-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-2) var(--s-4); }
 h4 { margin: 0; font: 600 var(--step-body) / 1.3 var(--font-text); }
-.where { margin-top: 4px; font-size: 15px; color: var(--muted); }
+.where { margin-top: 4px; font-size: 15px; color: var(--muted-foreground); }
 .focus { margin-top: var(--s-2); font-size: 16px; }
 .roles .lab-tags { margin-top: var(--s-3); }
 .note { margin-top: var(--s-4); font-size: 16px; }

@@ -18,9 +18,9 @@
             id="contact-msg" v-model="message" type="text" placeholder="Describe the problem in a sentence"
             aria-describedby="contact-next" autocomplete="off" @input="typed"
           >
-          <button ref="sender" v-magnetic="3" type="submit" aria-label="Write the email">
-            <ArrowRight :size="20" aria-hidden="true" />
-          </button>
+          <UiButton ref="sender" v-magnetic="3" type="submit" size="icon" class="send" aria-label="Write the email">
+            <ArrowRight :size="18" aria-hidden="true" />
+          </UiButton>
         </form>
         <p id="contact-next" class="next" data-reveal>Opens your email app with this as the first line, addressed to me.</p>
       </div>
@@ -37,6 +37,7 @@
 </template>
 
 <script setup lang="ts">
+import type { ComponentPublicInstance } from 'vue'
 import { ArrowRight } from 'lucide-vue-next'
 import { CONTACT } from '~/data/portfolio'
 
@@ -50,7 +51,7 @@ const channels = [
 const message = ref('')
 const lit = ref(-1)
 const board = ref<HTMLElement | null>(null)
-const sender = ref<HTMLElement | null>(null)
+const sender = ref<ComponentPublicInstance | null>(null)
 const nodes: HTMLElement[] = []
 const paths: SVGPathElement[] = []
 const size = reactive({ w: 1000, h: 400 })
@@ -60,7 +61,7 @@ const reduce = useReducedMotion()
 
 // Wires run from the send button to each channel: the message goes out along the first.
 const layout = () => {
-  const b = board.value, s = sender.value
+  const b = board.value, s = sender.value?.$el as HTMLElement | undefined
   if (!b || !s) return
   const r = b.getBoundingClientRect()
   size.w = Math.round(r.width); size.h = Math.round(r.height)
@@ -118,7 +119,8 @@ onBeforeUnmount(() => ro?.disconnect())
 .contact {
   margin-top: var(--section-gap);
   padding: clamp(96px, 12vw, 176px) 0;
-  background: var(--surface);
+  border-block: 1px solid var(--border); /* taste-skill-ignore: the band's edges (the brief's design system) */
+  background: var(--card);
 }
 .inner {
   position: relative;
@@ -138,12 +140,12 @@ onBeforeUnmount(() => ro?.disconnect())
 }
 .wires path {
   fill: none;
-  stroke: rgb(var(--field) / 0.22);
+  stroke: color-mix(in srgb, var(--muted-foreground) 30%, transparent);
   stroke-width: 1.5;
   transition: stroke 300ms ease, stroke-width 300ms ease;
 }
-.wires path.lit { stroke: var(--accent); stroke-width: 2; }
-.pulse { fill: var(--accent); transition: opacity 160ms ease; }
+.wires path.lit { stroke: var(--primary); stroke-width: 2; }
+.pulse { fill: var(--primary); transition: opacity 160ms ease; }
 
 .ask { grid-column: 1 / span 6; position: relative; }
 .prompt {
@@ -157,34 +159,22 @@ onBeforeUnmount(() => ro?.disconnect())
 .field { position: relative; margin-top: var(--s-7); max-width: 560px; }
 input {
   width: 100%;
-  height: 64px;
+  height: 56px;
   box-sizing: border-box;
-  padding: 0 72px 0 20px;
-  border: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font: 17px var(--font-text);
+  padding: 0 60px 0 16px;
+  border: 1px solid var(--input); /* taste-skill-ignore: a real form field keeps its edge */
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  font: 16px var(--font-text);
   outline: none;
-  transition: background-color var(--dur-hover) ease;
+  transition: border-color var(--dur-hover) ease;
 }
-input::placeholder { color: var(--muted); }
-input:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  background: var(--ink);
-  color: var(--bg);
-  cursor: pointer;
-  transition: background-color var(--dur-hover) ease;
-}
-button:hover { background: var(--accent); color: var(--accent-ink); }
-.next { margin-top: var(--s-4); font-size: var(--step-small); color: var(--muted); }
+input::placeholder { color: var(--muted-foreground); }
+input:hover { border-color: var(--border-strong); }
+input:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.field .send { position: absolute; top: 10px; right: 10px; }
+.next { margin-top: var(--s-4); font-size: var(--step-small); color: var(--muted-foreground); }
 
 .channels {
   grid-column: 8 / -1;
@@ -203,12 +193,12 @@ button:hover { background: var(--accent); color: var(--accent-ink); }
   height: 14px;
   box-sizing: border-box;
   border-radius: 50%;
-  border: 2px solid var(--muted);
-  background: var(--surface);
+  border: 2px solid var(--muted-foreground);
+  background: var(--card);
   transition: background-color var(--dur-hover) ease, border-color var(--dur-hover) ease, transform 420ms var(--ease-spring);
 }
-.node.lit { background: var(--accent); border-color: var(--accent); transform: scale(1.25); }
-.label { font-size: var(--step-small); color: var(--muted); }
+.node.lit { background: var(--primary); border-color: var(--primary); transform: scale(1.25); }
+.label { font-size: var(--step-small); color: var(--muted-foreground); }
 .channels a { font-size: var(--step-body); overflow-wrap: anywhere; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -218,7 +208,6 @@ button:hover { background: var(--accent); color: var(--accent-ink); }
   .inner { grid-template-columns: 1fr; row-gap: var(--s-8); }
   .ask, .channels { grid-column: 1; }
   .wires { display: none; }
-  input { height: 60px; }
-  button { top: 8px; }
+  .field .send { top: 10px; }
 }
 </style>

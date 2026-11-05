@@ -63,14 +63,15 @@ summary {
   gap: var(--s-3);
   min-height: 56px;
   padding: 0 var(--s-6);
-  color: var(--mint);
+  color: var(--foreground);
   cursor: pointer;
   list-style: none;
   transition: background-color var(--dur-hover) ease;
 }
 summary::-webkit-details-marker { display: none; }
-summary:hover { background: var(--surface-2); }
-summary:focus-visible { outline: 2px solid var(--mint); outline-offset: -2px; }
+summary:hover { background: var(--muted); }
+summary:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+summary .lab-mono { color: var(--foreground); }
 .chev { transition: transform var(--dur-move) var(--ease-out); }
 details[open] .chev { transform: rotate(180deg); }
 
@@ -88,10 +89,10 @@ details[open] .grid { animation: rise 420ms var(--ease-out); }
 .solved { grid-column: 1 / span 7; }
 .side { grid-column: 9 / -1; display: grid; align-content: start; gap: var(--s-6); }
 
-h4 { margin: 0 0 var(--s-3); color: var(--muted); font-size: 12px; }
+h4 { margin: 0 0 var(--s-3); color: var(--muted-foreground); font-size: 12px; }
 p, .list { font-size: 16px; }
 .list { margin: 0; padding-left: 1.1em; display: grid; gap: var(--s-2); }
-.list li::marker { color: var(--mint); }
+.list li::marker { color: var(--muted-foreground); }
 
 dl { margin: 0; display: grid; gap: var(--s-2); }
 dl div {
@@ -99,11 +100,11 @@ dl div {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
   gap: var(--s-4);
   padding: 12px var(--s-4);
-  border-radius: var(--radius-control);
-  background: var(--surface-2);
+  border-radius: var(--radius);
+  background: var(--muted);
   font-size: 16px;
 }
-dt { color: var(--muted); }
+dt { color: var(--muted-foreground); }
 dd { margin: 0; }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,6 +1,6 @@
 <template>
   <NuxtPage v-if="isHome" />
-  <!-- Every other page shares the home page's frame: the teal ground, the header, the footer.
+  <!-- Every other page shares the home page's frame: the page ground, the header, the footer.
        index.html holds the rendered home page, so other pages are drawn fresh in the browser rather than
        hydrated over home markup (which would keep the home page's attributes). -->
   <ClientOnly v-else>
@@ -45,8 +45,8 @@ useHead({
   top: 12px;
   z-index: 60;
   padding: 10px 16px;
-  background: var(--ink);
-  color: var(--bg);
+  background: var(--foreground);
+  color: var(--background);
   transform: translateY(-200%);
 }
 .page > .skip:focus { transform: none; }

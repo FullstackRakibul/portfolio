@@ -1,15 +1,15 @@
 <template>
   <Transition name="btt">
-    <button
-      v-show="visible" type="button" class="btt" :class="{ raised: dock.contact }"
+    <UiButton
+      v-show="visible" variant="outline" size="icon-lg" shape="circle" class="btt" :class="{ raised: dock.contact }"
       aria-label="Back to top" @click="toTop"
     >
-      <svg class="meter" viewBox="0 0 48 48" aria-hidden="true">
-        <circle class="track" cx="24" cy="24" :r="R" />
-        <circle ref="fill" class="fill" cx="24" cy="24" :r="R" :stroke-dasharray="C" :stroke-dashoffset="C" />
+      <svg class="meter" viewBox="0 0 44 44" aria-hidden="true">
+        <circle class="track" cx="22" cy="22" :r="R" />
+        <circle ref="fill" class="fill" cx="22" cy="22" :r="R" :stroke-dasharray="C" :stroke-dashoffset="C" />
       </svg>
-      <ArrowUp class="arrow" :size="18" :stroke-width="2.4" aria-hidden="true" />
-    </button>
+      <ArrowUp class="arrow" :size="18" :stroke-width="2.2" aria-hidden="true" />
+    </UiButton>
   </Transition>
 </template>
 
@@ -18,7 +18,7 @@
 // passed, stacks 12px above the floating contact button, and steps aside while that one is open.
 import { ArrowUp } from 'lucide-vue-next'
 
-const R = 21
+const R = 20
 const C = 2 * Math.PI * R
 
 const dock = useState('floating-dock', () => ({ contact: false, open: false }))
@@ -66,60 +66,35 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.btt {
-  /* Same family as the floating contact pill. */
-  --btt-bg: #121a1c;
-  --btt-border: rgb(255 255 255 / 0.08);
-  --btt-track: rgb(255 255 255 / 0.14);
-  --btt-ink: #5eead4;
-  --btt-focus: #5eead4;
+/* An outline icon button on the card surface, floating 12px above the contact pill. The ring is the
+   reading progress: --primary (the accent in dark mode, black in light). */
+.ui-btn.btt {
   --btt-gap: 24px;
   --btt-dock: 64px; /* contact pill 52px + 12px */
-
   position: fixed;
   right: var(--btt-gap);
   bottom: var(--btt-gap);
   z-index: 39;
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  border: 1px solid var(--btt-border); /* taste-skill-ignore: the hairline edge of the floating controls */
-  border-radius: 50%;
-  background: var(--btt-bg);
-  color: var(--btt-ink);
-  cursor: pointer;
-  box-shadow: 0 14px 34px -16px rgb(0 0 0 / 0.6); /* taste-skill-ignore: a floating control truly floats */
-  transition:
-    transform 220ms cubic-bezier(0.34, 1.4, 0.64, 1),
-    background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+  background: var(--card);
+  box-shadow: var(--shadow-float); /* taste-skill-ignore: a floating control truly floats */
+  transition: bottom 220ms var(--ease-out), background-color var(--dur-hover) ease, border-color var(--dur-hover) ease, transform var(--dur-press) ease;
 }
-[data-theme="light"] .btt {
-  --btt-bg: #111111;
-  --btt-border: rgb(255 255 255 / 0.1);
-  --btt-track: rgb(255 255 255 / 0.2);
-  --btt-focus: #0a6a62;
-}
-.btt.raised { transform: translateY(calc(var(--btt-dock) * -1)); }
-.btt:hover { transform: translateY(-2px); }
-.btt.raised:hover { transform: translateY(calc(var(--btt-dock) * -1 - 2px)); }
-.btt:active { transform: scale(0.95); }
-.btt.raised:active { transform: translateY(calc(var(--btt-dock) * -1)) scale(0.95); }
-.btt:focus-visible { outline: 2px solid var(--btt-focus); outline-offset: 3px; }
+.ui-btn.btt:hover { background: var(--muted); }
+.ui-btn.btt.raised { bottom: calc(var(--btt-gap) + var(--btt-dock)); }
 
 .meter {
   position: absolute;
-  inset: 1px;
-  width: calc(100% - 2px);
-  height: calc(100% - 2px);
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
   transform: rotate(-90deg);
+  pointer-events: none;
 }
-.meter circle { fill: none; stroke-width: 2.5; }
-.track { stroke: var(--btt-track); }
-.fill { stroke: var(--btt-ink); stroke-linecap: round; }
-.arrow { position: relative; transition: transform 200ms cubic-bezier(0.34, 1.4, 0.64, 1); }
-.btt:hover .arrow { transform: translateY(-2px); }
+.meter circle { fill: none; stroke-width: 2; }
+.track { stroke: transparent; }
+.fill { stroke: var(--primary); stroke-linecap: round; }
+.arrow { position: relative; color: var(--foreground); transition: transform 200ms var(--ease-spring); }
+.ui-btn.btt:hover .arrow { transform: translateY(-2px); }
 
 .btt-enter-active,
 .btt-leave-active { transition: opacity 200ms ease; }
@@ -127,11 +102,11 @@ onBeforeUnmount(() => {
 .btt-leave-to { opacity: 0; }
 
 @media (max-width: 639px) {
-  .btt { --btt-gap: 16px; }
+  .ui-btn.btt { --btt-gap: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .btt, .arrow { transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease; }
-  .btt:hover, .btt:active, .btt:hover .arrow { transform: none; }
-  .btt.raised, .btt.raised:hover, .btt.raised:active { transform: translateY(calc(var(--btt-dock) * -1)); }
+  .ui-btn.btt { transition: background-color var(--dur-hover) ease, border-color var(--dur-hover) ease; }
+  .arrow { transition: none; }
+  .ui-btn.btt:hover .arrow { transform: none; }
 }
 </style>

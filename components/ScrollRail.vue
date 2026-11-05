@@ -138,12 +138,9 @@ watch(rail, schedule)
 
 <style scoped>
 .rail {
-  --rail-read: rgb(94 234 212 / 0.7);
-  --rail-rest: rgb(255 255 255 / 0.16);
-  --rail-grip: #121a1c;
-  --rail-grip-edge: rgb(255 255 255 / 0.12);
-  --rail-mint: #5eead4;
-
+  /* Read part: --muted-foreground; what remains: the rail track, --border-strong. */
+  --rail-read: var(--muted-foreground);
+  --rail-rest: var(--border-strong);
   position: fixed;
   top: 84px;
   bottom: 12px;
@@ -153,12 +150,6 @@ watch(rail, schedule)
   opacity: 0.32;
   transition: opacity 320ms ease;
   touch-action: none;
-}
-[data-theme="light"] .rail {
-  --rail-read: rgb(14 129 119 / 0.75);
-  --rail-rest: rgb(15 42 46 / 0.18);
-  --rail-grip: #111111;
-  --rail-grip-edge: rgb(255 255 255 / 0.12);
 }
 .rail.awake { opacity: 1; }
 
@@ -182,16 +173,20 @@ watch(rail, schedule)
   width: 16px;
   height: 40px;
   box-sizing: border-box;
-  border: 1px solid var(--rail-grip-edge); /* taste-skill-ignore: the hairline edge of the floating controls */
+  border: 1px solid var(--border); /* taste-skill-ignore: the grip's edge (the brief's design system) */
   border-radius: 999px;
-  background: var(--rail-grip);
+  background: var(--card);
   transform: translate3d(-50%, 0, 0);
   will-change: transform;
   transition: background-color 200ms ease, border-color 200ms ease;
 }
 .grip svg { display: block; overflow: visible; }
-.grip path { fill: none; stroke: var(--rail-mint); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.grip circle { fill: var(--rail-mint); }
+.grip path { fill: none; stroke: var(--foreground); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke var(--dur-hover) ease; }
+.grip circle { fill: var(--foreground); transition: fill var(--dur-hover) ease; }
 .dragging .grip,
-.grip:hover { border-color: var(--rail-mint); }
+.grip:hover { border-color: var(--primary); }
+.dragging .grip path,
+.grip:hover path { stroke: var(--primary); }
+.dragging .grip circle,
+.grip:hover circle { fill: var(--primary); }
 </style>

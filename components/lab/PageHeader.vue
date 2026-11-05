@@ -14,7 +14,6 @@
         <slot />
       </div>
     </div>
-    <div class="floor" aria-hidden="true" />
   </header>
 </template>
 
@@ -45,7 +44,7 @@ const parts = computed(() => (/\s/.test(props.title) ? [props.title] : props.tit
 .inner { position: relative; z-index: 1; }
 
 .lab-back { margin: 0 0 var(--s-5) -2px; }
-.eyebrow { color: var(--mint); letter-spacing: 0.22em; } /* taste-skill-ignore: the eyebrow is PIPILIKA's mono label (brand) */
+.eyebrow { letter-spacing: 0.22em; } /* taste-skill-ignore: the eyebrow is a mono label (the brief keeps them) */
 .title {
   margin-top: var(--s-4);
   font-size: var(--step-page);
@@ -68,18 +67,8 @@ const parts = computed(() => (/\s/.test(props.title) ? [props.title] : props.tit
   max-width: 56ch;
   font-size: var(--step-lead);
   line-height: 1.4;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 .meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-4); margin-top: var(--s-6); }
 
-/* The slate floor plane, as on PIPILIKA: a low wedge at the foot of the header, below the words. */
-.floor {
-  position: absolute;
-  inset: auto 0 0;
-  height: clamp(28px, 3.6vw, 52px);
-  background: linear-gradient(100deg, var(--floor-b) 0%, var(--floor-a) 70%); /* taste-skill-ignore: PIPILIKA's floor plane is a slate gradient (brand) */
-  clip-path: polygon(0 35%, 58% 100%, 0 100%);
-  opacity: 0.6;
-  pointer-events: none;
-}
 </style>

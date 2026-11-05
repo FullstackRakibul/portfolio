@@ -106,22 +106,22 @@ const pickPath = (i: number) => {
 
 <style scoped>
 .dia { display: block; width: 100%; height: auto; font-family: var(--font-text); overflow: visible; }
-text { fill: var(--ink); font-size: 15px; }
+text { fill: var(--foreground); font-size: 15px; }
 .mid { text-anchor: middle; }
-.small { font-size: 13px; fill: var(--muted); }
-.on { fill: var(--bg); }
-.small.on { fill: var(--bg); opacity: 0.85; }
+.small { font-size: 13px; fill: var(--muted-foreground); }
+.on { fill: var(--background); }
+.small.on { fill: var(--background); opacity: 0.85; }
 
-.zone { fill: none; stroke: var(--muted); stroke-width: 1.25; stroke-dasharray: 5 6; }
-.box { fill: var(--bg); stroke: var(--muted); stroke-width: 1.5; }
-.box.strong { fill: var(--ink); stroke: var(--ink); }
+.zone { fill: none; stroke: var(--muted-foreground); stroke-width: 1.25; stroke-dasharray: 5 6; }
+.box { fill: var(--background); stroke: var(--muted-foreground); stroke-width: 1.5; }
+.box.strong { fill: var(--foreground); stroke: var(--foreground); }
 .box.faint { stroke-dasharray: 4 4; opacity: 0.6; }
-.page { fill: var(--surface-2); stroke: none; }
-.page.pick { fill: var(--accent); }
-.wire { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.page { fill: var(--muted); stroke: none; }
+.page.pick { fill: var(--foreground); }
+.wire { fill: none; stroke: var(--muted-foreground); stroke-width: 1.5; }
 .wire.dashed { stroke-dasharray: 4 5; }
-.stop { stroke: var(--ink); stroke-width: 3; }
-.pulse { fill: var(--accent); }
+.stop { stroke: var(--foreground); stroke-width: 3; }
+.pulse { fill: var(--foreground); }
 
 @media (prefers-reduced-motion: reduce) {
   .pulse { display: none; }

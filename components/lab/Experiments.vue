@@ -94,8 +94,10 @@ onBeforeUnmount(() => {
   top: calc(var(--header-h-tight) + 40px);
   margin: 0;
   padding: var(--s-6);
-  background: var(--surface);
-  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border); /* taste-skill-ignore: card edge (the brief's design system) */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card); /* taste-skill-ignore: hairline, light mode only */
 }
 .stack { display: grid; }
 .stack .d {
@@ -110,9 +112,9 @@ onBeforeUnmount(() => {
   gap: 2px;
   margin-top: var(--s-5);
   font-size: var(--step-small);
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
-.plate figcaption span:first-child { color: var(--ink); font-weight: 600; }
+.plate figcaption span:first-child { color: var(--foreground); font-weight: 600; }
 
 .entries { grid-column: 8 / -1; }
 .entry { padding-bottom: var(--s-9); }
@@ -123,11 +125,11 @@ onBeforeUnmount(() => {
   gap: 10px;
   font-size: var(--step-small);
   font-weight: 600;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
-.led { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
-.live .led { background: var(--accent); }
-.open .led { background: transparent; box-shadow: inset 0 0 0 2px var(--accent); } /* taste-skill-ignore: a ring drawn inside the status light */
+.led { width: 8px; height: 8px; border-radius: 50%; background: var(--muted-foreground); }
+.live .led { background: var(--primary); }
+.open .led { background: transparent; box-shadow: inset 0 0 0 2px var(--muted-foreground); } /* taste-skill-ignore: a ring drawn inside the status light */
 .entry.on.open .led { animation: blink 1.8s ease-in-out infinite; }
 @keyframes blink { 50% { opacity: 0.35; } }
 .entry h3 {
@@ -135,13 +137,11 @@ onBeforeUnmount(() => {
   font-size: var(--step-lead);
   letter-spacing: -0.02em;
   line-height: 1.12;
-  transition: color var(--dur-hover) ease;
 }
-.entry.on h3 { color: var(--accent); }
 .objective { margin-top: var(--s-3); max-width: 56ch; }
 dl { margin: var(--s-5) 0 0; display: grid; gap: 2px; font-size: 16px; }
-dl div { display: grid; grid-template-columns: 9.5rem 1fr; gap: var(--s-4); padding: 12px 16px; background: var(--surface); border-radius: var(--radius-control); }
-dt { color: var(--muted); }
+dl div { display: grid; grid-template-columns: 9.5rem 1fr; gap: var(--s-4); padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); } /* taste-skill-ignore: row edge (the brief's design system) */
+dt { color: var(--muted-foreground); }
 dd { margin: 0; }
 .m-dia { display: none; }
 
@@ -154,7 +154,7 @@ dd { margin: 0; }
   .split { grid-template-columns: 1fr; }
   .plate-col { display: none; }
   .entries { grid-column: 1; }
-  .m-dia { display: block; padding: var(--s-4); margin-bottom: var(--s-5); background: var(--surface); border-radius: var(--radius); box-sizing: border-box; }
+  .m-dia { display: block; padding: var(--s-4); margin-bottom: var(--s-5); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-sizing: border-box; } /* taste-skill-ignore: card edge */
   dl div { grid-template-columns: 1fr; gap: 4px; }
   .entry { padding-bottom: var(--s-8); }
 }

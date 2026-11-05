@@ -77,7 +77,13 @@ const inView = useInView(figure, '0px')
   position: sticky;
   top: calc(var(--header-h-tight) + 32px);
 }
-.frame { position: relative; overflow: hidden; background: var(--surface); }
+.frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border); /* taste-skill-ignore: keeps the photo's edge visible on the page */
+  border-radius: var(--radius-lg);
+  background: var(--card);
+}
 .frame img {
   display: block;
   width: 100%;
@@ -91,14 +97,14 @@ const inView = useInView(figure, '0px')
   position: absolute;
   inset: 0 0 auto;
   height: 2px;
-  background: var(--accent);
+  background: var(--foreground);
   opacity: 0;
 }
 .scan.run { animation: scan 6s var(--ease-out) infinite; }
 @keyframes scan {
   0% { transform: translateY(0); opacity: 0; }
-  10% { opacity: 0.7; }
-  80% { opacity: 0.7; }
+  10% { opacity: 0.45; }
+  80% { opacity: 0.45; }
   100% { transform: translateY(calc(100cqh - 2px)); opacity: 0; }
 }
 .frame { container-type: size; aspect-ratio: 472 / 591; }
@@ -107,16 +113,17 @@ const inView = useInView(figure, '0px')
   left: 0;
   bottom: 0;
   padding: 8px 12px;
-  background: var(--ink);
-  color: var(--bg);
+  border-top-right-radius: var(--radius);
+  background: var(--card);
+  color: var(--muted-foreground);
   font-size: var(--step-small);
   line-height: 1.35;
 }
 
 .facts { margin: var(--s-5) 0 0; display: grid; gap: var(--s-3); font-size: var(--step-small); }
 .facts div { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--s-3); }
-.facts dt { color: var(--muted); }
-.facts dd { margin: 0; color: var(--ink); }
+.facts dt { color: var(--muted-foreground); }
+.facts dd { margin: 0; color: var(--foreground-body); }
 
 .text { grid-column: 6 / -1; }
 .text h2 { max-width: 16ch; }
@@ -137,8 +144,10 @@ const inView = useInView(figure, '0px')
 .quote {
   margin: var(--s-8) 0 0;
   padding: var(--s-6) var(--s-6) var(--s-6);
-  background: var(--surface);
-  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border); /* taste-skill-ignore: card edge (the brief's design system) */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card); /* taste-skill-ignore: hairline, light mode only */
   max-width: 820px;
 }
 .quote p {
@@ -149,7 +158,7 @@ const inView = useInView(figure, '0px')
 .osc { display: block; width: 48px; height: 16px; margin-bottom: var(--s-4); overflow: hidden; }
 .osc path {
   fill: none;
-  stroke: var(--accent);
+  stroke: var(--muted-foreground);
   stroke-width: 1.75;
   stroke-linecap: round;
   animation: carrier 1.6s linear infinite;

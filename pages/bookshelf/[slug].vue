@@ -6,7 +6,7 @@
   <div v-else class="lab-wrap missing">
     <LabEmpty label="Not on the shelf" title="This book isn’t on the shelf"
       text="It may have been moved or the link is mistyped.">
-      <NuxtLink class="lab-button" to="/bookshelf">Back to the bookshelf</NuxtLink>
+      <UiButton to="/bookshelf">Back to the bookshelf</UiButton>
     </LabEmpty>
   </div>
 </template>

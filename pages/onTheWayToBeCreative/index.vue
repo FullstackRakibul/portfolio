@@ -20,9 +20,10 @@
       </ul>
       <LabEmpty v-else title="No Medium posts to show" text="The feed could not be read; the posts are still on Medium." />
       <p class="more" data-reveal>
-        <a class="lab-link" :href="MEDIUM_PROFILE" target="_blank" rel="noopener" data-cursor-label="Open ↗">
-          Everything on Medium <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span>
-        </a>
+        <UiButton variant="link" :href="MEDIUM_PROFILE" target="_blank" rel="noopener" data-cursor-label="Open ↗">
+          Everything on Medium<span class="sr-only"> (opens in a new tab)</span>
+          <template #icon><ArrowUpRight aria-hidden="true" /></template>
+        </UiButton>
       </p>
     </section>
 
@@ -38,13 +39,13 @@
       </div>
 
       <div class="tabs" role="group" aria-label="Filter by category" data-reveal>
-        <button type="button" :aria-pressed="selectedCategory === 'all'" @click="selectedCategory = 'all'">All Posts</button>
-        <button
-          v-for="category in categories" :key="category" type="button"
+        <UiButton size="sm" :variant="selectedCategory === 'all' ? 'default' : 'outline'" :aria-pressed="selectedCategory === 'all'" @click="selectedCategory = 'all'">All Posts</UiButton>
+        <UiButton
+          v-for="category in categories" :key="category" size="sm" :variant="selectedCategory === category ? 'default' : 'outline'"
           :aria-pressed="selectedCategory === category" @click="selectedCategory = category"
         >
           {{ category }}
-        </button>
+        </UiButton>
       </div>
 
       <div v-if="!searchQuery && selectedCategory === 'all'" class="group">
@@ -70,7 +71,7 @@
           </li>
         </ul>
         <LabEmpty v-else label="No match" title="No articles found" text="Try adjusting your search or filter criteria">
-          <button type="button" class="reset" @click="searchQuery = ''; selectedCategory = 'all'">Show all articles</button>
+          <UiButton variant="outline" @click="searchQuery = ''; selectedCategory = 'all'">Show all articles</UiButton>
         </LabEmpty>
       </div>
     </section>
@@ -78,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search } from 'lucide-vue-next'
+import { ArrowUpRight, Search } from 'lucide-vue-next'
 import { MEDIUM_PROFILE } from '~/data/writing'
 
 const searchQuery = ref('')
@@ -129,46 +130,32 @@ useHead({
 }
 .cards > li { min-width: 0; }
 .cards--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.more { margin-top: var(--s-6); font-size: 16px; }
+.more { margin-top: var(--s-5); }
 
 .search {
   grid-column: 8 / -1;
   position: relative;
   display: flex;
   align-items: center;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
-.search svg { position: absolute; left: 16px; pointer-events: none; }
+.search svg { position: absolute; left: 14px; pointer-events: none; }
 .search input {
   width: 100%;
-  min-height: 52px;
-  padding: 0 16px 0 46px;
-  border: 1px solid var(--line); /* taste-skill-ignore: a real form field keeps its edge */
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  color: var(--ink);
-  font: 16px var(--font-text);
+  min-height: 40px;
+  padding: 0 14px 0 42px;
+  border: 1px solid var(--input); /* taste-skill-ignore: a real form field keeps its edge */
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  font: 15px var(--font-text);
   transition: border-color var(--dur-hover) ease;
 }
-.search input::placeholder { color: var(--muted); }
-.search input:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; border-color: transparent; }
+.search input::placeholder { color: var(--muted-foreground); }
+.search input:hover { border-color: var(--border-strong); }
+.search input:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 
 .tabs { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-bottom: var(--s-7); }
-.tabs button,
-.reset {
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid var(--line); /* taste-skill-ignore: PIPILIKA's control edge (brand) */
-  border-radius: 999px;
-  background: var(--surface-2);
-  color: var(--ink);
-  font: 500 15px var(--font-text);
-  cursor: pointer;
-  transition: background-color var(--dur-hover) ease, border-color var(--dur-hover) ease, color var(--dur-hover) ease;
-}
-.tabs button:hover,
-.reset:hover { border-color: var(--mint); }
-.tabs button[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: #fff; }
 
 .group + .group { margin-top: var(--s-8); }
 .group .group-h { margin-bottom: var(--s-5); font: 600 var(--step-lead) / 1.2 var(--font-text); letter-spacing: -0.01em; }

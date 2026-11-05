@@ -16,7 +16,7 @@
           <a :href="CONTACT.medium" target="_blank" rel="noopener" data-cursor-label="Open ↗">Medium</a>
           <NuxtLink to="/resume">Résumé</NuxtLink>
         </nav>
-        <p class="end"><span class="lab-mono">© {{ year }} rabbitic</span><span class="lab-badge">Production</span></p>
+        <p class="end"><span class="lab-mono">© {{ year }} rabbitic</span><span class="lab-badge" data-status="production">Production</span></p>
       </div>
     </div>
   </footer>
@@ -86,19 +86,25 @@ onBeforeUnmount(() => ro?.disconnect())
 <style scoped>
 /* Bottom room for the fixed corner controls (contact pill 52px + 12px + back-to-top 48px, from 24px / 16px),
    so they never sit on the footer's last line. */
-.foot { padding: clamp(96px, 10vw, 160px) 0 152px; overflow: hidden; }
+.foot {
+  padding: clamp(96px, 10vw, 160px) 0 152px;
+  overflow: hidden;
+  border-top: 1px solid var(--border); /* taste-skill-ignore: where the page ends and the footer well begins */
+  background: var(--background-deep);
+}
 @media (max-width: 639px) { .foot { padding-bottom: 140px; } }
 .field { display: block; width: 100%; height: auto; overflow: visible; }
-.field path { fill: none; stroke: rgb(var(--field)); stroke-width: 1.25; }
-.field path:nth-child(5) { stroke: var(--accent); }
-.pole { fill: var(--ink); }
+.field path { fill: none; stroke: var(--muted-foreground); stroke-width: 1.25; }
+.field path:nth-child(5) { stroke: var(--foreground); }
+.pole { fill: var(--foreground); }
 .name {
   margin-top: var(--s-6);
+  color: var(--foreground);
   font: 700 var(--step-display) / 0.86 var(--font-display);
   letter-spacing: -0.05em;
   white-space: nowrap;
 }
-.tag { margin-top: var(--s-5); font-size: var(--step-lead); color: var(--muted); max-width: 40ch; }
+.tag { margin-top: var(--s-5); font-size: var(--step-lead); color: var(--muted-foreground); max-width: 40ch; }
 .line {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -107,13 +113,13 @@ onBeforeUnmount(() => ro?.disconnect())
   margin-top: var(--s-8);
   padding-top: var(--s-5);
   font-size: var(--step-small);
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 .links { display: flex; gap: var(--s-5); font-size: 16px; }
-.links a { color: var(--ink); text-decoration: none; padding: 8px 0; transition: color var(--dur-hover) ease; }
-.links a:hover { color: var(--accent); }
+.links a { color: var(--foreground); text-decoration: none; padding: 8px 0; transition: color var(--dur-hover) ease; }
+.links a:hover { color: var(--primary); }
 .end { display: flex; justify-content: flex-end; align-items: center; gap: var(--s-3); }
-.end .lab-mono { font-size: 12px; color: var(--muted); text-transform: lowercase; }
+.end .lab-mono { font-size: 12px; color: var(--muted-foreground); text-transform: lowercase; }
 
 @media (max-width: 899px) {
   .name { white-space: normal; font-size: clamp(3.25rem, 1rem + 11vw, 6rem); }

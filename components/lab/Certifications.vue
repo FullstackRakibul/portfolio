@@ -23,14 +23,16 @@
               <span class="sr-only">Credential ID </span>
               <code>{{ c.credentialId }}</code>
             </p>
-            <button
-              type="button" class="copy" :aria-label="`Copy credential ID ${c.credentialId}`"
+            <UiButton
+              variant="ghost" size="sm" class="copy" :aria-label="`Copy credential ID ${c.credentialId}`"
               @click="copy(c.credentialId)"
             >
-              <Check v-if="copied === c.credentialId" :size="16" aria-hidden="true" />
-              <Copy v-else :size="16" aria-hidden="true" />
-              <span class="copy-t" aria-hidden="true">{{ copied === c.credentialId ? 'Copied' : 'Copy' }}</span>
-            </button>
+              <template #leading>
+                <Check v-if="copied === c.credentialId" aria-hidden="true" />
+                <Copy v-else aria-hidden="true" />
+              </template>
+              <span aria-hidden="true">{{ copied === c.credentialId ? 'Copied' : 'Copy' }}</span>
+            </UiButton>
             <a v-if="c.url" class="show lab-link" :href="c.url" target="_blank" rel="noopener">
               Show credential<span class="sr-only"> (opens in a new tab)</span>
             </a>
@@ -86,26 +88,23 @@ onBeforeUnmount(() => clearTimeout(timer))
   flex-direction: column;
   min-width: 0;
   padding: var(--s-5);
-  transition: transform var(--dur-move) var(--ease-out), box-shadow var(--dur-move) var(--ease-out), border-color var(--dur-hover) ease;
 }
-.cert:hover,
-.cert:focus-within { transform: translateY(-3px); box-shadow: var(--shadow-lift); border-color: var(--line-strong); } /* taste-skill-ignore: PIPILIKA card lifts on hover (brand) */
 
 .top { display: flex; align-items: center; gap: var(--s-3); }
-/* Issuer mark: Anthropic's "A\" set in type on a light tile. */
+/* Issuer mark: Anthropic's "A\" set in type on a neutral tile. */
 .mark {
   display: grid;
   place-items: center;
   width: 32px;
   height: 32px;
   flex: none;
-  border-radius: 8px;
-  background: #f0eee6; /* taste-skill-ignore: the issuer’s own tile colour (Anthropic mark) */
-  color: #191919;
+  border-radius: var(--radius);
+  background: var(--muted);
+  color: var(--foreground);
   font: 700 14px / 1 var(--font-text);
   letter-spacing: -0.02em;
 }
-.issuer { color: var(--ink); font-size: 12px; }
+.issuer { font-size: 12px; } /* a mono label: --muted-foreground from .lab-mono */
 .top .lab-pill { margin-left: auto; }
 
 .cert h3 {
@@ -119,36 +118,14 @@ onBeforeUnmount(() => clearTimeout(timer))
 .foot { display: flex; align-items: center; gap: var(--s-3); padding-top: var(--s-3); }
 .cid { min-width: 0; }
 code {
-  font: 500 13px / 1 var(--font-mono); /* taste-skill-ignore: PIPILIKA sets labels, versions and badges in mono (brand) */
+  font: 500 13px / 1 var(--font-mono); /* taste-skill-ignore: mono labels (the brief keeps them) */
   letter-spacing: 0.06em;
-  color: var(--muted);
+  color: var(--muted-foreground);
   user-select: all;
 }
-.copy {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 0 10px;
-  margin-right: -6px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--muted);
-  font: 500 12px / 1 var(--font-mono); /* taste-skill-ignore: PIPILIKA sets labels, versions and badges in mono (brand) */
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background-color var(--dur-hover) ease, color var(--dur-hover) ease;
-}
-.copy:hover { background: var(--surface-2); color: var(--mint); }
-.cid + .copy { margin-left: auto; }
+.foot .copy { margin-left: auto; margin-right: -8px; }
 .show { font-size: 14px; }
 
-@media (prefers-reduced-motion: reduce) {
-  .cert { transition: none; }
-  .cert:hover, .cert:focus-within { transform: none; }
-}
 @media (max-width: 1099px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

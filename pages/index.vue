@@ -42,8 +42,8 @@ useSeoMeta({
   top: 12px;
   z-index: 60;
   padding: 10px 16px;
-  background: var(--ink);
-  color: var(--bg);
+  background: var(--foreground);
+  color: var(--background);
   transform: translateY(-200%);
 }
 .skip:focus { transform: none; }

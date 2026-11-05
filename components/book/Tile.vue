@@ -50,7 +50,7 @@ const verb = computed(() => (done.value ? 'Read again' : f.value > 0 ? 'Continue
   }
 
   .tile:hover .t {
-    color: var(--mint);
+    color: var(--primary);
   }
 }
 
@@ -64,7 +64,7 @@ const verb = computed(() => (done.value ? 'Read again' : f.value > 0 ? 'Continue
 }
 
 .tile:focus-visible .lift {
-  outline: 2px solid var(--mint);
+  outline: 2px solid var(--ring);
   outline-offset: 4px;
   border-radius: 6px;
 }
@@ -82,7 +82,7 @@ const verb = computed(() => (done.value ? 'Read again' : f.value > 0 ? 'Continue
 
 .a {
   font-size: 14px;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 .state {
@@ -91,7 +91,7 @@ const verb = computed(() => (done.value ? 'Read again' : f.value > 0 ? 'Continue
   gap: 8px;
   margin-top: 6px;
   font-size: 13px;
-  color: var(--mint);
+  color: var(--muted-foreground);
 }
 
 .bar {
@@ -99,7 +99,7 @@ const verb = computed(() => (done.value ? 'Read again' : f.value > 0 ? 'Continue
   max-width: 96px;
   height: 4px;
   border-radius: 999px;
-  background: var(--surface-3);
+  background: var(--border-strong);
   overflow: hidden;
 }
 
@@ -107,7 +107,7 @@ const verb = computed(() => (done.value ? 'Read again' : f.value > 0 ? 'Continue
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: var(--mint);
+  background: var(--foreground);
 }
 
 @media (prefers-reduced-motion: reduce) {

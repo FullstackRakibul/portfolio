@@ -44,7 +44,7 @@ const { formatDate } = useBlog()
 .bc { display: flex; flex-direction: column; min-width: 0; height: 100%; padding: var(--s-5); }
 .featured { padding: var(--s-6); }
 .meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-2) var(--s-4); }
-.when { font-size: 14px; color: var(--muted); }
+.when { font-size: 14px; color: var(--muted-foreground); }
 .t {
   margin-top: var(--s-4);
   font: 600 20px / 1.3 var(--font-text);
@@ -53,11 +53,11 @@ const { formatDate } = useBlog()
 }
 .featured .t { font-size: 24px; letter-spacing: -0.02em; }
 .t a { transition: color var(--dur-hover) ease; }
-.bc:hover .t a { color: var(--mint); }
-.ex { margin-top: var(--s-3); font-size: 16px; color: var(--muted); }
+.bc:hover .t a { color: var(--primary); }
+.ex { margin-top: var(--s-3); font-size: 16px; color: var(--muted-foreground); }
 .spacer { flex: 1; min-height: var(--s-5); }
 .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3); padding-top: var(--s-4); }
-.more { display: inline-flex; align-items: center; gap: 6px; color: var(--mint); font-size: 15px; font-weight: 600; }
+.more { display: inline-flex; align-items: center; gap: 6px; color: var(--foreground); font-size: 15px; font-weight: 500; }
 .more svg { transition: transform var(--dur-hover) var(--ease-out); }
 .bc:hover .more svg { transform: translateX(3px); }
 @media (prefers-reduced-motion: reduce) {

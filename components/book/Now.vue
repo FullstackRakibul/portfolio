@@ -1,5 +1,5 @@
 <template>
-  <section class="now" :style="{ '--tint': book.tint }" aria-labelledby="now-h">
+  <section class="now lab-card" aria-labelledby="now-h">
     <NuxtLink :to="to" class="cover-link" tabindex="-1" aria-hidden="true">
       <BookCover :book="book" eager :alt="false" />
     </NuxtLink>
@@ -15,18 +15,21 @@
       </div>
 
       <div class="acts">
-        <NuxtLink :to="to" class="lab-button" data-cursor-label="Read">
+        <UiButton size="lg" :to="to" data-cursor-label="Read">
           {{ started ? 'Continue' : 'Start reading' }}
-          <ArrowRight :size="18" aria-hidden="true" />
-        </NuxtLink>
-        <a v-if="book.pdf" :href="book.pdf" class="ghost" download>Download PDF</a>
+          <template #icon><ArrowRight aria-hidden="true" /></template>
+        </UiButton>
+        <UiButton v-if="book.pdf" variant="ghost" size="lg" :href="book.pdf" download>
+          <template #leading><Download aria-hidden="true" /></template>
+          Download PDF
+        </UiButton>
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ArrowRight } from 'lucide-vue-next'
+import { ArrowRight, Download } from 'lucide-vue-next'
 import type { Book } from '~/data/books'
 
 // The first thing on the shelf, as in a book app's "Read Now": the book in hand, or one to begin with.
@@ -39,16 +42,13 @@ const f = computed(() => fraction(props.book.slug))
 </script>
 
 <style scoped>
-/* A whole field in the book's own colour, deepened with the site's teal ground so it sits in either theme. */
+/* The book in hand, on a neutral card: the cover carries the colour, the card stays quiet. */
 .now {
   display: grid;
   grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
   gap: clamp(28px, 5vw, 80px);
   align-items: center;
   padding: clamp(28px, 5vw, 72px);
-  border-radius: calc(var(--radius) + 8px);
-  background: color-mix(in srgb, var(--tint) 80%, #0d2b30);
-  color: #f6f1e8;
 }
 
 .cover-link {
@@ -60,11 +60,7 @@ const f = computed(() => fraction(props.book.slug))
   transition: transform var(--dur-move) var(--ease-out);
 }
 
-.cover-link :deep(.cover) {
-  box-shadow: 0 40px 60px -28px rgb(0 0 0 / 0.75), 0 4px 10px rgb(0 0 0 / 0.3);
-}
-
-/* taste-skill-ignore: the book held up off the field */
+/* taste-skill-ignore: the book held up off the card */
 .now:hover .cover-link {
   transform: rotate(0deg) translateY(-6px);
 }
@@ -78,11 +74,12 @@ h2 {
   font-weight: 600;
   letter-spacing: 0;
   line-height: 1.3;
-  color: rgb(246 241 232 / 0.78);
+  color: var(--muted-foreground);
 }
 
 .title {
   margin-top: var(--s-3);
+  color: var(--foreground);
   font: 700 clamp(2rem, 1.2rem + 2.6vw, 3.5rem) / 1.02 'Charter', 'Bitstream Charter', 'Iowan Old Style', Georgia, serif;
   letter-spacing: -0.015em;
   text-wrap: balance;
@@ -91,7 +88,7 @@ h2 {
 .by {
   margin-top: var(--s-3);
   font-size: 17px;
-  color: rgb(246 241 232 / 0.82);
+  color: var(--muted-foreground);
 }
 
 .blurb {
@@ -107,14 +104,14 @@ h2 {
   gap: var(--s-3);
   margin-top: var(--s-5);
   font-size: 14px;
-  color: rgb(246 241 232 / 0.85);
+  color: var(--muted-foreground);
 }
 
 .bar {
   flex: 0 1 180px;
   height: 5px;
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.2);
+  background: var(--muted);
   overflow: hidden;
 }
 
@@ -122,44 +119,15 @@ h2 {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: #f6f1e8;
+  background: var(--foreground);
 }
 
 .acts {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--s-3) var(--s-5);
+  gap: var(--s-3);
   margin-top: var(--s-6);
-}
-
-.acts .lab-button {
-  background: #f6f1e8;
-  color: #1b1712;
-  box-shadow: none;
-}
-
-.acts .lab-button:hover {
-  background: #fff;
-}
-
-.ghost {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: inherit;
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 0.3em;
-  text-decoration-color: rgb(246 241 232 / 0.45);
-}
-
-.ghost:hover {
-  text-decoration-color: currentColor;
-}
-
-.now :focus-visible {
-  outline-color: #f6f1e8;
 }
 
 @media (max-width: 719px) {

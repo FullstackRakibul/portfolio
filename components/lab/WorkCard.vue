@@ -1,19 +1,17 @@
 <template>
-  <article class="wc lab-card" :class="{ wide: wide || project.featured, featured: project.featured }">
-    <a
-      class="media" :href="project.url" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"
-      data-cursor-label="View project"
-    >
+  <!-- The whole card opens the project (the title's link stretches over it); the other controls sit above. -->
+  <article class="wc lab-card lab-card-link" :class="{ wide: wide || project.featured, featured: project.featured }">
+    <div class="media">
       <img
         v-if="project.image" :src="project.image" :alt="''" width="1120" height="700"
         :loading="project.featured ? 'eager' : 'lazy'" decoding="async"
       >
-    </a>
+    </div>
 
     <div class="body">
       <div class="title-row">
         <h3 :class="{ mono: project.featured }">
-          <a :href="project.url" target="_blank" rel="noopener" data-cursor-label="View project">
+          <a class="lab-stretch" :href="project.url" target="_blank" rel="noopener" data-cursor-label="View project">
             {{ project.title }}<span class="sr-only"> (opens in a new tab)</span>
           </a>
         </h3>
@@ -26,15 +24,15 @@
         <template v-else>{{ project.pitch }}</template>
       </p>
       <p v-if="project.translation" class="trans">{{ project.translation }}</p>
-      <a v-if="project.related" class="rel" :href="project.related.url" target="_blank" rel="noopener" data-cursor-label="Read">
+      <a v-if="project.related" class="rel lab-above" :href="project.related.url" target="_blank" rel="noopener" data-cursor-label="Read">
         {{ project.related.label }} <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span>
       </a>
 
       <template v-if="project.featured">
-        <a v-magnetic="3" class="lab-button lab-button--block open" :href="project.url" target="_blank" rel="noopener" data-cursor-label="View project">
-          Open {{ project.title }} <ArrowUpRight :size="18" aria-hidden="true" />
-          <span class="sr-only"> (opens in a new tab)</span>
-        </a>
+        <UiButton v-magnetic="3" block class="open lab-above" :href="project.url" target="_blank" rel="noopener" data-cursor-label="View project">
+          Open {{ project.title }}<span class="sr-only"> (opens in a new tab)</span>
+          <template #icon><ArrowUpRight aria-hidden="true" /></template>
+        </UiButton>
         <p class="tagline">This page takes its colours, type and cards from it.</p>
       </template>
 
@@ -47,7 +45,7 @@
       </div>
     </div>
 
-    <div v-if="$slots.after" class="after"><slot name="after" /></div>
+    <div v-if="$slots.after" class="after lab-above"><slot name="after" /></div>
   </article>
 </template>
 
@@ -68,12 +66,10 @@ const host = computed(() => {
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
-  transition: transform var(--dur-move) var(--ease-out), box-shadow var(--dur-move) var(--ease-out), border-color var(--dur-hover) ease;
 }
-.wc:hover,
-.wc:focus-within { transform: translateY(-3px); box-shadow: var(--shadow-lift); border-color: var(--line-strong); } /* taste-skill-ignore: PIPILIKA card lifts on hover (brand) */
 
-.media { display: block; aspect-ratio: 16 / 10; overflow: hidden; background: var(--surface-solid); }
+/* The picture keeps a 1px edge against the card. */
+.media { display: block; aspect-ratio: 16 / 10; overflow: hidden; border-bottom: 1px solid var(--border); background: var(--muted); } /* taste-skill-ignore: image edge */
 .media img {
   display: block;
   width: 100%;
@@ -91,20 +87,21 @@ const host = computed(() => {
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
-h3 a { color: var(--ink); text-decoration: none; transition: color var(--dur-hover) ease; }
-h3 a:hover { color: var(--mint); }
+h3 a { color: var(--foreground); transition: color var(--dur-hover) ease; }
+.wc:hover h3 a { color: var(--primary); }
 .body h3.mono {
-  font: 600 22px / 1.2 var(--font-mono); /* taste-skill-ignore: PIPILIKA sets labels, versions and badges in mono (brand) */
+  font: 600 22px / 1.2 var(--font-mono); /* taste-skill-ignore: mono wordmark (the brief keeps mono labels) */
   letter-spacing: 0.18em;
 }
-.kind { margin-top: 4px; font-size: 15px; color: var(--muted); }
+.kind { margin-top: 4px; font-size: 15px; color: var(--muted-foreground); }
 .pitch { margin-top: var(--s-3); font-size: 16px; line-height: 1.5; }
 .pitch.bn { font-family: "Hind Siliguri", var(--font-text); font-size: 17px; line-height: 1.6; }
-.trans { margin-top: 4px; font-size: 15px; color: var(--muted); }
-.rel { align-self: flex-start; margin-top: var(--s-3); color: var(--mint); font-size: 15px; font-weight: 600; text-underline-offset: 0.25em; }
+.trans { margin-top: 4px; font-size: 15px; color: var(--muted-foreground); }
+.rel { align-self: flex-start; margin-top: var(--s-3); color: var(--foreground); font-size: 15px; font-weight: 500; text-decoration: underline; text-underline-offset: 0.25em; text-decoration-color: var(--border-strong); transition: text-decoration-color var(--dur-hover) ease; }
+.rel:hover { text-decoration-color: var(--primary); }
 
 .open { margin-top: var(--s-6); }
-.tagline { margin-top: var(--s-3); text-align: center; font-size: 15px; color: var(--muted); }
+.tagline { margin-top: var(--s-3); text-align: center; font-size: 15px; color: var(--muted-foreground); }
 
 .foot {
   display: flex;
@@ -114,15 +111,15 @@ h3 a:hover { color: var(--mint); }
   padding-top: var(--s-4);
 }
 .spacer { flex: 1; min-height: var(--s-5); }
-.host { transition: color var(--dur-hover) ease; color: var(--muted); font-size: 12px; letter-spacing: 0.08em; text-transform: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.host { transition: color var(--dur-hover) ease; color: var(--muted-foreground); font-size: 12px; letter-spacing: 0.08em; text-transform: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .foot .lab-badge { flex: none; }
-.wc:hover .host { color: var(--mint); }
+.wc:hover .host { color: var(--foreground); }
 
 /* Wide: picture on the left, the card's words on the right. */
 @media (min-width: 900px) {
   .wide { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .featured { grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); }
-  .wide .media { aspect-ratio: auto; height: 100%; min-height: 100%; }
+  .wide .media { aspect-ratio: auto; height: 100%; min-height: 100%; border-bottom: 0; border-right: 1px solid var(--border); } /* taste-skill-ignore: image edge */
   .wide .body { padding: var(--s-6); }
   .featured .body { padding: var(--s-7) var(--s-6) var(--s-6); }
   .featured .body h3.mono { font-size: 28px; }
@@ -131,8 +128,7 @@ h3 a:hover { color: var(--mint); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wc, .media img { transition: none; }
-  .wc:hover, .wc:focus-within { transform: none; }
+  .media img { transition: none; }
   .wc:hover .media img { transform: none; }
 }
 </style>

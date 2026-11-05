@@ -41,7 +41,7 @@ const broken = ref(false)
 
 <style scoped>
 .mc { display: flex; flex-direction: column; min-width: 0; height: 100%; overflow: hidden; }
-.cover { aspect-ratio: 16 / 9; overflow: hidden; background: var(--surface-solid); }
+.cover { aspect-ratio: 16 / 9; overflow: hidden; border-bottom: 1px solid var(--border); background: var(--muted); } /* taste-skill-ignore: keeps the picture's edge visible */
 .cover img {
   display: block;
   width: 100%;
@@ -49,16 +49,15 @@ const broken = ref(false)
   object-fit: cover;
   transition: transform 900ms var(--ease-out);
 }
-.mc:hover .cover img { transform: scale(1.04); }
-/* No cover: a quiet mono pattern in the card's own colours. */
+.mc:hover .cover img { transform: scale(1.03); }
+/* No cover: a quiet dot pattern in the card's own neutrals. */
 .placeholder {
   display: grid;
   place-items: center;
   height: 100%;
-  background-color: var(--surface-solid);
-  background-image: radial-gradient(color-mix(in srgb, var(--mint) 28%, transparent) 1px, transparent 1.4px); /* taste-skill-ignore: a dot pattern standing in for a missing cover */
+  background-color: var(--muted);
+  background-image: radial-gradient(var(--border-strong) 1px, transparent 1.4px); /* taste-skill-ignore: a dot pattern standing in for a missing cover */
   background-size: 14px 14px;
-  color: var(--mint);
 }
 
 .body { display: flex; flex-direction: column; flex: 1; padding: var(--s-5); }
@@ -66,25 +65,25 @@ const broken = ref(false)
 .topic {
   padding: 3px 9px;
   border-radius: 6px;
-  background: var(--surface-2);
-  color: var(--muted);
+  background: var(--muted);
+  color: var(--muted-foreground);
   font-size: 13px;
 }
-.read { font-size: 13px; color: var(--muted); }
+.read { font-size: 13px; color: var(--muted-foreground); }
 .t {
   margin-top: var(--s-4);
   font: 600 20px / 1.3 var(--font-text);
   letter-spacing: -0.01em;
   text-wrap: pretty;
 }
-.ex { margin-top: var(--s-3); font-size: 16px; color: var(--muted); }
+.ex { margin-top: var(--s-3); font-size: 16px; color: var(--muted-foreground); }
 .spacer { flex: 1; min-height: var(--s-5); }
 .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-2) var(--s-4); padding-top: var(--s-4); }
-.go, .rel { font-size: 15px; font-weight: 600; }
-.go { color: var(--mint); }
-.rel { color: var(--muted); text-decoration: underline; text-underline-offset: 0.25em; text-decoration-color: var(--line-strong); }
-.rel:hover { color: var(--mint); }
-.mc:hover .go { text-decoration: underline; text-underline-offset: 0.3em; }
+.go, .rel { font-size: 15px; font-weight: 500; }
+.go { color: var(--foreground); text-decoration: underline; text-underline-offset: 0.3em; text-decoration-color: transparent; transition: text-decoration-color var(--dur-hover) ease; }
+.rel { color: var(--muted-foreground); text-decoration: underline; text-underline-offset: 0.25em; text-decoration-color: var(--border-strong); }
+.rel:hover { color: var(--primary); }
+.mc:hover .go { text-decoration-color: var(--primary); }
 
 @media (prefers-reduced-motion: reduce) {
   .cover img { transition: none; }

@@ -38,8 +38,8 @@ export default defineNuxtConfig({
       viewport: "width=device-width, initial-scale=1",
       htmlAttrs: { lang: "en" },
       meta: [
-        { name: "theme-color", content: "#0d2b30", media: "(prefers-color-scheme: dark)" },
-        { name: "theme-color", content: "#eef4f3", media: "(prefers-color-scheme: light)" },
+        { name: "theme-color", content: "#0B0D06", media: "(prefers-color-scheme: dark)" }, // --background (meta tags cannot read CSS variables)
+        { name: "theme-color", content: "#FFFFFF", media: "(prefers-color-scheme: light)" },
       ],
       script: [{ innerHTML: routeBoot, tagPosition: "head" }, { innerHTML: themeBoot, tagPosition: "head" }],
       link: [

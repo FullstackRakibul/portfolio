@@ -26,8 +26,11 @@
           Building scalable systems, engineering intelligent tools, and exploring the boundaries of technology.
         </p>
         <div class="actions" data-reveal>
-          <a v-magnetic="5" class="lab-button" href="#contact" data-floating-contact-hide>Start a conversation <ArrowRight :size="18" aria-hidden="true" /></a>
-          <a class="lab-link" href="#projects" data-cursor-label="Let’s see">See the work</a>
+          <UiButton v-magnetic="5" class="cta" size="lg" href="#contact" data-floating-contact-hide>
+            Start a conversation
+            <template #icon><ArrowRight aria-hidden="true" /></template>
+          </UiButton>
+          <UiButton variant="ghost" size="lg" href="#projects" data-cursor-label="Let’s see">See the work</UiButton>
         </div>
       </div>
 
@@ -73,13 +76,15 @@ onBeforeUnmount(() => field?.destroy())
   min-height: 100svh;
   overflow: hidden;
   touch-action: pan-y;
-  /* The portrait keeps the colours it was drawn in, whatever the page theme. */
-  --field: 220 222 223;
-  --signal: #9dbad6;
+  /* The portrait reads as texture, not as a second subject: --muted-foreground in dark mode, --subtle in
+     light. The canvas builds rgb(<channels> / alpha), so --field holds those tokens as channel triplets
+     (#AFACA1 and #71717A); --signal takes the token itself. */
+  --field: 175 172 161;
+  --signal: var(--muted-foreground);
 }
 [data-theme="light"] .stage {
-  --field: 42 43 45;
-  --signal: #3a6286;
+  --field: 113 113 122;
+  --signal: var(--subtle);
 }
 
 .field {
@@ -139,9 +144,8 @@ onBeforeUnmount(() => field?.destroy())
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--s-4) var(--s-6);
+  gap: var(--s-3);
   margin-top: var(--s-4);
-  font-size: 16px;
 }
 
 .caption {
@@ -149,7 +153,7 @@ onBeforeUnmount(() => field?.destroy())
   right: 0;
   bottom: 28px;
   font-size: var(--step-small);
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 /* Phones and portrait tablets: name, portrait, then the words, as one column. */
@@ -173,7 +177,7 @@ onBeforeUnmount(() => field?.destroy())
   }
   .lower { max-width: 40rem; margin-top: var(--s-5); }
   .role { font-size: 22px; }
-  .actions .lab-button { flex: 1 1 100%; }
+  .actions .cta { flex: 1 1 100%; }
   .caption { display: none; }
 }
 </style>

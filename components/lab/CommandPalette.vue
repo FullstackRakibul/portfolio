@@ -116,13 +116,16 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   max-height: min(620px, calc(100svh - 64px));
   margin: 12vh auto auto;
   padding: 0;
-  border: 0;
-  background: var(--surface);
-  color: var(--ink);
+  border: 1px solid var(--border); /* taste-skill-ignore: popover edge (the brief's design system) */
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--popover);
+  color: var(--popover-foreground);
   font-family: var(--font-text);
-  box-shadow: 0 24px 64px rgb(0 0 0 / 0.4); /* taste-skill-ignore: a dialog truly floats */
+  box-shadow: var(--shadow-float); /* taste-skill-ignore: a dialog truly floats */
 }
-.palette::backdrop { background: rgb(10 10 9 / 0.55); }
+/* A neutral scrim; ::backdrop cannot read the page's tokens in every browser. */
+.palette::backdrop { background: rgb(0 0 0 / 0.5); }
 .palette[open] { animation: rise 220ms var(--ease-out); }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
 @media (prefers-reduced-motion: reduce) { .palette[open] { animation: none; } }
@@ -130,21 +133,22 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 .sheet { display: grid; }
 
 input {
-  height: 60px;
+  height: 56px;
   padding: 0 20px;
   border: 0;
-  background: var(--surface-2);
-  color: var(--ink);
-  font: 400 var(--step-lead) var(--font-text);
+  border-bottom: 1px solid var(--border); /* taste-skill-ignore: divides the input from the results */
+  background: transparent;
+  color: var(--foreground);
+  font: 400 17px var(--font-text);
   outline: none;
 }
-input:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-input::placeholder { color: var(--muted); }
+input:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+input::placeholder { color: var(--muted-foreground); }
 
 ul {
   list-style: none;
   margin: 0;
-  padding: 8px 0;
+  padding: 6px;
   overflow-y: auto;
   max-height: 420px;
 }
@@ -152,13 +156,14 @@ li[role="option"] {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  padding: 11px 20px;
-  font-size: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--foreground-body);
+  font-size: 15px;
   cursor: pointer;
 }
-li[aria-selected="true"] { background: var(--surface-2); }
-li[aria-selected="true"] span:first-child { color: var(--accent); }
-.hint { color: var(--muted); font-size: var(--step-small); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.empty { padding: 14px 20px; color: var(--muted); }
-.foot { padding: 12px 20px 16px; color: var(--muted); font-size: var(--step-small); }
+li[aria-selected="true"] { background: var(--muted); color: var(--foreground); }
+.hint { color: var(--muted-foreground); font-size: var(--step-small); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.empty { padding: 14px 20px; color: var(--muted-foreground); }
+.foot { padding: 12px 20px 14px; border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: 13px; } /* taste-skill-ignore: palette footer divider */
 </style>

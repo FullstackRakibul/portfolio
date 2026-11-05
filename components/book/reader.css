@@ -9,6 +9,13 @@
   --r-control-hover: rgb(0 0 0 / 0.1);
   --r-filter: none;
   --r-blend: multiply;
+  /* Buttons inside the reader (UiButton) take their tokens from the page theme, not the site's. */
+  --background: var(--r-ground);
+  --foreground: var(--r-ink);
+  --primary: var(--r-ink);
+  --primary-foreground: var(--r-ground);
+  --primary-hover: color-mix(in srgb, var(--r-ink) 88%, var(--r-ground));
+  --ring: var(--r-ink);
   position: fixed;
   inset: 0;
   z-index: 60;
@@ -95,8 +102,9 @@
 }
 .ic:active { transform: scale(0.92); }
 .aa-btn { font: 600 16px 'Charter', 'Bitstream Charter', Georgia, serif; }
-.aa-btn[aria-expanded="true"] { background: var(--teal); color: #fff; }
-.reader :focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; }
+/* The reader follows its own page theme (Paper, Sepia, Night, Original): its accent is the page's ink. */
+.aa-btn[aria-expanded="true"] { background: var(--r-ink); color: var(--r-ground); }
+.reader :focus-visible { outline: 2px solid var(--r-ink); outline-offset: 2px; }
 
 .stage {
   position: absolute;
@@ -172,22 +180,22 @@
 .scrub::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--teal) var(--p), var(--r-control-hover) var(--p)); /* taste-skill-ignore: two-colour progress fill, a hard stop */
+  background: linear-gradient(90deg, var(--r-ink) var(--p), var(--r-control-hover) var(--p)); /* taste-skill-ignore: two-colour progress fill, a hard stop */
 }
 .scrub::-moz-range-track { height: 4px; border-radius: 999px; background: var(--r-control-hover); }
-.scrub::-moz-range-progress { height: 4px; border-radius: 999px; background: var(--teal); }
+.scrub::-moz-range-progress { height: 4px; border-radius: 999px; background: var(--r-ink); }
 .scrub::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   margin-top: -7px;
   border: 0;
   border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35); /* taste-skill-ignore: the thumb floats over its track */
+  background: var(--r-ink);
+  box-shadow: 0 0 0 2px var(--r-ground); /* taste-skill-ignore: the thumb's halo against its track */
   -webkit-appearance: none;
   transition: transform var(--dur-press) var(--ease-out);
 }
-.scrub::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.35); } /* taste-skill-ignore: the thumb floats over its track */
+.scrub::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: var(--r-ink); box-shadow: 0 0 0 2px var(--r-ground); } /* taste-skill-ignore: the thumb's halo against its track */
 .scrub:active::-webkit-slider-thumb { transform: scale(1.2); }
 
 .state { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; }
@@ -195,7 +203,7 @@
   width: 28px;
   height: 28px;
   border: 3px solid var(--r-control-hover);
-  border-top-color: var(--teal);
+  border-top-color: var(--r-ink);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -205,7 +213,7 @@
 .err-x { margin: 8px 0 20px; color: var(--r-muted); }
 
 .stage--embed { padding: calc(env(safe-area-inset-top, 0px) + 64px) 0 env(safe-area-inset-bottom, 0px); touch-action: auto; }
-.stage--embed iframe { display: block; width: 100%; height: 100%; border: 0; background: #000; }
+.stage--embed iframe { display: block; width: 100%; height: 100%; border: 0; background: var(--r-ground); }
 
 @media (prefers-reduced-motion: reduce) {
   .reader { animation: none; }

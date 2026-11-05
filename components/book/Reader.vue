@@ -35,7 +35,7 @@
         <div class="err">
           <p class="err-t">This PDF can’t be opened here.</p>
           <p class="err-x">The site that hosts it may not allow reading it from another page.</p>
-          <a class="lab-button" :href="book.pdf" target="_blank" rel="noopener">Open the PDF</a>
+          <UiButton :href="book.pdf" target="_blank" rel="noopener">Open the PDF</UiButton>
         </div>
       </div>
       <div v-show="pdf.pages.value" ref="spreadEl" class="spread" :style="{ gap: `${GAP}px` }">

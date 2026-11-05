@@ -99,22 +99,19 @@ const host = (url?: string) => (url ? new URL(url).hostname.replace(/^www\./, ''
   gap: var(--s-4);
   min-height: 52px;
   padding: 8px var(--s-4);
-  border-radius: var(--radius-control);
-  background: var(--surface-2);
-  color: var(--ink);
+  border: 1px solid var(--border); /* taste-skill-ignore: row edge (the brief's design system) */
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
   text-decoration: none;
-  transition: background-color var(--dur-hover) ease, transform var(--dur-hover) var(--ease-out);
+  transition: border-color var(--dur-hover) ease;
 }
-a.row:hover { background: var(--surface-3); transform: translateY(-1px); }
-a.row:hover .r-title { color: var(--mint); }
+a.row:hover { border-color: var(--border-strong); }
+a.row:hover .r-title { color: var(--primary); }
 .r-title { font-weight: 600; font-size: 16px; transition: color var(--dur-hover) ease; }
-.r-desc { font-size: 15px; color: var(--muted); }
-.r-host { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 0.06em; text-transform: none; color: var(--muted); white-space: nowrap; }
+.r-desc { font-size: 15px; color: var(--muted-foreground); }
+.r-host { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 0.06em; text-transform: none; color: var(--muted-foreground); white-space: nowrap; }
 
-@media (prefers-reduced-motion: reduce) {
-  .row { transition: background-color var(--dur-hover) ease; }
-  a.row:hover { transform: none; }
-}
 @media (max-width: 1099px) {
   .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cards > li,

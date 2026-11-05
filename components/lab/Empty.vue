@@ -14,8 +14,8 @@ withDefaults(defineProps<{ title: string; text?: string; label?: string }>(), { 
 
 <style scoped>
 .empty { padding: clamp(28px, 4vw, 48px); text-align: center; }
-.k { color: var(--mint); }
+.k { color: var(--muted-foreground); }
 .t { margin-top: var(--s-3); font-size: var(--step-lead); font-weight: 600; }
-.x { margin-top: var(--s-2); color: var(--muted); }
+.x { margin-top: var(--s-2); color: var(--muted-foreground); }
 .act { margin-top: var(--s-5); display: flex; justify-content: center; }
 </style>

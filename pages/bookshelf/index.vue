@@ -20,8 +20,8 @@
         </div>
 
         <div class="chips" role="group" aria-label="Filter by shelf" data-reveal>
-          <button v-for="g in ['All', ...genres]" :key="g" type="button" class="chip" :aria-pressed="genre === g"
-            @click="genre = g">{{ g }}</button>
+          <UiButton v-for="g in ['All', ...genres]" :key="g" size="sm" :variant="genre === g ? 'default' : 'outline'"
+            :aria-pressed="genre === g" @click="genre = g">{{ g }}</UiButton>
         </div>
 
         <template v-if="groups.length">
@@ -37,7 +37,7 @@
 
         <LabEmpty v-else label="No match" :title="`No books match “${query.trim()}”`"
           text="Try another title or author.">
-          <button type="button" class="chip" @click="query = ''; genre = 'All'">Show all books</button>
+          <UiButton variant="outline" @click="query = ''; genre = 'All'">Show all books</UiButton>
         </LabEmpty>
       </section>
     </div>
@@ -96,32 +96,37 @@ useHead({
   display: flex;
   align-items: center;
   flex: 0 1 380px;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 .search svg {
   position: absolute;
-  left: 16px;
+  left: 14px;
   pointer-events: none;
 }
 
 .search input {
   width: 100%;
-  min-height: 48px;
-  padding: 0 16px 0 46px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--surface-3);
-  color: var(--ink);
-  font: 16px var(--font-text);
+  min-height: 40px;
+  padding: 0 14px 0 42px;
+  border: 1px solid var(--input); /* taste-skill-ignore: a real form field keeps its edge */
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  font: 15px var(--font-text);
+  transition: border-color var(--dur-hover) ease;
 }
 
 .search input::placeholder {
-  color: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.search input:hover {
+  border-color: var(--border-strong);
 }
 
 .search input:focus-visible {
-  outline: 2px solid var(--mint);
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
@@ -130,31 +135,6 @@ useHead({
   flex-wrap: wrap;
   gap: var(--s-2);
   margin-top: var(--s-6);
-}
-
-.chip {
-  min-height: 40px;
-  padding: 0 18px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--surface-2);
-  color: var(--ink);
-  font: 500 15px var(--font-text);
-  cursor: pointer;
-  transition: background-color var(--dur-hover) ease, color var(--dur-hover) ease, transform var(--dur-press) var(--ease-out);
-}
-
-.chip:hover {
-  background: var(--surface-3);
-}
-
-.chip:active {
-  transform: scale(0.96);
-}
-
-.chip[aria-pressed="true"] {
-  background: var(--teal);
-  color: #fff;
 }
 
 .shelf {
@@ -173,7 +153,7 @@ useHead({
   font-size: 15px;
   font-weight: 500;
   letter-spacing: 0;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 /* A grid of covers on wide screens, a row to swipe through on a phone. */

@@ -68,8 +68,7 @@ const zoom = (d: number) => setPrefs({ zoom: Math.min(2.5, Math.max(1, prefs.val
   border-radius: 18px;
   background: var(--r-sheet);
   color: var(--r-ink);
-  box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.55);
-  /* taste-skill-ignore: a floating sheet */
+  box-shadow: var(--shadow-float); /* taste-skill-ignore: a floating sheet */
 }
 
 .h {
@@ -117,7 +116,7 @@ const zoom = (d: number) => setPrefs({ zoom: Math.min(2.5, Math.max(1, prefs.val
 }
 
 .sw[aria-checked="true"] .sw-face {
-  outline-color: var(--mint);
+  outline-color: var(--r-ink);
 }
 
 .sw--original .sw-face {
@@ -128,10 +127,9 @@ const zoom = (d: number) => setPrefs({ zoom: Math.min(2.5, Math.max(1, prefs.val
 .sw--paper .sw-face {
   background: #fbfaf7;
   color: #1d1d1f;
-  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08); /* taste-skill-ignore: a white swatch needs its edge */
 }
 
-/* taste-skill-ignore: a white swatch needs its edge */
 .sw--sepia .sw-face {
   background: #f3e8d2;
   color: #4a3826;
@@ -140,10 +138,9 @@ const zoom = (d: number) => setPrefs({ zoom: Math.min(2.5, Math.max(1, prefs.val
 .sw--night .sw-face {
   background: #141414;
   color: #d6d6d6;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12); /* taste-skill-ignore: a black swatch needs its edge */
 }
 
-/* taste-skill-ignore: a black swatch needs its edge */
 .sw-name {
   font-size: 12px;
   color: var(--r-muted);
@@ -211,8 +208,8 @@ const zoom = (d: number) => setPrefs({ zoom: Math.min(2.5, Math.max(1, prefs.val
 }
 
 .seg button[aria-checked="true"] {
-  background: var(--teal);
-  color: #fff;
+  background: var(--r-ink);
+  color: var(--r-ground);
 }
 
 .dl {

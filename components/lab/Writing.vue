@@ -15,17 +15,20 @@
     </ul>
 
     <div class="links" data-reveal>
-      <NuxtLink class="all" to="/onTheWayToBeCreative" data-cursor-label="View">
-        See all writing <span aria-hidden="true">→</span>
-      </NuxtLink>
-      <a class="lab-link" :href="MEDIUM_PROFILE" target="_blank" rel="noopener" data-cursor-label="Open ↗">
-        Everything on Medium <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span>
-      </a>
+      <UiButton variant="outline" to="/onTheWayToBeCreative" data-cursor-label="View">
+        See all writing
+        <template #icon><ArrowRight aria-hidden="true" /></template>
+      </UiButton>
+      <UiButton variant="link" :href="MEDIUM_PROFILE" target="_blank" rel="noopener" data-cursor-label="Open ↗">
+        Everything on Medium<span class="sr-only"> (opens in a new tab)</span>
+        <template #icon><ArrowUpRight aria-hidden="true" /></template>
+      </UiButton>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import { ArrowRight, ArrowUpRight } from 'lucide-vue-next'
 import { MEDIUM_PROFILE } from '~/data/writing'
 
 // The latest three Medium posts; the writing page holds the rest and the notes kept on this site.
@@ -43,19 +46,7 @@ const latest = computed(() => (data.value?.posts ?? []).slice(0, 3))
   gap: var(--gap);
 }
 .cards > li { min-width: 0; }
-.links { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-6); margin-top: var(--s-7); font-size: 16px; }
-.all {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  color: var(--mint);
-  font: 500 13px / 1 var(--font-mono); /* taste-skill-ignore: PIPILIKA sets labels in mono (brand) */
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-decoration: none;
-}
-.all:hover { text-decoration: underline; text-underline-offset: 0.35em; }
+.links { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-6); margin-top: var(--s-7); }
 
 @media (max-width: 1099px) {
   .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }

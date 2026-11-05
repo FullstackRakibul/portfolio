@@ -9,9 +9,9 @@
   >
     <div class="top lab-wrap">
       <NuxtLink to="/" class="brand" @click="close()">Rakibul H. Rabbi</NuxtLink>
-      <button ref="closer" type="button" class="x" aria-label="Close menu" @click="close()">
-        <X :size="22" aria-hidden="true" />
-      </button>
+      <UiButton ref="closer" variant="ghost" size="icon-lg" class="x" aria-label="Close menu" @click="close()">
+        <X :size="20" aria-hidden="true" />
+      </UiButton>
     </div>
 
     <nav class="list lab-wrap" aria-label="Sections">
@@ -35,12 +35,13 @@
         <li><a :href="CONTACT.linkedin" target="_blank" rel="noopener" data-cursor-label="Open ↗">LinkedIn</a></li>
         <li><NuxtLink to="/resume" @click="close()">Résumé</NuxtLink></li>
       </ul>
-      <a class="lab-button" href="/#/contact" @click.prevent="pick('contact')">Let’s talk</a>
+      <UiButton size="lg" block href="/#/contact" @click.prevent="pick('contact')">Let’s talk</UiButton>
     </div>
   </dialog>
 </template>
 
 <script setup lang="ts">
+import type { ComponentPublicInstance } from 'vue'
 import { X } from 'lucide-vue-next'
 import { CONTACT } from '~/data/portfolio'
 
@@ -49,7 +50,7 @@ const open = defineModel<boolean>('open', { required: true })
 const emit = defineEmits<{ go: [id: string] }>()
 
 const dialog = ref<HTMLDialogElement | null>(null)
-const closer = ref<HTMLButtonElement | null>(null)
+const closer = ref<ComponentPublicInstance | null>(null)
 const shown = ref(false)
 let timer = 0
 let after: (() => void) | null = null
@@ -63,7 +64,7 @@ const show = () => {
   clearTimeout(timer)
   d.showModal()
   lock(true)
-  closer.value?.focus()
+  ;(closer.value?.$el as HTMLElement | undefined)?.focus()
   requestAnimationFrame(() => { shown.value = true })
 }
 
@@ -113,8 +114,8 @@ onBeforeUnmount(() => {
   margin: 0;
   padding: 0 0 max(24px, env(safe-area-inset-bottom));
   border: 0;
-  background: var(--bg);
-  color: var(--ink);
+  background: var(--background);
+  color: var(--foreground);
   font-family: var(--font-text);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -142,19 +143,7 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
 }
-.x {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  margin-right: -2px;
-  border: 0;
-  background: var(--surface-2);
-  color: var(--ink);
-  cursor: pointer;
-  transition: transform var(--dur-press) var(--ease-out);
-}
-.x:active { transform: scale(0.92); }
+.top .x { margin-right: -6px; }
 
 .list {
   display: grid;
@@ -176,19 +165,19 @@ onBeforeUnmount(() => {
   min-height: 60px;
   font: 700 clamp(2rem, 9vw, 3rem) / 1 var(--font-display);
   letter-spacing: -0.03em;
-  color: var(--ink);
+  color: var(--foreground);
   text-decoration: none;
 }
 .node {
   width: 10px;
   height: 10px;
   flex: none;
-  border: 2px solid var(--muted);
+  border: 2px solid var(--muted-foreground);
   border-radius: 50%;
   transition: background-color var(--dur-hover) ease, border-color var(--dur-hover) ease;
 }
-.list a[aria-current] .node { background: var(--accent); border-color: var(--accent); }
-.list a:active .node { background: var(--ink); border-color: var(--ink); }
+.list a[aria-current] .node { background: var(--primary); border-color: var(--primary); }
+.list a:active .node { background: var(--foreground); border-color: var(--foreground); }
 
 .foot {
   margin-top: auto;
@@ -208,10 +197,9 @@ onBeforeUnmount(() => {
 .foot ul a {
   display: inline-block;
   padding: 10px 0;
-  color: var(--muted);
+  color: var(--muted-foreground);
   text-decoration: none;
 }
-.foot .lab-button { width: 100%; min-height: 52px; }
 
 @media (prefers-reduced-motion: reduce) {
   .menu, .list a, .foot { transition: none; }

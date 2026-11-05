@@ -64,6 +64,6 @@ onBeforeUnmount(() => { ro?.disconnect(); removeEventListener('pointermove', onM
 .wave { padding-top: calc(var(--section-gap) * 0.55); margin-bottom: calc(var(--section-gap) * -0.45); }
 svg { display: block; width: 100%; height: auto; overflow: visible; }
 path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.carrier { stroke: rgb(var(--field) / 0.42); stroke-width: 1.5; }
-.signal { stroke: var(--signal); stroke-width: 1.25; opacity: 0.75; }
+.carrier { stroke: var(--border-strong); stroke-width: 1.5; }
+.signal { stroke: var(--muted-foreground); stroke-width: 1.25; opacity: 0.75; }
 </style>

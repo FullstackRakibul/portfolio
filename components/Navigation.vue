@@ -34,9 +34,8 @@
         <p v-if="time" class="clock lab-num" :title="`Local time in ${LOCATION.city}`">
           <span class="sr-only">Local time in </span>Dhaka <time>{{ time }}</time>
         </p>
-        <button
-          type="button"
-          class="icon"
+        <UiButton
+          variant="ghost" size="icon"
           :aria-label="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
           @click="toggle"
         >
@@ -44,17 +43,17 @@
             <Sun v-if="theme === 'dark'" key="sun" :size="18" aria-hidden="true" />
             <Moon v-else key="moon" :size="18" aria-hidden="true" />
           </Transition>
-        </button>
-        <button type="button" class="icon palette-key" aria-label="Open command palette (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K" @click="palette = true">
+        </UiButton>
+        <UiButton variant="ghost" size="icon" class="palette-key" aria-label="Open command palette (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K" @click="palette = true">
           <Command :size="17" aria-hidden="true" />
-        </button>
-        <NuxtLink v-magnetic="4" class="lab-button talk" to="/contact" @click="go($event, 'contact')">
+        </UiButton>
+        <UiButton v-magnetic="4" size="sm" class="talk" to="/contact" @click="go($event, 'contact')">
           Let’s talk
-        </NuxtLink>
-        <button type="button" class="burger" aria-haspopup="dialog" :aria-expanded="menu" aria-controls="site-menu" @click="menu = true">
+        </UiButton>
+        <UiButton variant="ghost" size="icon" class="burger" aria-haspopup="dialog" :aria-expanded="menu" aria-controls="site-menu" @click="menu = true">
           <span class="sr-only">Menu</span>
           <span class="bars" aria-hidden="true"><i /><i /></span>
-        </button>
+        </UiButton>
       </div>
     </div>
     <span class="progress" :style="{ transform: `scaleX(${progress})` }" aria-hidden="true" />
@@ -173,13 +172,15 @@ onBeforeUnmount(() => {
   position: fixed;
   inset: 0 0 auto;
   z-index: 40;
-  color: var(--ink);
+  color: var(--foreground);
   font-family: var(--font-text);
-  transition: background-color 320ms ease, backdrop-filter 320ms ease;
+  border-bottom: 1px solid transparent; /* taste-skill-ignore: the bar's bottom edge once the page scrolls */
+  transition: background-color var(--dur-hover) ease, border-color var(--dur-hover) ease;
 }
 .hdr--page,
 .hdr.scrolled {
-  background: var(--header-bg);
+  background: color-mix(in srgb, var(--background) 88%, transparent);
+  border-bottom-color: var(--border);
   backdrop-filter: blur(8px); /* taste-skill-ignore: a light blur under the bar once the page scrolls (earlier brief) */
   -webkit-backdrop-filter: blur(8px); /* taste-skill-ignore: same bar, Safari prefix */
 }
@@ -202,20 +203,22 @@ onBeforeUnmount(() => {
   text-decoration: none;
   color: inherit;
 }
-/* PIPILIKA's logo tile: a teal square with soft corners, the loop mark inside. */
+/* Logo tile: a neutral square with a 1px border, the loop mark inside. */
 .tile {
   display: grid;
   place-items: center;
   width: 34px;
   height: 34px;
   flex: none;
-  border-radius: var(--radius-control);
-  background: var(--teal);
-  color: #fff;
+  box-sizing: border-box;
+  border: 1px solid var(--border); /* taste-skill-ignore: the mark's tile edge (the brief's design system) */
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
 }
 .mark { width: 24px; height: 24px; overflow: visible; }
 .mark path { fill: none; stroke: currentColor; stroke-width: 1.8; }
-.mark .axis { stroke: #a7f3e4; stroke-dasharray: 2 3; }
+.mark .axis { stroke: var(--muted-foreground); stroke-dasharray: 2 3; }
 .mark circle { fill: currentColor; }
 .mark .loop { transform-origin: 16px 16px; transition: transform 420ms var(--ease-spring); }
 .brand:hover .mark .loop:first-of-type { transform: scaleY(1.25); }
@@ -223,7 +226,7 @@ onBeforeUnmount(() => {
 .brand-name {
   font-size: 13px;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--foreground);
   white-space: nowrap;
   opacity: 0;
   transform: translateX(-6px);
@@ -240,19 +243,19 @@ onBeforeUnmount(() => {
 }
 .links a {
   padding: 10px 12px;
-  color: var(--muted);
+  color: var(--subtle);
   text-decoration: none;
   transition: color var(--dur-hover) ease;
 }
 .links a:hover,
 .links a:focus-visible,
-.links a[aria-current] { color: var(--ink); }
+.links a[aria-current] { color: var(--foreground); }
 .ind {
   position: absolute;
   left: 0;
   bottom: 2px;
   height: 2px;
-  background: var(--accent);
+  background: var(--primary);
   pointer-events: none;
   transition: transform var(--dur-move) var(--ease-out), width var(--dur-move) var(--ease-out), opacity var(--dur-hover) ease;
 }
@@ -261,31 +264,14 @@ onBeforeUnmount(() => {
 .clock {
   margin-right: var(--s-3);
   font-size: var(--step-small);
-  color: var(--muted);
+  color: var(--muted-foreground);
   white-space: nowrap;
 }
-.clock time { color: var(--ink); }
+.clock time { color: var(--foreground); }
 
-.icon,
-.burger {
-  display: inline-grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  cursor: pointer;
-  transition: background-color var(--dur-hover) ease, transform var(--dur-press) var(--ease-out);
-}
-.icon:hover,
-.burger:hover { background: var(--surface-2); }
-.icon:active,
-.burger:active { transform: scale(0.92); }
+.tools .talk { margin-left: var(--s-3); }
 
-.talk { margin-left: var(--s-3); min-height: 40px; padding: 0 18px; }
-
-.burger { display: none; }
+.tools .burger { display: none; }
 .bars { display: grid; gap: 6px; width: 20px; }
 .bars i { display: block; height: 2px; background: currentColor; transition: transform var(--dur-move) var(--ease-out); }
 .bars i:last-child { width: 70%; justify-self: end; }
@@ -299,7 +285,7 @@ onBeforeUnmount(() => {
   right: 0;
   bottom: 0;
   height: 2px;
-  background: var(--accent);
+  background: var(--primary);
   transform-origin: left;
   opacity: 0;
   transition: opacity 320ms ease;
@@ -314,9 +300,9 @@ onBeforeUnmount(() => {
   .clock { display: none; }
 }
 @media (max-width: 1079px) {
-  .links, .palette-key, .talk { display: none; }
+  .links, .tools .palette-key, .tools .talk { display: none; }
   .tools { margin-left: auto; }
-  .burger { display: inline-grid; }
+  .tools .burger { display: inline-flex; }
 }
 @media (max-width: 380px) {
   .brand-name { font-size: 11px; letter-spacing: 0.1em; }

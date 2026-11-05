@@ -23,18 +23,20 @@
             <div>
               <h2 class="share-h">Share this article</h2>
               <div class="share-links">
-                <a
+                <UiButton
+                  variant="outline" size="icon-lg" shape="circle"
                   :href="`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(currentUrl)}`"
                   target="_blank" rel="noopener" aria-label="Share on X (Twitter), opens in a new tab" data-cursor-label="Open ↗"
                 >
                   <Share :size="18" aria-hidden="true" />
-                </a>
-                <a
+                </UiButton>
+                <UiButton
+                  variant="outline" size="icon-lg" shape="circle"
                   :href="`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`"
                   target="_blank" rel="noopener" aria-label="Share on LinkedIn, opens in a new tab" data-cursor-label="Open ↗"
                 >
                   <Share :size="18" aria-hidden="true" />
-                </a>
+                </UiButton>
               </div>
             </div>
             <div class="published">
@@ -66,7 +68,7 @@
       />
       <div class="lab-wrap">
         <LabEmpty label="404" title="The blog post you're looking for doesn't exist.">
-          <NuxtLink to="/onTheWayToBeCreative" class="lab-button">Back to Blog</NuxtLink>
+          <UiButton to="/onTheWayToBeCreative">Back to Blog</UiButton>
         </LabEmpty>
       </div>
     </template>
@@ -105,7 +107,7 @@ useHead({
 </script>
 
 <style scoped>
-.by { font-size: 15px; color: var(--muted); }
+.by { font-size: 15px; color: var(--muted-foreground); }
 
 .article { max-width: 860px; margin-inline: auto; padding: clamp(24px, 4vw, 56px); }
 
@@ -117,49 +119,42 @@ useHead({
 .prose :deep(p) { margin-bottom: 0; }
 .prose :deep(ul), .prose :deep(ol) { padding-left: 1.3em; }
 .prose :deep(li + li) { margin-top: 0.4em; }
-.prose :deep(li::marker) { color: var(--mint); }
-.prose :deep(strong) { color: var(--ink); font-weight: 650; }
-.prose :deep(a) { color: var(--mint); text-underline-offset: 0.25em; }
+.prose :deep(li::marker) { color: var(--muted-foreground); }
+.prose :deep(strong) { color: var(--foreground); font-weight: 650; }
+/* Links inside running text keep a resting underline, so they never rely on colour alone. */
+.prose :deep(a) { color: var(--foreground); font-weight: 500; text-decoration: underline; text-underline-offset: 0.25em; text-decoration-color: var(--border-strong); transition: text-decoration-color var(--dur-hover) ease; }
+.prose :deep(a:hover) { text-decoration-color: var(--primary); }
 .prose :deep(blockquote) {
   margin-inline: 0;
   padding: var(--s-4) var(--s-5);
-  border-radius: var(--radius-control);
-  background: var(--surface-2);
-  color: var(--muted);
+  border-left: 2px solid var(--border-strong); /* taste-skill-ignore: quotation rule */
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--muted);
+  color: var(--muted-foreground);
   font-style: italic;
 }
 .prose :deep(code) {
   padding: 2px 6px;
-  border-radius: 6px;
-  background: var(--surface-2);
-  color: var(--mint);
+  border-radius: var(--radius-sm);
+  background: var(--muted);
+  color: var(--foreground);
   font: 0.9em var(--font-mono);
 }
 .prose :deep(pre) {
   padding: var(--s-4);
-  border-radius: var(--radius-control);
-  background: var(--surface-solid);
+  border: 1px solid var(--border); /* taste-skill-ignore: a code block's edge */
+  border-radius: var(--radius);
+  background: var(--background-deep);
   overflow-x: auto;
 }
-.prose :deep(pre code) { padding: 0; background: none; color: var(--ink); }
-.prose :deep(img) { max-width: 100%; height: auto; border-radius: var(--radius-control); }
+.prose :deep(pre code) { padding: 0; background: none; color: var(--foreground); }
+.prose :deep(img) { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: var(--radius); } /* taste-skill-ignore: image edge */
 
 .share { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--s-5); margin-top: var(--s-8); padding-top: var(--s-6); }
 .share-h { font: 600 18px / 1.3 var(--font-text); letter-spacing: 0; }
 .share-links { display: flex; gap: var(--s-2); margin-top: var(--s-3); }
-.share-links a {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--surface-2);
-  color: var(--muted);
-  transition: color var(--dur-hover) ease, background-color var(--dur-hover) ease;
-}
-.share-links a:hover { color: var(--mint); background: var(--surface-3); }
 .published { text-align: right; }
-.published .k { color: var(--muted); }
+.published .k { color: var(--muted-foreground); }
 .published p + p { margin-top: 4px; }
 
 .related { margin-top: var(--section-gap); }

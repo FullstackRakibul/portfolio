@@ -22,7 +22,7 @@ const props = defineProps({
   density: { type: Number, default: 3 },
   // How far around the pointer the particles scatter, in CSS pixels.
   radius: { type: Number, default: 110 },
-  // Colour particles take while scattered. Falls back to the theme accent.
+  // Colour particles take while scattered. Falls back to the theme's --primary.
   scatterColor: { type: String, default: '' },
 })
 
@@ -34,7 +34,8 @@ let ctx = null
 let particles = []
 let frame = 0
 let pointer = { x: -9999, y: -9999, active: false }
-let colors = { base: '#e6eef0', scatter: '#2dd4bf' }
+// Read from the theme before the first frame (rebuild() calls readColors() first).
+let colors = { base: '', scatter: '', scatterOpacity: 1 }
 let visible = true
 let dpr = 1
 let cleanups = []
@@ -49,8 +50,12 @@ function readColors() {
   h1.appendChild(probe)
   const base = getComputedStyle(probe).color
   probe.remove()
-  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
-  colors = { base, scatter: props.scatterColor || accent || '#2dd4bf' }
+  // Dark: the accent. Light: no accent at all, so --primary is the foreground and the scattered
+  // particles are drawn at --name-scatter-opacity instead.
+  const root = getComputedStyle(document.documentElement)
+  const accent = root.getPropertyValue('--primary').trim()
+  const opacity = Number.parseFloat(root.getPropertyValue('--name-scatter-opacity'))
+  colors = { base, scatter: props.scatterColor || accent || base, scatterOpacity: Number.isFinite(opacity) ? opacity : 1 }
 }
 
 // Draw the lines offscreen with the heading's own font and collect the filled pixels.
@@ -141,8 +146,9 @@ function tick(time) {
   }
 
   // A barely-there shimmer keeps the name alive without blurring it.
-  const drawSet = (set, color) => {
+  const drawSet = (set, color, alpha = 1) => {
     ctx.fillStyle = color
+    ctx.globalAlpha = alpha
     for (const p of set) {
       const fx = Math.sin(t + p.seed) * 0.35 * dpr
       const fy = Math.cos(t * 0.8 + p.seed) * 0.25 * dpr
@@ -150,7 +156,8 @@ function tick(time) {
     }
   }
   drawSet(cool, colors.base)
-  drawSet(hot, colors.scatter)
+  drawSet(hot, colors.scatter, colors.scatterOpacity)
+  ctx.globalAlpha = 1
 
   frame = requestAnimationFrame(tick)
 }
