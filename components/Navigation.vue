@@ -2,13 +2,7 @@
   <header class="hdr" :class="[`hdr--${variant}`, { scrolled, named: showName }]">
     <div class="inner lab-wrap">
       <NuxtLink to="/" class="brand" @click="toTop">
-        <span class="tile" aria-hidden="true"><svg class="mark" viewBox="0 0 32 32">
-          <path class="loop" d="M8 16C11 5 21 5 24 16" />
-          <path class="loop" d="M8 16C11 27 21 27 24 16" />
-          <path class="axis" d="M8 16H24" />
-          <circle cx="8" cy="16" r="3" />
-          <circle cx="24" cy="16" r="3" />
-        </svg></span>
+        <img class="logo" src="/assets/img/logo-96.png" width="34" height="34" alt="" decoding="async">
         <span class="brand-name lab-mono">Rakibul H. Rabbi</span>
       </NuxtLink>
 
@@ -203,26 +197,16 @@ onBeforeUnmount(() => {
   text-decoration: none;
   color: inherit;
 }
-/* Logo tile: a neutral square with a 1px border, the loop mark inside. */
-.tile {
-  display: grid;
-  place-items: center;
+/* Logo: public/assets/img/logo-96.png (from rakibul-h-rabbi.png), shown at 34px; a small tilt on hover. */
+.logo {
+  display: block;
   width: 34px;
   height: 34px;
   flex: none;
-  box-sizing: border-box;
-  border: 1px solid var(--border); /* taste-skill-ignore: the mark's tile edge (the brief's design system) */
-  border-radius: var(--radius);
-  background: var(--card);
-  color: var(--foreground);
+  transition: transform 420ms var(--ease-spring);
 }
-.mark { width: 24px; height: 24px; overflow: visible; }
-.mark path { fill: none; stroke: currentColor; stroke-width: 1.8; }
-.mark .axis { stroke: var(--muted-foreground); stroke-dasharray: 2 3; }
-.mark circle { fill: currentColor; }
-.mark .loop { transform-origin: 16px 16px; transition: transform 420ms var(--ease-spring); }
-.brand:hover .mark .loop:first-of-type { transform: scaleY(1.25); }
-.brand:hover .mark .loop:nth-of-type(2) { transform: scaleY(1.25); }
+.brand:hover .logo,
+.brand:focus-visible .logo { transform: rotate(-10deg) scale(1.06); }
 .brand-name {
   font-size: 13px;
   font-weight: 600;
@@ -308,6 +292,6 @@ onBeforeUnmount(() => {
   .brand-name { font-size: 11px; letter-spacing: 0.1em; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ind, .inner, .brand-name, .mark .loop { transition: none; }
+  .ind, .inner, .brand-name, .logo { transition: none; }
 }
 </style>

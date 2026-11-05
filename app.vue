@@ -32,7 +32,12 @@ const toMain = () => main.value?.focus()
 
 useHead({
   titleTemplate: t => t ?? 'Rakibul H. Rabbi',
-  link: [{ rel: 'icon', href: '/favicon.ico' }],
+  // Made from public/assets/img/rakibul-h-rabbi.png (cropped, the mask filled white so it reads on dark tabs too).
+  link: [
+    { rel: 'icon', href: '/favicon.ico', sizes: '32x32' },
+    { rel: 'icon', type: 'image/png', href: '/icon-192.png', sizes: '192x192' },
+    { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+  ],
 })
 </script>
 
