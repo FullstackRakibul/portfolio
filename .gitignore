@@ -26,4 +26,4 @@ logs
 # Taste Skill working files (screenshots, reports)
 .taste-skill/
 .nuxt
-.nuxt-gen
+.nuxt-gen/
