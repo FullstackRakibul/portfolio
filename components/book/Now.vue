@@ -6,12 +6,12 @@
     <div class="body">
       <h2 id="now-h">{{ started ? 'Continue reading' : 'Start with this one' }}</h2>
       <p class="title">{{ book.title }}</p>
-      <p class="by">{{ book.author }}<template v-if="book.year"> · {{ book.year }}</template></p>
-      <p v-if="book.blurb" class="blurb">{{ book.blurb }}</p>
+      <p class="by">{{ book.author }}<template v-if="book.year"> · {{ book.year }}</template><template v-if="book.pagesHint"> · {{ book.pagesHint.toLocaleString('en') }} pages</template></p>
+      <p v-if="book.description" class="blurb">{{ book.description }}</p>
 
       <div v-if="started" class="prog">
         <span class="bar" aria-hidden="true"><span :style="{ width: `${Math.max(3, f * 100)}%` }" /></span>
-        <span class="lab-num">Page {{ p!.page }} of {{ p!.pages }} · {{ Math.round(f * 100) }}%</span>
+        <span class="lab-num">Page {{ p!.page.toLocaleString('en') }} of {{ p!.pages.toLocaleString('en') }} · {{ Math.round(f * 100) }}%</span>
       </div>
 
       <div class="acts">
@@ -19,17 +19,14 @@
           {{ started ? 'Continue' : 'Start reading' }}
           <template #icon><ArrowRight aria-hidden="true" /></template>
         </UiButton>
-        <UiButton v-if="book.pdf" variant="ghost" size="lg" :href="book.pdf" download>
-          <template #leading><Download aria-hidden="true" /></template>
-          Download PDF
-        </UiButton>
+        <BookWant :book="book" label class="want-lg" />
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ArrowRight, Download } from 'lucide-vue-next'
+import { ArrowRight } from 'lucide-vue-next'
 import type { Book } from '~/data/books'
 
 // The first thing on the shelf, as in a book app's "Read Now": the book in hand, or one to begin with.
@@ -129,6 +126,8 @@ h2 {
   gap: var(--s-3);
   margin-top: var(--s-6);
 }
+
+.acts :deep(.want-lg) { height: 44px; padding: 0 14px; }
 
 @media (max-width: 719px) {
   .now {

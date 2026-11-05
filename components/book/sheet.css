@@ -1,0 +1,137 @@
+/* Sheets that float over the page (Aa settings, contents, shortcuts). They take their colours from the
+   page theme (--r-*), not from the site, so they sit in the reader's room. */
+.sheet {
+  position: absolute;
+  z-index: 6;
+  max-height: calc(100svh - var(--r-pad-top) - 16px - env(safe-area-inset-bottom, 0px));
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--r-sheet);
+  color: var(--r-ink);
+  box-shadow: var(--shadow-float); /* taste-skill-ignore: a floating sheet */
+  animation: sheet-in 200ms var(--ease-out);
+}
+@keyframes sheet-in { from { opacity: 0; transform: translateY(-6px) scale(0.98); } }
+
+.h {
+  margin: 18px 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--r-muted);
+}
+.h:first-child { margin-top: 0; }
+
+.row { display: flex; align-items: center; gap: 8px; }
+
+/* Buttons inside a sheet: soft tiles of the page's ink. */
+.tile-btn,
+.seg button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--r-control);
+  color: var(--r-ink);
+  font: 500 14px var(--font-text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--dur-hover) ease, transform var(--dur-press) var(--ease-out);
+}
+.tile-btn:disabled { opacity: 0.4; cursor: default; }
+.tile-btn:not(:disabled):active,
+.seg button:active { transform: scale(0.97); }
+
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
+.seg button[aria-checked="true"],
+.seg button[aria-pressed="true"],
+.seg button[aria-selected="true"] { background: var(--r-ink); color: var(--r-ground); }
+
+/* A switch row: the label on the left, a track on the right. */
+.switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: 500 14px var(--font-text);
+  text-align: left;
+  cursor: pointer;
+}
+.switch small { display: block; margin-top: 2px; font-size: 12px; font-weight: 400; color: var(--r-muted); }
+.track {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--r-control-hover);
+  transition: background-color var(--dur-hover) ease;
+}
+.track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--r-sheet);
+  transition: transform 220ms var(--ease-out);
+}
+.switch[aria-checked="true"] .track { background: var(--r-ink); }
+.switch[aria-checked="true"] .track::after { transform: translateX(18px); }
+
+/* Sliders: a thin track that fills to the value, a thumb big enough for a thumb. */
+.range {
+  --p: 0%;
+  display: block;
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--r-ink) var(--p), var(--r-control-hover) var(--p)); /* taste-skill-ignore: two-colour progress fill, a hard stop */
+}
+.range::-moz-range-track { height: 4px; border-radius: 999px; background: var(--r-control-hover); }
+.range::-moz-range-progress { height: 4px; border-radius: 999px; background: var(--r-ink); }
+.range::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--r-ink);
+  box-shadow: 0 0 0 2px var(--r-sheet); /* taste-skill-ignore: the thumb's halo against its track */
+  -webkit-appearance: none;
+  transition: transform var(--dur-press) var(--ease-out);
+}
+.range::-moz-range-thumb { width: 20px; height: 20px; border: 0; border-radius: 50%; background: var(--r-ink); box-shadow: 0 0 0 2px var(--r-sheet); } /* taste-skill-ignore: the thumb's halo against its track */
+.range:active::-webkit-slider-thumb { transform: scale(1.15); }
+
+.val { min-width: 52px; text-align: right; font-size: 13px; color: var(--r-muted); font-variant-numeric: tabular-nums; }
+
+@media (hover: hover) {
+  .tile-btn:not(:disabled):hover,
+  .seg button:not([aria-checked="true"]):not([aria-pressed="true"]):not([aria-selected="true"]):hover { background: var(--r-control-hover); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sheet { animation: none; }
+  .track::after { transition: none; }
+}

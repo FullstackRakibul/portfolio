@@ -33,6 +33,7 @@
         <li><a :href="`mailto:${CONTACT.email}`">{{ CONTACT.email }}</a></li>
         <li><a :href="CONTACT.github" target="_blank" rel="noopener" data-cursor-label="Open ↗">GitHub</a></li>
         <li><a :href="CONTACT.linkedin" target="_blank" rel="noopener" data-cursor-label="Open ↗">LinkedIn</a></li>
+        <li><NuxtLink to="/bookshelf" @click="close()">Bookshelf</NuxtLink></li>
         <li><NuxtLink to="/resume" @click="close()">Résumé</NuxtLink></li>
       </ul>
       <UiButton size="lg" block href="/#/contact" @click.prevent="pick('contact')">Let’s talk</UiButton>

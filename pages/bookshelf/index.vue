@@ -1,190 +1,115 @@
 <template>
   <div class="bookshelf">
     <LabPageHeader eyebrow="Library" title="Bookshelf"
-      intro="Stories I keep coming back to. Open one and read it right here, in a reader that remembers your page."
-      :pill="`${books.length} ${books.length === 1 ? 'book' : 'books'}`" />
+      intro="Classics to read right here, in a reader that remembers your page and goes easy on your eyes."
+      :pill="`${books.length} books · ${categories.length} shelves`" />
 
     <div class="lab-wrap">
-      <div v-if="hero" v-reveal>
-        <BookNow :book="hero" data-reveal />
-      </div>
+      <BookToolbar v-model:query="query" v-model:filter="filter" v-model:sort="sort" />
 
-      <section v-reveal class="library" aria-labelledby="lib-h">
-        <div class="lib-head" data-reveal>
-          <h2 id="lib-h" class="lab-heading">The shelf</h2>
-          <div class="search">
-            <Search :size="18" aria-hidden="true" />
-            <input v-model="query" type="search" placeholder="Title or author" aria-label="Search books"
-              autocomplete="off">
-          </div>
-        </div>
-
-        <div class="chips" role="group" aria-label="Filter by shelf" data-reveal>
-          <UiButton v-for="g in ['All', ...genres]" :key="g" size="sm" :variant="genre === g ? 'default' : 'outline'"
-            :aria-pressed="genre === g" @click="genre = g">{{ g }}</UiButton>
-        </div>
-
-        <template v-if="groups.length">
-          <div v-for="g in groups" :key="g.name" class="shelf" data-reveal>
-            <h3 class="shelf-h">{{ g.name }} <span class="lab-num">{{ g.books.length }}</span></h3>
-            <ul class="row" role="list">
-              <li v-for="b in g.books" :key="b.slug">
-                <BookTile :book="b" />
-              </li>
-            </ul>
-          </div>
-        </template>
-
-        <LabEmpty v-else label="No match" :title="`No books match “${query.trim()}”`"
-          text="Try another title or author.">
-          <UiButton variant="outline" @click="query = ''; genre = 'All'">Show all books</UiButton>
+      <!-- Searching or filtering: one set of results. -->
+      <section v-if="narrowing" class="results" aria-labelledby="res-h">
+        <h2 id="res-h" class="res-h" aria-live="polite">{{ resultsTitle }}</h2>
+        <BookGrid v-if="results.length" :books="results" :view="view" />
+        <LabEmpty v-else-if="filter === 'want' && !query.trim()" label="Want to Read" title="Nothing saved for later yet"
+          text="Tap the bookmark under any book to keep it here.">
+          <UiButton variant="outline" @click="clear">Browse the library</UiButton>
+        </LabEmpty>
+        <LabEmpty v-else label="No match" :title="query.trim() ? `No books match “${query.trim()}”` : 'No books here yet'"
+          :text="query.trim() ? 'Try a title, an author or a shelf, like “Tolstoy” or “poetry”.' : 'Open a book and it will show up here.'">
+          <UiButton variant="outline" @click="clear">Show all books</UiButton>
         </LabEmpty>
       </section>
+
+      <!-- Browsing: Read Now, Want to Read, a shelf per category, then everything. -->
+      <template v-else>
+        <section class="block first" aria-labelledby="now-section">
+          <h2 id="now-section" class="sr-only">Read now</h2>
+          <BookNow v-if="hero" :book="hero" />
+          <BookRow v-if="recentBooks.length" class="after-now" title="Recently opened" :books="recentBooks" />
+        </section>
+
+        <div class="block">
+          <BookRow title="Want to Read" :books="wantBooks" :to="wantBooks.length ? '/bookshelf?filter=want' : undefined">
+            <template #empty>
+              <p class="slot-empty">Nothing here yet. Tap the bookmark under a book to save it for later.</p>
+            </template>
+          </BookRow>
+        </div>
+
+        <section class="block" aria-labelledby="browse-h">
+          <h2 id="browse-h" class="lab-heading section-h">Browse by shelf</h2>
+          <BookRow v-for="c in shelves" :key="c.id" :title="c.name" :description="c.description" :books="c.books"
+            :to="`/bookshelf/category/${c.id}`" />
+        </section>
+
+        <section class="block" aria-labelledby="all-h">
+          <h2 id="all-h" class="lab-heading section-h">All books <span class="count lab-num">{{ books.length }}</span></h2>
+          <BookGrid :books="sorted(books)" :view="view" />
+        </section>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Search } from 'lucide-vue-next'
-import { useReading } from '~/composables/useReading'
-import { books, findBook } from '~/data/books'
+import { books, categories, booksIn, findBook } from '~/data/books'
 
-const { lastOpened } = useReading()
-const query = ref('')
-const genre = ref('All')
+const { lastOpened, recent, want, view } = useReading()
+const { query, filter, sort, narrowing, results, sorted, clear } = useLibrary()
+const covers = useCovers()
 
 // The book in hand first; with none, the featured one.
 const hero = computed(() => (lastOpened.value && findBook(lastOpened.value)) || books.find(b => b.featured) || books[0])
+const recentBooks = computed(() => recent.value.map(s => findBook(s)).filter(b => !!b && b.slug !== hero.value?.slug).slice(0, 6) as typeof books)
+const wantBooks = computed(() => want.value.map(s => findBook(s)).filter(Boolean) as typeof books)
+const shelves = categories.map(c => ({ ...c, books: booksIn(c.id) })).filter(c => c.books.length)
 
-const genres = [...new Set(books.map(b => b.genre))]
+const resultsTitle = computed(() => {
+  const n = results.value.length
+  const what = { all: 'books', progress: 'in progress', finished: 'finished', want: 'in Want to Read' }[filter.value]
+  const q = query.value.trim()
+  return `${n} ${filter.value === 'all' ? (n === 1 ? 'book' : 'books') : what}${q ? ` for “${q}”` : ''}`
+})
 
-const groups = computed(() => {
-  const q = query.value.trim().toLowerCase()
-  const hits = books.filter(b =>
-    (genre.value === 'All' || b.genre === genre.value)
-    && (!q || `${b.title} ${b.author}`.toLowerCase().includes(q)))
-  return genres
-    .map(name => ({ name, books: hits.filter(b => b.genre === name) }))
-    .filter(g => g.books.length)
+// Back from the reader: focus returns to the book that was open.
+const returnTo = useState<string>('bookshelf-return', () => '')
+onMounted(async () => {
+  covers.loadAll()
+  const slug = returnTo.value
+  if (!slug) return
+  returnTo.value = ''
+  await nextTick()
+  document.querySelector<HTMLElement>(`[data-book="${slug}"] a`)?.focus({ preventScroll: true })
 })
 
 useHead({
   title: 'Bookshelf',
-  meta: [{ name: 'description', content: 'A small library of stories, readable right in the browser with a reader that remembers your page.' }],
+  meta: [{ name: 'description', content: 'A library of classics, readable in the browser with a reader that remembers your page and goes easy on your eyes.' }],
 })
 </script>
 
 <style scoped>
-.bookshelf {
-  padding-bottom: var(--section-gap);
-}
-
-.library {
-  margin-top: clamp(72px, 9vw, 128px);
-}
-
-.lib-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  justify-content: space-between;
-  gap: var(--s-5) var(--s-6);
-}
-
-.search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex: 0 1 380px;
-  color: var(--muted-foreground);
-}
-
-.search svg {
-  position: absolute;
-  left: 14px;
-  pointer-events: none;
-}
-
-.search input {
-  width: 100%;
-  min-height: 40px;
-  padding: 0 14px 0 42px;
-  border: 1px solid var(--input); /* taste-skill-ignore: a real form field keeps its edge */
-  border-radius: var(--radius);
-  background: var(--background);
-  color: var(--foreground);
-  font: 15px var(--font-text);
-  transition: border-color var(--dur-hover) ease;
-}
-
-.search input::placeholder {
-  color: var(--muted-foreground);
-}
-
-.search input:hover {
-  border-color: var(--border-strong);
-}
-
-.search input:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-2);
-  margin-top: var(--s-6);
-}
-
-.shelf {
-  margin-top: var(--s-8);
-}
-
-.shelf-h {
-  display: flex;
-  align-items: baseline;
-  gap: var(--s-3);
+.bookshelf { padding-bottom: var(--section-gap); }
+.block { margin-top: clamp(56px, 7vw, 104px); }
+.block.first { margin-top: var(--s-6); }
+.results { margin-top: var(--s-6); }
+.res-h {
+  margin-bottom: var(--s-6);
   font-size: clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem);
   letter-spacing: -0.02em;
 }
+.after-now { margin-top: var(--s-8); }
+.section-h { margin-bottom: var(--s-7); }
+.count { font-size: 0.5em; font-weight: 500; letter-spacing: 0; color: var(--muted-foreground); vertical-align: middle; }
 
-.shelf-h span {
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: 0;
+/* An empty shelf keeps its heading and says what would fill it. */
+.slot-empty {
+  margin-top: var(--s-5);
+  padding: var(--s-5);
+  border: 1px dashed var(--border-strong); /* taste-skill-ignore: an empty slot (app-screen empty state) */
+  border-radius: var(--radius);
   color: var(--muted-foreground);
-}
-
-/* A grid of covers on wide screens, a row to swipe through on a phone. */
-.row {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 13vw, 180px), 1fr));
-  gap: var(--s-7) clamp(20px, 2.6vw, 40px);
-  margin: var(--s-5) 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-@media (max-width: 639px) {
-  .row {
-    display: flex;
-    gap: var(--s-5);
-    margin-inline: calc(-1 * var(--margin));
-    padding: var(--s-2) var(--margin) var(--s-4);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: var(--margin);
-    scrollbar-width: none;
-  }
-
-  .row::-webkit-scrollbar {
-    display: none;
-  }
-
-  .row>li {
-    flex: 0 0 42%;
-    scroll-snap-align: start;
-  }
+  font-size: 15px;
 }
 </style>

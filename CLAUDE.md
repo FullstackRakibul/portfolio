@@ -53,7 +53,9 @@ src/
 │   ├── resume.vue      # Resume/CV page
 │   ├── sheju.vue
 │   ├── bookshelf/
-│   │   └── index.vue
+│   │   ├── index.vue          # Library (Read Now, Want to Read, shelves, all books)
+│   │   ├── [slug].vue         # Reader (?page=N)
+│   │   └── category/[id].vue  # One shelf
 │   └── onTheWayToBeCreative/
 │       ├── index.vue   # Blog listing page
 │       └── [slug].vue  # Dynamic blog post page
@@ -139,6 +141,29 @@ server/               # Optional API routes & server middleware
 - Project screenshots: `public/assets/work/<id>.jpg`, 1120×700 (16:10)
 - Homepage theme follows PIPILIKA (tokens and shared `.lab-card`, `.lab-pill`, `.lab-badge`, `.lab-mono`, `.lab-tags` in `assets/css/lab.css`)
 - Contact info is in multiple places: `resume.ts`, components (ContactCard values), Navigation external links
+
+## Bookshelf (`/#/bookshelf`)
+
+An online library with its own PDF reader. Data in `data/books.ts`; pdf.js in `composables/usePdf.ts`;
+reader state (progress, bookmarks, Want to Read, pace, settings) in `composables/useReading.ts`, all in
+localStorage; page-1 cover thumbnails in IndexedDB (`composables/useCovers.ts`); components in `components/book/`.
+
+**Add a book in one line** (in the `books` array of `data/books.ts`):
+```ts
+fromUrl(`${HOST}Title_Words-Author_Name.pdf`, { categories: ['classics'], year: 1900, pagesHint: 240 }),
+```
+The file name gives title, author (after the last `-`), slug and cover colour; override any of them in the
+second argument. Categories are ids from the `categories` list; a book can be on several shelves.
+
+**Hosting requirements for PDFs on another origin** (currently `https://api.hameemgroup.com:9012/Resources/Pdfs/`):
+- `Access-Control-Allow-Origin` for the site (and the dev origin), `Access-Control-Allow-Headers: Range`, and
+  206 answers to `Range` requests. Without these the reader falls back to the browser's own viewer
+  (`components/book/Fallback.vue`).
+- `Access-Control-Expose-Headers: Accept-Ranges, Content-Range, Content-Length` is recommended. The reader
+  works without it (it fetches ranges itself through `PDFDataRangeTransport`), but plain pdf.js does not.
+- **Page tree:** calibre-made PDFs put every page directly under one `/Pages` node, and pdf.js then fetches
+  every page object (the whole file) before page 1 shows. Re-save such files with a balanced page tree
+  (16 kids per node) so a long book opens after a few hundred KB. War and Peace: 5.05 MB → 0.58 MB.
 
 ## Configuration Notes
 

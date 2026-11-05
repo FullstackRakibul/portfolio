@@ -11,7 +11,7 @@
         <NuxtLink v-for="s in linkSections" :key="s.id" v-slot="{ href, navigate }" :to="'/' + s.id" custom>
           <a
             :ref="el => setLink(s.id, el as Element | null)"
-            :href="href"
+            :href="href ?? undefined"
             :aria-current="active === s.id ? (variant === 'home' ? 'location' : 'page') : undefined"
             @pointerenter="hoverId = s.id"
             @focus="hoverId = s.id"
@@ -19,6 +19,20 @@
             @click="go($event, s.id); navigate($event)"
           >
             {{ s.label }}
+          </a>
+        </NuxtLink>
+        <!-- A page of its own, not a home section. -->
+        <NuxtLink v-slot="{ href, navigate }" to="/bookshelf" custom>
+          <a
+            :ref="el => setLink('bookshelf', el as Element | null)"
+            :href="href ?? undefined"
+            :aria-current="active === 'bookshelf' ? 'page' : undefined"
+            @pointerenter="hoverId = 'bookshelf'"
+            @focus="hoverId = 'bookshelf'"
+            @blur="hoverId = ''"
+            @click="navigate"
+          >
+            Bookshelf
           </a>
         </NuxtLink>
         <span class="ind" :style="indicator" aria-hidden="true" />
@@ -75,7 +89,7 @@ const active = ref('')
 const hoverId = ref('')
 
 // Other pages light the section they belong to: the notes under Writing, the résumé under Experience.
-const PAGE_SECTION: [prefix: string, id: string][] = [['/onTheWayToBeCreative', 'writing'], ['/resume', 'experience']]
+const PAGE_SECTION: [prefix: string, id: string][] = [['/onTheWayToBeCreative', 'writing'], ['/resume', 'experience'], ['/bookshelf', 'bookshelf']]
 watch(() => route.path, (path) => {
   if (props.variant === 'page') active.value = PAGE_SECTION.find(([prefix]) => path.startsWith(prefix))?.[1] ?? ''
 }, { immediate: true })

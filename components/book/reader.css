@@ -1,5 +1,7 @@
 /* The reader: one calm room per page theme. The page sits on a ground of its own colour, so the
-   sheet's edges fall away and only the text is left, as in a book app. */
+   sheet's edges fall away and only the text is left, as in a book app. These are the reader's own
+   page colours (accepted literal exceptions to the site tokens); the site's tokens are re-pointed at
+   them so buttons inside the reader match the page. */
 .reader {
   --r-ground: #fbfaf7;
   --r-ink: #1d1d1f;
@@ -9,12 +11,19 @@
   --r-control-hover: rgb(0 0 0 / 0.1);
   --r-filter: none;
   --r-blend: multiply;
-  /* Buttons inside the reader (UiButton) take their tokens from the page theme, not the site's. */
+  --r-hit: rgb(0 0 0 / 0.16);
+  --r-select: rgb(0 0 0 / 0.18);
+  --r-shade: rgb(251 250 247 / 0.78);
+  --r-pad-top: calc(env(safe-area-inset-top, 0px) + 64px);
+  --r-pad-bottom: calc(env(safe-area-inset-bottom, 0px) + 84px);
   --background: var(--r-ground);
   --foreground: var(--r-ink);
   --primary: var(--r-ink);
   --primary-foreground: var(--r-ground);
   --primary-hover: color-mix(in srgb, var(--r-ink) 88%, var(--r-ground));
+  --border: var(--r-control-hover);
+  --input: var(--r-control-hover);
+  --border-strong: var(--r-muted);
   --ring: var(--r-ink);
   position: fixed;
   inset: 0;
@@ -35,6 +44,23 @@
   --r-sheet: #faf2e2;
   --r-control: rgb(59 44 28 / 0.08);
   --r-control-hover: rgb(59 44 28 / 0.14);
+  --r-hit: rgb(120 72 20 / 0.22);
+  --r-select: rgb(120 72 20 / 0.22);
+  --r-shade: rgb(243 232 210 / 0.8);
+}
+/* Dim: dark grey paper, soft grey ink, low contrast for long evenings. */
+.reader[data-r="dim"] {
+  --r-ground: #2f2f31;
+  --r-ink: #c9c6be;
+  --r-muted: #9a978f;
+  --r-sheet: #3a3a3c;
+  --r-control: rgb(255 255 255 / 0.07);
+  --r-control-hover: rgb(255 255 255 / 0.12);
+  --r-filter: invert(0.83) hue-rotate(180deg) contrast(0.82);
+  --r-blend: normal;
+  --r-hit: rgb(255 214 140 / 0.28);
+  --r-select: rgb(255 255 255 / 0.22);
+  --r-shade: rgb(47 47 49 / 0.82);
 }
 .reader[data-r="night"] {
   --r-ground: #141414;
@@ -46,6 +72,9 @@
   /* White paper turns to the ground's black, ink to soft grey; colours keep their hue. */
   --r-filter: invert(0.92) hue-rotate(180deg);
   --r-blend: normal;
+  --r-hit: rgb(255 214 140 / 0.3);
+  --r-select: rgb(255 255 255 / 0.24);
+  --r-shade: rgb(20 20 20 / 0.84);
 }
 .reader[data-r="original"] {
   --r-ground: #1c1c1e;
@@ -55,32 +84,42 @@
   --r-control: rgb(255 255 255 / 0.08);
   --r-control-hover: rgb(255 255 255 / 0.14);
   --r-blend: normal;
+  --r-hit: rgb(255 200 0 / 0.38);
+  --r-select: rgb(0 90 255 / 0.25);
+  --r-shade: rgb(28 28 30 / 0.84);
 }
 @keyframes r-in { from { opacity: 0; transform: translateY(12px); } }
+
+/* The area pages may use, measured by the reader (the screen less the bars' room). */
+.probe { position: absolute; inset: 0; padding: var(--r-pad-top) 12px var(--r-pad-bottom); visibility: hidden; pointer-events: none; }
 
 /* Controls float over the page and step aside while reading. */
 .top, .bottom {
   position: absolute;
   inset-inline: 0;
-  z-index: 3;
+  z-index: 5;
   transition: opacity 240ms ease, transform 300ms var(--ease-out);
 }
 .reader.bare .top { opacity: 0; transform: translateY(-8px); pointer-events: none; }
 .reader.bare .bottom { opacity: 0; transform: translateY(8px); pointer-events: none; }
+.reader.focus .top, .reader.focus .bottom { display: none; }
 
 .top {
   top: 0;
   display: grid;
-  grid-template-columns: 44px 1fr 44px;
+  grid-template-columns: 1fr minmax(0, 2fr) 1fr;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   padding: calc(env(safe-area-inset-top, 0px) + 10px) max(12px, env(safe-area-inset-right, 0px)) 10px max(12px, env(safe-area-inset-left, 0px));
 }
+.side { display: flex; gap: 6px; }
+.side.end { justify-content: flex-end; }
 .who { min-width: 0; text-align: center; }
 .who h1 {
   margin: 0;
   font: 600 15px / 1.3 var(--font-text);
   letter-spacing: 0;
+  color: var(--r-ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -89,6 +128,7 @@
 .ic {
   display: grid;
   place-items: center;
+  flex: none;
   width: 44px;
   height: 44px;
   padding: 0;
@@ -102,103 +142,38 @@
 }
 .ic:active { transform: scale(0.92); }
 .aa-btn { font: 600 16px 'Charter', 'Bitstream Charter', Georgia, serif; }
-/* The reader follows its own page theme (Paper, Sepia, Night, Original): its accent is the page's ink. */
-.aa-btn[aria-expanded="true"] { background: var(--r-ink); color: var(--r-ground); }
-.reader :focus-visible { outline: 2px solid var(--r-ink); outline-offset: 2px; }
+/* The reader follows its own page theme: its accent is the page's ink. */
+.ic[aria-expanded="true"], .ic[aria-pressed="true"] { background: var(--r-ink); color: var(--r-ground); }
+.reader :deep(:focus-visible) { outline: 2px solid var(--r-ink); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .ic:not([aria-expanded="true"]):not([aria-pressed="true"]):hover { background: var(--r-control-hover); }
+}
+@media (max-width: 479px) {
+  .top { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .hide-xs { display: none; }
+}
 
-.stage {
+.bottom { bottom: 0; }
+/* The bars keep the page's ground behind them, so scrolled text never runs under their words. */
+.top, .bottom { background: color-mix(in srgb, var(--r-ground) 94%, transparent); }
+
+/* Eye comfort. Warmth multiplies an amber light over everything; brightness lays black over it. */
+.comfort { position: absolute; inset: 0; z-index: 3; pointer-events: none; transition: opacity 200ms ease; }
+.warm { background: #ff9a3c; mix-blend-mode: multiply; opacity: calc(var(--warm) * 0.42); }
+.dim { background: #000; opacity: var(--dim); }
+
+.state {
   position: absolute;
   inset: 0;
   display: grid;
-  place-items: center;
-  padding: calc(env(safe-area-inset-top, 0px) + 64px) 12px calc(env(safe-area-inset-bottom, 0px) + 64px);
-  overflow: hidden;
-  touch-action: pan-y;
-  user-select: none;
-  -webkit-user-select: none;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
 }
-.stage.zoomed { place-items: start center; overflow: auto; touch-action: auto; }
-.spread { display: flex; align-items: center; justify-content: center; }
-.pg {
-  display: block;
-  filter: var(--r-filter);
-  mix-blend-mode: var(--r-blend);
-  transition: filter 320ms ease;
-}
-.reader[data-r="original"] .pg { box-shadow: 0 20px 50px -20px rgb(0 0 0 / 0.8); border-radius: 2px; } /* taste-skill-ignore: the original page is a sheet lying on the desk */
-
-/* Side arrows: visible on a mouse, invisible tap zones cover the same job on touch. */
-.turn {
-  position: absolute;
-  top: 50%;
-  display: none;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  margin-top: -24px;
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: var(--r-control);
-  color: var(--r-ink);
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 200ms ease, background-color var(--dur-hover) ease, transform var(--dur-press) var(--ease-out);
-}
-.turn.prev { left: max(16px, env(safe-area-inset-left, 0px)); }
-.turn.next { right: max(16px, env(safe-area-inset-right, 0px)); }
-.turn:disabled { visibility: hidden; }
-.turn:focus-visible { opacity: 1; }
-.turn:active { transform: scale(0.92); }
-@media (hover: hover) and (pointer: fine) {
-  .turn { display: grid; }
-  .stage:hover .turn { opacity: 0.85; }
-  .turn:hover, .ic:hover { background: var(--r-control-hover); }
-}
-
-.bottom {
-  bottom: 0;
-  padding: 8px max(20px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 12px) max(20px, env(safe-area-inset-left, 0px));
-  width: min(720px, 100%);
-  margin-inline: auto;
-}
-.where { display: flex; justify-content: space-between; gap: 12px; margin: 6px 0 0; font-size: 13px; color: var(--r-muted); }
-.left { color: var(--r-muted); }
-
-/* The scrubber: a thin track that fills as you read, a large thumb for a thumb. */
-.scrub {
-  --p: 0%;
-  display: block;
-  width: 100%;
-  height: 28px;
-  margin: 0;
-  background: transparent;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-}
-.scrub::-webkit-slider-runnable-track {
-  height: 4px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--r-ink) var(--p), var(--r-control-hover) var(--p)); /* taste-skill-ignore: two-colour progress fill, a hard stop */
-}
-.scrub::-moz-range-track { height: 4px; border-radius: 999px; background: var(--r-control-hover); }
-.scrub::-moz-range-progress { height: 4px; border-radius: 999px; background: var(--r-ink); }
-.scrub::-webkit-slider-thumb {
-  width: 18px;
-  height: 18px;
-  margin-top: -7px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--r-ink);
-  box-shadow: 0 0 0 2px var(--r-ground); /* taste-skill-ignore: the thumb's halo against its track */
-  -webkit-appearance: none;
-  transition: transform var(--dur-press) var(--ease-out);
-}
-.scrub::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: var(--r-ink); box-shadow: 0 0 0 2px var(--r-ground); } /* taste-skill-ignore: the thumb's halo against its track */
-.scrub:active::-webkit-slider-thumb { transform: scale(1.2); }
-
-.state { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; }
+.opening { margin: 0; font-size: 15px; font-weight: 500; }
+.sub { margin: 0; font-size: 13px; color: var(--r-muted); }
 .spin {
   width: 28px;
   height: 28px;
@@ -208,16 +183,65 @@
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.err { max-width: 380px; text-align: center; }
-.err-t { margin: 0; font-size: 20px; font-weight: 600; }
-.err-x { margin: 8px 0 20px; color: var(--r-muted); }
 
-.stage--embed { padding: calc(env(safe-area-inset-top, 0px) + 64px) 0 env(safe-area-inset-bottom, 0px); touch-action: auto; }
-.stage--embed iframe { display: block; width: 100%; height: 100%; border: 0; background: var(--r-ground); }
+/* Focus mode's one way out on touch: shown by a tap in the middle, gone again after a moment. */
+.exit-focus {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  left: 50%;
+  z-index: 6;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--r-sheet);
+  color: var(--r-ink);
+  font: 500 14px var(--font-text);
+  box-shadow: var(--shadow-float); /* taste-skill-ignore: a floating control */
+  cursor: pointer;
+  opacity: 0;
+  transform: translate(-50%, -8px);
+  transition: opacity 200ms ease, transform 260ms var(--ease-out);
+}
+.exit-focus.shown, .exit-focus:focus-visible { opacity: 1; transform: translate(-50%, 0); }
+
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: min(520px, calc(100vw - 24px));
+  padding: 14px 14px 14px 18px;
+  border-radius: 16px;
+  background: var(--r-sheet);
+  color: var(--r-ink);
+  box-shadow: var(--shadow-float); /* taste-skill-ignore: a floating notice */
+  transform: translateX(-50%);
+  animation: toast-in 260ms var(--ease-out);
+}
+.toast p { margin: 0; font-size: 14px; line-height: 1.45; }
+.ic-text {
+  flex: none;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--r-ink);
+  color: var(--r-ground);
+  font: 600 14px var(--font-text);
+  cursor: pointer;
+}
+@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 12px); } }
+
+.embed { position: absolute; inset: 0; padding: var(--r-pad-top) 0 env(safe-area-inset-bottom, 0px); }
+.embed iframe { display: block; width: 100%; height: 100%; border: 0; background: var(--r-ground); }
 
 @media (prefers-reduced-motion: reduce) {
-  .reader { animation: none; }
-  .top, .bottom, .pg { transition: opacity 120ms ease; }
+  .reader, .toast { animation: none; }
+  .top, .bottom, .exit-focus { transition: opacity 120ms ease; }
   .reader.bare .top, .reader.bare .bottom { transform: none; }
   .spin { animation-duration: 2s; }
 }

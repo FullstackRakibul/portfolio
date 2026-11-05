@@ -1,30 +1,34 @@
 <template>
-  <NuxtLink :to="`/bookshelf/${book.slug}`" class="tile" :aria-label="`${verb} ${book.title} by ${book.author}`"
-    data-cursor-label="Read">
-    <span class="lift">
-      <BookCover :book="book" :alt="false" />
-    </span>
-    <span class="t">{{ book.title }}</span>
-    <span class="a">{{ book.author }}</span>
-    <span v-if="done" class="state">Finished</span>
-    <span v-else-if="f > 0" class="state">
+  <article class="tile" :data-book="book.slug">
+    <NuxtLink :to="`/bookshelf/${book.slug}`" class="open" :aria-label="`${verb} ${book.title} by ${book.author}`" data-cursor-label="Read">
+      <span class="lift">
+        <BookCover :book="book" :alt="false" />
+      </span>
+    </NuxtLink>
+    <div class="meta">
+      <div class="words">
+        <p class="t">{{ book.title }}</p>
+        <p class="a">{{ book.author }}</p>
+      </div>
+      <BookWant :book="book" />
+    </div>
+    <p v-if="done" class="state">Finished</p>
+    <p v-else-if="f > 0" class="state">
       <span class="bar" aria-hidden="true"><span :style="{ width: `${Math.max(4, f * 100)}%` }" /></span>
       <span class="lab-num">{{ Math.round(f * 100) }}%</span>
-    </span>
-  </NuxtLink>
+    </p>
+  </article>
 </template>
 
 <script setup lang="ts">
 import type { Book } from '~/data/books'
 
-// One book on the shelf: its cover, its title and author, and how far this reader has got.
+// One book on the shelf: its cover (the link into the reader), title and author, a Want to Read
+// bookmark, and how far this reader has got.
 const props = defineProps<{ book: Book }>()
-const { progress, fraction } = useReading()
+const { fraction, isDone } = useReading()
 const f = computed(() => fraction(props.book.slug))
-const done = computed(() => {
-  const p = progress.value[props.book.slug]
-  return !!p && p.page >= p.pages
-})
+const done = computed(() => isDone(props.book.slug))
 const verb = computed(() => (done.value ? 'Read again' : f.value > 0 ? 'Continue' : 'Read'))
 </script>
 
@@ -32,7 +36,11 @@ const verb = computed(() => (done.value ? 'Read again' : f.value > 0 ? 'Continue
 .tile {
   display: grid;
   align-content: start;
-  gap: 2px;
+  min-width: 0;
+}
+
+.open {
+  display: block;
   color: inherit;
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
@@ -45,45 +53,31 @@ const verb = computed(() => (done.value ? 'Read again' : f.value > 0 ? 'Continue
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .tile:hover .lift {
-    transform: translateY(-6px) rotate(-0.6deg);
-  }
-
-  .tile:hover .t {
-    color: var(--primary);
-  }
+  .open:hover .lift { transform: translateY(-6px) rotate(-0.6deg); }
+  .tile:has(.open:hover) .t { color: var(--primary); }
 }
 
-.tile:active .lift {
-  transform: scale(0.97);
-  transition-duration: var(--dur-press);
-}
+.open:active .lift { transform: scale(0.97); transition-duration: var(--dur-press); }
+.open:focus-visible { outline: none; }
+.open:focus-visible .lift { outline: 2px solid var(--ring); outline-offset: 4px; border-radius: 6px; }
 
-.tile:focus-visible {
-  outline: none;
-}
-
-.tile:focus-visible .lift {
-  outline: 2px solid var(--ring);
-  outline-offset: 4px;
-  border-radius: 6px;
-}
+.meta { display: flex; align-items: flex-start; gap: 4px; }
+.words { flex: 1; min-width: 0; }
 
 .t {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.3;
+  font: 600 16px / 1.3 var(--font-text);
+  letter-spacing: 0;
+  color: var(--foreground);
   transition: color var(--dur-hover) ease;
 }
 
-.a {
-  font-size: 14px;
-  color: var(--muted-foreground);
-}
+.a { margin-top: 2px; font-size: 14px; color: var(--muted-foreground); }
+.meta :deep(.want) { margin: -6px -8px 0 0; }
 
 .state {
   display: flex;
@@ -103,20 +97,10 @@ const verb = computed(() => (done.value ? 'Read again' : f.value > 0 ? 'Continue
   overflow: hidden;
 }
 
-.bar span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--foreground);
-}
+.bar span { display: block; height: 100%; border-radius: inherit; background: var(--foreground); }
 
 @media (prefers-reduced-motion: reduce) {
-  .lift {
-    transition: none;
-  }
-
-  .tile:hover .lift {
-    transform: none;
-  }
+  .lift { transition: none; }
+  .open:hover .lift { transform: none; }
 }
 </style>
