@@ -74,8 +74,8 @@ const next = () => { i.value = (i.value + 1) % QUOTES.length }
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(180deg, var(--background-deep) 0%, transparent 18%, transparent 80%, var(--background-deep) 100%),
-    linear-gradient(90deg, var(--background-deep) 0%, color-mix(in srgb, var(--background-deep) 88%, transparent) 30%, transparent 62%);
+    linear-gradient(180deg, var(--background-deep) 0%, transparent 18%, transparent 80%, var(--background-deep) 100%), /* taste-skill-ignore: scrim over the painting */
+    linear-gradient(90deg, var(--background-deep) 0%, color-mix(in srgb, var(--background-deep) 88%, transparent) 30%, transparent 62%); /* taste-skill-ignore: scrim over the painting */
 }
 
 .body {
@@ -127,8 +127,7 @@ const next = () => { i.value = (i.value + 1) % QUOTES.length }
   min-height: 44px;
   margin-top: var(--s-6);
   padding: 0 var(--s-4);
-  border: 1px solid var(--border);
-  /* taste-skill-ignore: outline button */
+  border: 1px solid var(--border); /* taste-skill-ignore: outline button */
   border-radius: var(--radius);
   background: transparent;
   color: var(--foreground);
@@ -193,8 +192,8 @@ const next = () => { i.value = (i.value + 1) % QUOTES.length }
   .art {
     position: relative;
     height: 280px;
-    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 74%, transparent 100%);
-    mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 74%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 74%, transparent 100%); /* taste-skill-ignore: fade mask on the painting */
+    mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 74%, transparent 100%); /* taste-skill-ignore: fade mask on the painting */
   }
 
   .art img {
