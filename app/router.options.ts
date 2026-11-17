@@ -2,10 +2,9 @@ import type { RouterConfig } from '@nuxt/schema'
 import { START_LOCATION } from 'vue-router'
 import { SECTION_IDS, headerOffset, prefersReducedMotion, sectionFromPath } from '~/utils/sections'
 
-// Hash routing (nuxt.config: router.options.hashMode): every address lives after the #, so the host only
-// ever serves index.html. Each homepage section gets its own address, /#/projects: a route of its own
-// (aliases count as the same location, so the router would refuse to move between them) that shows the
-// home page under the same page key, so moving between sections never remounts the page.
+// Real paths. Each homepage section also has its own address, /projects: a route of its own (aliases count
+// as the same location, so the router would refuse to move between them) that shows the home page under the
+// same page key, so moving between sections never remounts the page. Plain anchors (/#about) scroll too.
 export default <RouterConfig>{
   routes: (routes) => {
     const index = routes.find(r => r.name === 'index')
@@ -22,7 +21,7 @@ export default <RouterConfig>{
     const first = from === START_LOCATION
     const samePage = !first && (to.name === from.name || (!!to.meta.home && !!from.meta.home))
 
-    const id = sectionFromPath(to.path)
+    const id = sectionFromPath(to.path) || (to.hash && !to.hash.startsWith('#/') ? decodeURIComponent(to.hash.slice(1)) : '')
 
     // Wait until the page that holds the target is on screen (and fonts have settled its layout):
     // on first load until the app is ready, otherwise until the section is in the document.

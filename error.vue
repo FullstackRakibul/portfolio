@@ -2,9 +2,9 @@
   <main class="err" :data-theme="theme">
     <div class="box">
       <p class="code">{{ error.statusCode }}</p>
-      <h1>{{ notFound ? 'Taking you home' : 'Something broke on this page' }}</h1>
+      <h1>{{ notFound ? 'This page does not exist' : 'Something broke on this page' }}</h1>
       <p class="msg">
-        {{ notFound ? 'That address does not exist here.' : 'It is not you. Going back to the home page usually fixes it.' }}
+        {{ notFound ? 'The address may be mistyped, or the page has moved.' : 'It is not you. Going back to the home page usually fixes it.' }}
       </p>
       <UiButton class="home" size="lg" block @click="home">Back to the home page</UiButton>
     </div>
@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app'
 
-// Unknown addresses go straight back to the home page; any other error gets this small page.
+// Unknown addresses get a real 404 (status from the host, noindex here) with a way home; other errors get the same page.
 const props = defineProps<{ error: NuxtError }>()
 const notFound = computed(() => props.error.statusCode === 404)
 const theme = ref('dark')
@@ -22,9 +22,9 @@ const home = () => clearError({ redirect: '/' })
 
 onMounted(() => {
   theme.value = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'
-  if (notFound.value) home()
 })
-useHead({ title: notFound.value ? 'Taking you home' : 'Something broke' })
+useHead({ title: notFound.value ? 'Page not found · Rakibul H. Rabbi' : 'Something broke · Rakibul H. Rabbi' })
+useSeoMeta({ robots: 'noindex, follow' })
 </script>
 
 <style scoped>

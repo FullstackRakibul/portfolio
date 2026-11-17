@@ -38,10 +38,23 @@ function close() {
   else router.push('/bookshelf')
 }
 
-useHead(() => ({
-  title: book.value ? `${book.value.title} · Bookshelf` : 'Bookshelf',
-  meta: [{ name: 'description', content: book.value ? `Read ${book.value.title} by ${book.value.author}.` : 'A book from the bookshelf.' }],
-}))
+// A book that isn't on the shelf is a real 404, not an empty page with a 200.
+if (!book.value) throw createError({ statusCode: 404, statusMessage: 'Book not found' })
+const b = book.value
+const read = `Read ${b.title} by ${b.author}${b.year ? ` (${b.year})` : ''} free in your browser on Rakibul H. Rabbi’s bookshelf`
+usePageSeo({
+  title: fitTitle(`${b.title} by ${b.author}`, b.title),
+  description: fitDescription(
+    `${read}, with a reader that remembers your page, keeps your bookmarks and goes easy on your eyes.`,
+    `${read}, with a reader that remembers your page and goes easy on your eyes.`,
+    `${read}, with a reader that remembers your page and bookmarks.`,
+    `${read}, with a reader that remembers your page.`,
+    `${read}.`,
+  ),
+  path: `/bookshelf/${b.slug}`,
+  ogLabel: `${b.title}, ${b.author}`,
+  crumbs: [{ name: 'Bookshelf', path: '/bookshelf' }, { name: b.title, path: `/bookshelf/${b.slug}` }],
+})
 </script>
 
 <style scoped>

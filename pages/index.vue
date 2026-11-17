@@ -15,6 +15,7 @@
       <LabWave />
       <LabWriting />
       <LabContact />
+      <LabFaq />
     </main>
     <LabFooter />
     <LabCommandPalette />
@@ -22,16 +23,10 @@
 </template>
 
 <script setup lang="ts">
-const description = 'Rakibul H. Rabbi is a full-stack engineer in Dhaka building enterprise systems in .NET, SQL Server and Vue, and Mostisko, a locally hosted AI workspace.'
+import { BIO } from '~/data/profile'
 
-useSeoMeta({
-  title: 'Rakibul H. Rabbi, full-stack engineer and systems architect',
-  description,
-  ogTitle: 'Rakibul H. Rabbi, full-stack engineer and systems architect',
-  ogDescription: description,
-  ogType: 'website',
-  ogUrl: 'https://rabbitic.com',
-})
+// Also rendered at each section's address (/projects); those are the home page, so the canonical stays '/'.
+usePageSeo({ title: 'Full-Stack Engineer in Dhaka', description: BIO, path: '/' })
 </script>
 
 <style scoped>

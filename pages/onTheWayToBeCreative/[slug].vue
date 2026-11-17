@@ -84,26 +84,36 @@ const slug = String(route.params.slug)
 const { getPostBySlug, getPostsByCategory, formatDate } = useBlog()
 
 const post = getPostBySlug(slug)
-const currentUrl = computed(() => (import.meta.client ? window.location.href : `https://rabbitic.com/#/onTheWayToBeCreative/${slug}`))
+const currentUrl = computed(() => (import.meta.client ? window.location.href : `${useRuntimeConfig().public.siteUrl}/onTheWayToBeCreative/${slug}`))
 
 const relatedPosts = computed(() => {
   if (!post) return []
   return getPostsByCategory(post.category).filter(p => p.slug !== post.slug).slice(0, 2)
 })
 
-useHead({
-  title: post ? `${post.title} - Rakibul H. Rabbi` : 'Post Not Found - Rakibul H. Rabbi',
-  meta: [
-    { name: 'description', content: post ? post.excerpt : 'Blog post not found' },
-    { name: 'author', content: post?.author || 'Rakibul H. Rabbi' },
-    { property: 'og:title', content: post?.title || 'Post Not Found' },
-    { property: 'og:description', content: post?.excerpt || 'Blog post not found' },
-    { property: 'og:type', content: 'article' },
-    { property: 'article:author', content: post?.author || 'Rakibul H. Rabbi' },
-    { property: 'article:published_time', content: post?.date },
-    { property: 'article:section', content: post?.category },
-  ],
+// A post that doesn't exist is a real 404.
+if (!post) throw createError({ statusCode: 404, statusMessage: 'Post not found' })
+const path = `/onTheWayToBeCreative/${post.slug}`
+const { siteUrl } = useRuntimeConfig().public as { siteUrl: string }
+usePageSeo({
+  title: fitTitle(post.title, post.title),
+  description: fitDescription(`${post.excerpt} An article by Rakibul H. Rabbi.`, `${post.excerpt} By Rakibul H. Rabbi.`, post.excerpt),
+  path,
+  type: 'article',
+  ogLabel: post.title,
+  crumbs: [{ name: 'Writing', path: '/onTheWayToBeCreative' }, { name: post.title, path }],
+  extraSchema: [{
+    '@type': 'BlogPosting',
+    '@id': `${siteUrl}${path}#article`,
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    author: { '@id': `${siteUrl}/#person` },
+    mainEntityOfPage: { '@id': `${siteUrl}${path}#webpage` },
+    articleSection: post.category,
+  }],
 })
+useSeoMeta({ articlePublishedTime: post.date, articleSection: post.category, articleAuthor: [post.author] })
 </script>
 
 <style scoped>

@@ -1,10 +1,8 @@
 <template>
   <NuxtPage v-if="isHome" />
   <!-- Every other page shares the home page's frame: the page ground, the header, the footer.
-       index.html holds the rendered home page, so other pages are drawn fresh in the browser rather than
-       hydrated over home markup (which would keep the home page's attributes). -->
-  <ClientOnly v-else>
-    <div class="lab page">
+       Each page is prerendered to its own HTML, so crawlers read it without running script. -->
+  <div v-else class="lab page">
       <a class="skip" href="#main" @click.prevent="toMain">Skip to content</a>
       <Navigation variant="page" />
       <main id="main" ref="main" tabindex="-1">
@@ -12,8 +10,7 @@
       </main>
       <LabFooter />
       <LabCommandPalette />
-    </div>
-  </ClientOnly>
+  </div>
   <!-- Site-wide layers: they follow the theme toggle and add nothing to the layout. -->
   <CustomCursor />
   <ScrollRail />
@@ -23,10 +20,10 @@
 
 <script setup lang="ts">
 const route = useRoute()
-// The home page answers at / and at each section's address (/#/projects).
+// The home page answers at / and at each section's address (/projects).
 const isHome = computed(() => !!route.meta.home)
 
-// With hash routing, #main would read as an address; move focus to the content instead.
+// Move focus to the content (the link's #main alone would only scroll).
 const main = ref<HTMLElement | null>(null)
 const toMain = () => main.value?.focus()
 

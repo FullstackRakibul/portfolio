@@ -108,11 +108,12 @@ const filteredPosts = computed(() => {
   return posts
 })
 
-useHead({
-  title: 'onTheWayToBeCreative - Rakibul H. Rabbi',
-  meta: [
-    { name: 'description', content: 'Read about software development, technology insights, and programming tutorials by Rakibul H. Rabbi.' },
-  ],
+usePageSeo({
+  title: 'Writing: engineering notes and articles',
+  description: 'Engineering articles by Rakibul H. Rabbi on .NET, Vue, databases, distributed systems and cloud migration, plus his newest notes on Medium about AI and LLMs.',
+  path: '/onTheWayToBeCreative',
+  ogLabel: 'Writing',
+  crumbs: [{ name: 'Writing', path: '/onTheWayToBeCreative' }],
 })
 </script>
 

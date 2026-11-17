@@ -3,10 +3,10 @@
     <canvas ref="canvas" class="field" aria-hidden="true" />
 
     <div class="copy lab-wrap">
-      <h1 ref="title" class="name">
-        <!-- <span>Rakibul H.</span> <span>Rabbi</span> -->
+      <!-- HeroNameParticles renders the page's one <h1>; this wrapper only sizes it. -->
+      <div ref="title" class="name">
         <HeroNameParticles :lines="['Rakibul H.', 'Rabbi']" :density="3" :radius="110" />
-      </h1>
+      </div>
 
       <img
         ref="portrait"

@@ -83,9 +83,12 @@ onMounted(async () => {
   document.querySelector<HTMLElement>(`[data-book="${slug}"] a`)?.focus({ preventScroll: true })
 })
 
-useHead({
-  title: 'Bookshelf',
-  meta: [{ name: 'description', content: 'A library of classics, readable in the browser with a reader that remembers your page and goes easy on your eyes.' }],
+usePageSeo({
+  title: 'Bookshelf: classic books to read online',
+  description: `Rakibul H. Rabbi’s bookshelf: ${books.length} classic books, from Tolstoy to Poe, free to read in your browser with a reader that remembers your page and bookmarks.`,
+  path: '/bookshelf',
+  ogLabel: 'Bookshelf',
+  crumbs: [{ name: 'Bookshelf', path: '/bookshelf' }],
 })
 </script>
 

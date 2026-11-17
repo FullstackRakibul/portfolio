@@ -1,8 +1,8 @@
 import { SECTIONS } from '~/data/portfolio'
 
 /**
- * Homepage sections that have their own address. With hash routing, /#/projects opens the home page
- * scrolled to #projects; the router keeps it as the same page (see app/router.options.ts).
+ * Homepage sections that have their own address: /projects opens the home page scrolled to
+ * #projects; the router keeps it as the same page (see app/router.options.ts).
  */
 export const SECTION_IDS: string[] = [...new Set([...SECTIONS.map(s => s.id), 'mostisko'])]
 

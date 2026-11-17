@@ -218,11 +218,11 @@ const downloadPDF = () => {
   }, 150)
 }
 
-useHead({
-  title: `${resumeData.name} - Resume`,
-  meta: [
-    { name: 'description', content: `Professional ATS-friendly resume of ${resumeData.name}, ${resumeData.title}` }
-  ]
+usePageSeo({
+  title: 'Résumé',
+  description: 'Résumé of Rakibul H. Rabbi, Software Support Engineer at Ha-Meem Group in Dhaka: enterprise ERP for HRM, payroll and production, with .NET and SQL Server.',
+  path: '/resume',
+  crumbs: [{ name: 'Résumé', path: '/resume' }],
 })
 </script>
 

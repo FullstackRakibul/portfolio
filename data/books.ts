@@ -18,7 +18,7 @@ export interface Category {
 }
 
 export interface Book {
-  /** Address of the book: /#/bookshelf/<slug>. Lowercase words joined by hyphens. */
+  /** Address of the book: /bookshelf/<slug>. Lowercase words joined by hyphens. */
   slug: string
   title: string
   author: string

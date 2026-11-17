@@ -18,7 +18,7 @@
       <a
         v-for="(s, i) in sections"
         :key="s.id"
-        :href="'/#/' + s.id"
+        :href="'/' + s.id"
         :style="{ '--i': i }"
         :aria-current="active === s.id ? 'location' : undefined"
         @click.prevent="pick(s.id)"
@@ -36,7 +36,7 @@
         <li><NuxtLink to="/bookshelf" @click="close()">Bookshelf</NuxtLink></li>
         <li><NuxtLink to="/resume" @click="close()">Résumé</NuxtLink></li>
       </ul>
-      <UiButton size="lg" block href="/#/contact" @click.prevent="pick('contact')">Let’s talk</UiButton>
+      <UiButton size="lg" block href="/contact" @click.prevent="pick('contact')">Let’s talk</UiButton>
     </div>
   </dialog>
 </template>

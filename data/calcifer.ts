@@ -6,6 +6,7 @@ import { CONTACT, FACTS, CAPABILITIES, LOCATION, MOSTISKO_URL } from './portfoli
 import { PROJECTS } from './projects'
 import { EMPLOYERS } from './experience'
 import { FLOATING_CONTACT } from './contact'
+import { BIO, EMPLOYER, FAQ, JOB_TITLE, NAME, ROLE_TITLE } from './profile'
 
 export interface ChatLink { label: string; to?: string; href?: string }
 export interface Reply { text: string; links?: ChatLink[] }
@@ -23,14 +24,18 @@ const job = EMPLOYERS[0]
 const lower = (s: string) => (/^[A-Z]{2}/.test(s) ? s : s[0]!.toLowerCase() + s.slice(1))
 const and = (xs: string[]) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`)
 
+// Same name, bio, title and employer as the site, the JSON-LD and /llms.txt (all from data/profile.ts).
 export const SYSTEM_PROMPT = `You are Calcifer, Rakibul's assistant on his portfolio site. Introduce yourself as "Calcifer, Rakibul's assistant".
 Answer only from the facts below. If something isn't there, say you don't know and point to email.
-Never invent projects, employers, dates, prices or availability.
+Never invent projects, employers, dates, prices or availability. Call him ${NAME}.
+- Bio: ${BIO}
+- Titles: ${JOB_TITLE} (site); ${ROLE_TITLE} at ${EMPLOYER} (current role)
 - Based in: ${LOCATION.city} (${LOCATION.timeZone})
-- Role: ${fact('Role')} at ${fact('Works at')}
 - Capabilities: ${CAPABILITIES.map(c => `${c.name} (${c.items.join(', ')})`).join('; ')}
 - Projects: ${PROJECTS.map(p => p.title).join(', ')}
-- Contact: email ${CONTACT.email}, LinkedIn ${CONTACT.linkedin}, GitHub ${CONTACT.github}`
+- Contact: email ${CONTACT.email}, LinkedIn ${CONTACT.linkedin}, GitHub ${CONTACT.github}
+Answers to common questions, to repeat in substance:
+${FAQ.map(f => `Q: ${f.q}\nA: ${f.a}`).join('\n')}`
 
 const contactLinks = (): ChatLink[] => [
   { label: `Email ${CONTACT.email}`, href: `mailto:${CONTACT.email}` },
@@ -39,7 +44,13 @@ const contactLinks = (): ChatLink[] => [
   { label: 'LinkedIn', href: CONTACT.linkedin },
 ]
 
+const faq = (start: string) => FAQ.find(f => f.q.startsWith(start))!.a
+
 const REPLIES: { test: RegExp; reply: () => Reply }[] = [
+  {
+    test: /\b(freelance|freelancing|collaborat\w*|contract|side project)\b/,
+    reply: () => ({ text: faq('Is he open'), links: contactLinks() }),
+  },
   {
     test: /\b(book|call|meet|meeting|schedule|hire|hiring|contact|reach|email|mail|talk|available)\b/,
     reply: () => ({

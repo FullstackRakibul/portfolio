@@ -37,10 +37,26 @@ const list = computed(() => (category.value ? booksIn(category.value.id) : []))
 const others = computed(() => categories.filter(c => c.id !== category.value?.id && booksIn(c.id).length))
 onMounted(() => covers.loadAll())
 
-useHead(() => ({
-  title: category.value ? `${category.value.name} · Bookshelf` : 'Bookshelf',
-  meta: [{ name: 'description', content: category.value?.description ?? 'A shelf of the bookshelf.' }],
-}))
+// A shelf that doesn't exist is a real 404.
+if (!category.value) throw createError({ statusCode: 404, statusMessage: 'Shelf not found' })
+const c = category.value
+const n = list.value.length
+const shelf = `${c.description} ${n} ${n === 1 ? 'book' : 'books'} on this shelf of Rakibul H. Rabbi’s bookshelf`
+usePageSeo({
+  title: fitTitle(`${c.name} · Bookshelf`, c.name),
+  description: fitDescription(
+    `${shelf}, each free to read in your browser with a reader that remembers your page and keeps your bookmarks.`,
+    `${shelf}, each free to read in your browser with a reader that remembers your page and bookmarks.`,
+    `${shelf}, each free to read in your browser with a reader that remembers your page.`,
+    `${shelf}, each free to read online with a reader that remembers your page.`,
+    `${shelf}, each free to read in your browser.`,
+    `${shelf}, each free to read online.`,
+    `${shelf}.`,
+  ),
+  path: `/bookshelf/category/${c.id}`,
+  ogLabel: `Bookshelf: ${c.name}`,
+  crumbs: [{ name: 'Bookshelf', path: '/bookshelf' }, { name: c.name, path: `/bookshelf/category/${c.id}` }],
+})
 </script>
 
 <style scoped>

@@ -4,7 +4,12 @@
   "installCommand": "npm install",
   "buildCommand": "npm run generate",
   "outputDirectory": ".output/public",
-  "rewrites": [
-    { "source": "/((?!_nuxt/|api/).*)", "destination": "/index.html" }
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/:path*", "has": [{ "type": "host", "value": "rabbitic.com" }], "destination": "https://butterbun.vercel.app/:path*", "permanent": true },
+    { "source": "/:path*", "has": [{ "type": "host", "value": "www.rabbitic.com" }], "destination": "https://butterbun.vercel.app/:path*", "permanent": true }
+  ],
+  "headers": [
+    { "source": "/llms(.*).txt", "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }] }
   ]
 }

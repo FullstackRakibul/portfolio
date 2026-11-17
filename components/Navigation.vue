@@ -2,7 +2,7 @@
   <header class="hdr" :class="[`hdr--${variant}`, { scrolled, named: showName }]">
     <div class="inner lab-wrap">
       <NuxtLink to="/" class="brand" @click="toTop">
-        <img class="logo" src="/assets/img/logo-96.png" width="34" height="34" alt="" decoding="async">
+        <img class="logo" src="/assets/img/logo-96.png" width="34" height="34" alt="" aria-hidden="true" decoding="async">
         <span class="brand-name lab-mono">Rakibul H. Rabbi</span>
       </NuxtLink>
 
