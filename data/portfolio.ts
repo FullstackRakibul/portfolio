@@ -39,7 +39,17 @@ export const CONTACT = {
   medium: 'https://medium.com/@rakibul.h.rabbi',
 }
 
-export const LOCATION = { city: 'Dhaka, Bangladesh', lat: '23.8103° N', lon: '90.4125° E', timeZone: 'Asia/Dhaka' }
+/** Footer "agora": Greek original, English, who said it, and where it is recorded. Order matters. */
+export interface Quote { greek: string; english: string; who: string; source: string }
+export const QUOTES: Quote[] = [
+  { greek: 'Πάντες ἄνθρωποι τοῦ εἰδέναι ὀρέγονται φύσει.', english: 'All men by nature desire to know.', who: 'Aristotle', source: 'Metaphysics, 980a' },
+  { greek: 'δὶς ἐς τὸν αὐτὸν ποταμὸν οὐκ ἂν ἐμβαίης.', english: 'You could not step twice into the same river.', who: 'Heraclitus', source: 'as quoted in Plato’s Cratylus, 402a' },
+  { greek: 'ὁ δὲ ἀνεξέταστος βίος οὐ βιωτὸς ἀνθρώπῳ.', english: 'The unexamined life is not worth living.', who: 'Socrates', source: 'in Plato’s Apology, 38a' },
+  { greek: 'Γνῶθι σεαυτόν.', english: 'Know thyself.', who: 'Inscribed at the Temple of Apollo', source: 'Delphi' },
+  { greek: 'Δός μοι πᾶ στῶ καὶ τὰν γᾶν κινάσω.', english: 'Give me a place to stand, and I will move the earth.', who: 'Archimedes', source: 'as recorded by Pappus of Alexandria' },
+]
+
+export const LOCATION ={ city: 'Dhaka, Bangladesh', lat: '23.8103° N', lon: '90.4125° E', timeZone: 'Asia/Dhaka' }
 
 export const FACTS: Fact[] = [
   { label: 'Based in', value: 'Dhaka, Bangladesh' },
